@@ -48,11 +48,11 @@ export function getCoachByUsername(username: string): Coach | undefined {
   }
 }
 
-export function getCoachById(id: number): Coach | undefined {
-  const stmt = db.prepare("SELECT id, username, realName, sex, birthYear, campusId, phone, email, avatarPath, comment, type FROM coaches WHERE id = ?");
+export function getCoachById(id: number): (Coach & { campusName: string }) | undefined {
+  const stmt = db.prepare("SELECT co.id, co.username, co.realName, co.sex, co.birthYear, co.campusId, co.phone, co.email, co.avatarPath, co.comment, co.type, ca.name as campusName FROM coaches co JOIN campuses ca ON co.campusId = ca.id WHERE co.id = ?");
   const row = stmt.get(id);
   if (row) {
-    return row as Coach;
+    return row as (Coach & { campusName: string });
   }
 }
 

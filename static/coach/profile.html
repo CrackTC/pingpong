@@ -25,6 +25,25 @@
         </div>
     </div>
     <script>
+        function getSexString(sex) {
+            switch (sex) {
+                case 1: return "Male";
+                case 2: return "Female";
+                case 3: return "Other";
+                default: return "Not specified";
+            }
+        }
+
+        function getCoachTypeString(type) {
+            switch (type) {
+                case 1: return "Pending";
+                case 2: return "Junior";
+                case 3: return "Intermediate";
+                case 4: return "Senior";
+                default: return "Unknown";
+            }
+        }
+
         fetch('/api/coach/me')
             .then(response => response.json())
             .then(data => {
@@ -36,13 +55,13 @@
                         <p><img src="${imagePath}" alt="Avatar" width="100" height="100"></p>
                         <p><strong>Username:</strong> ${data.username}</p>
                         <p><strong>Real Name:</strong> ${data.realName}</p>
-                        <p><strong>Sex:</strong> ${data.sex}</p>
-                        <p><strong>Birth Year:</strong> ${data.birthYear}</p>
-                        <p><strong>Campus ID:</strong> ${data.campusId}</p>
+                        <p><strong>Sex:</strong> ${getSexString(data.sex)}</p>
+                        <p><strong>Birth Year:</strong> ${data.birthYear || "Not specified"}</p>
+                        <p><strong>Campus:</strong> ${data.campusName}</p>
                         <p><strong>Phone:</strong> ${data.phone}</p>
-                        <p><strong>Email:</strong> ${data.email}</p>
-                        <p><strong>Type:</strong> ${data.type}</p>
-                        <p><strong>Comment:</strong> ${data.comment}</p>
+                        <p><strong>Email:</strong> ${data.email || "Not specified"}</p>
+                        <p><strong>Type:</strong> ${getCoachTypeString(data.type)}</p>
+                        <p><strong>Comment:</strong> ${data.comment || "Not specified"}</p>
                     `;
                 }
             });

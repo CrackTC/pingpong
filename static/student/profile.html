@@ -25,6 +25,15 @@
         </div>
     </div>
     <script>
+        function getSexString(sex) {
+            switch (sex) {
+                case 1: return "Male";
+                case 2: return "Female";
+                case 3: return "Other";
+                default: return "Not specified";
+            }
+        }
+
         fetch('/api/student/me')
             .then(response => response.json())
             .then(data => {
@@ -34,12 +43,12 @@
                     document.getElementById('profile-data').innerHTML = `
                         <p><strong>Username:</strong> ${data.username}</p>
                         <p><strong>Real Name:</strong> ${data.realName}</p>
-                        <p><strong>Sex:</strong> ${data.sex}</p>
-                        <p><strong>Birth Year:</strong> ${data.birthYear}</p>
-                        <p><strong>Campus ID:</strong> ${data.campusId}</p>
+                        <p><strong>Sex:</strong> ${getSexString(data.sex)}</p>
+                        <p><strong>Birth Year:</strong> ${data.birthYear || "Not specified"}</p>
+                        <p><strong>Campus:</strong> ${data.campusName}</p>
                         <p><strong>Phone:</strong> ${data.phone}</p>
-                        <p><strong>Email:</strong> ${data.email}</p>
-                        <p><strong>Balance:</strong> ${data.balance}</p>
+                        <p><strong>Email:</strong> ${data.email || "Not specified"}</p>
+                        <p><strong>Balance:</strong> ${data.balance || "Not specified"}</p>
                     `;
                 }
             });

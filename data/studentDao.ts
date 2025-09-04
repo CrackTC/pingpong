@@ -47,10 +47,10 @@ export function getStudentByUsername(username: string): Student | undefined {
   }
 }
 
-export function getStudentById(id: number): Student | undefined {
-  const stmt = db.prepare("SELECT id, username, realName, sex, birthYear, campusId, phone, email, balance FROM students WHERE id = ?");
+export function getStudentById(id: number): (Student & { campusName: string }) | undefined {
+  const stmt = db.prepare("SELECT s.id, s.username, s.realName, s.sex, s.birthYear, s.campusId, s.phone, s.email, s.balance, c.name as campusName FROM students s JOIN campuses c ON s.campusId = c.id WHERE s.id = ?");
   const row = stmt.get(id);
   if (row) {
-    return row as Student;
+    return row as (Student & { campusName: string });
   }
 }
