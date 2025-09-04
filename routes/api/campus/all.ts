@@ -1,8 +1,8 @@
 import { Hono } from "hono";
-import { getAllCampuses } from "../../data/campusDao.ts";
+import { getAllCampuses } from "../../../data/campusDao.ts";
 
 export function useApiGetAllCampuses(app: Hono) {
-  app.get("/api/getAllCampuses", (c) => {
+  app.get("/api/campus/all", (c) => {
     const campuses = getAllCampuses();
     return c.json(campuses);
   });

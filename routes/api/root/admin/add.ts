@@ -1,10 +1,10 @@
 import { Hono } from "hono";
-import { addAdmin, getAdminByUsername } from "../../../data/adminDao.ts";
-import { getCampusById } from "../../../data/campusDao.ts";
-import { validatePassword } from "../../../utils.ts";
+import { addAdmin, getAdminByUsername } from "../../../../data/adminDao.ts";
+import { getCampusById } from "../../../../data/campusDao.ts";
+import { validatePassword } from "../../../../utils.ts";
 
 export function useApiAddAdmin(app: Hono) {
-  app.post("/api/root/addAdmin", async (c) => {
+  app.post("/api/root/admin/add", async (c) => {
     const { username, password, campusId } = await c.req.json();
 
     if (!username || typeof username !== "string" || username.trim() === "") {

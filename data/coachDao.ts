@@ -1,18 +1,25 @@
 import { db } from "./db.ts";
 import { Coach, CoachType } from "../models/coach.ts";
 
-export function verifyCoach(username: string, password_input: string): number | undefined {
+export function verifyCoach(
+  username: string,
+  password_input: string,
+): number | undefined {
   // ASSUMPTION: The 'coaches' table has a 'password' column.
   // If not, the authentication mechanism for coaches needs to be clarified.
-  const stmt = db.prepare("SELECT id FROM coaches WHERE username = ? AND password = ?");
-  const row = stmt.get(username, password_input);
+  const stmt = db.prepare(
+    "SELECT id FROM coaches WHERE username = ? AND password = ?",
+  );
+  const row = stmt.get<Coach>(username, password_input);
   if (row) {
     return row.id as number;
   }
   return undefined;
 }
 
-export function addCoach(coach: Omit<Coach, "id" | "type"> & { password: string }) {
+export function addCoach(
+  coach: Omit<Coach, "id" | "type"> & { password: string },
+) {
   // ASSUMPTION: The 'coaches' table has a 'password' column.
   // The 'type' column will be initialized to CoachType.Pending (1).
   const stmt = db.prepare(
@@ -39,4 +46,14 @@ export function getCoachByUsername(username: string): Coach | undefined {
   if (row) {
     return row as Coach;
   }
+}
+
+export function getPendingCoaches(): Coach[] {
+  const stmt = db.prepare("SELECT * FROM coaches WHERE type = ?");
+  return stmt.all(CoachType.Pending) as Coach[];
+}
+
+export function approveCoach(coachId: number, type: CoachType) {
+  const stmt = db.prepare("UPDATE coaches SET type = ? WHERE id = ?");
+  stmt.run(type, coachId);
 }

@@ -6,7 +6,10 @@ export async function adminAuth(c: Context, next: Next) {
 
   // If the user is already authenticated as admin and tries to access /admin/login,
   // redirect them to /admin/home (assuming /admin/home exists).
-  if (c.req.path === "/admin/login" && claim?.type === "admin") {
+  if (
+    c.req.path === "/admin/login" &&
+    (claim?.type === "admin" || claim?.type === "root")
+  ) {
     return c.redirect("/admin/home");
   }
 
@@ -18,7 +21,7 @@ export async function adminAuth(c: Context, next: Next) {
   }
 
   // For any other /admin/* path, check authentication.
-  if (claim?.type !== "admin") {
+  if (claim?.type !== "admin" && claim?.type !== "root") {
     return c.redirect("/admin/login");
   }
   await next();

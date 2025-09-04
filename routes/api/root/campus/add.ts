@@ -1,13 +1,16 @@
 import { Hono } from "hono";
-import { addCampus, getCampusByName } from "../../../data/campusDao.ts";
-import { CampusType } from "../../../models/campus.ts";
+import { addCampus, getCampusByName } from "../../../../data/campusDao.ts";
+import { CampusType } from "../../../../models/campus.ts";
 
 export function useApiAddCampus(app: Hono) {
-  app.post("/api/root/addCampus", async (c) => {
+  app.post("/api/root/campus/add", async (c) => {
     const { name, address, phone, email } = await c.req.json();
 
     if (!name || typeof name !== "string" || name.trim() === "") {
-      return c.json({ success: false, message: "Campus name is required." }, 400);
+      return c.json(
+        { success: false, message: "Campus name is required." },
+        400,
+      );
     }
     if (!address || typeof address !== "string" || address.trim() === "") {
       return c.json({ success: false, message: "Address is required." }, 400);

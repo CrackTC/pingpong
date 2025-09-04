@@ -21,7 +21,11 @@
                             <h3 class="card-title text-center mb-4">
                                 Add Admin
                             </h3>
-                            <div id="message-area" class="alert d-none" role="alert"></div>
+                            <div
+                                id="message-area"
+                                class="alert d-none"
+                                role="alert"
+                            ></div>
                             <form id="add-admin-form">
                                 <div class="mb-3">
                                     <label for="username" class="form-label"
@@ -46,8 +50,13 @@
                                         name="password"
                                         required
                                     />
-                                    <small id="passwordHelp" class="form-text text-muted">
-                                        Password must be 8-16 characters, contain at least one letter, one number, and one special symbol.
+                                    <small
+                                        id="passwordHelp"
+                                        class="form-text text-muted"
+                                    >
+                                        Password must be 8-16 characters,
+                                        contain at least one letter, one number,
+                                        and one special symbol.
                                     </small>
                                 </div>
                                 <div class="mb-3">
@@ -69,7 +78,7 @@
                                         Add Admin
                                     </button>
                                     <a
-                                        href="/root/admins"
+                                        href="/root/admin/all"
                                         class="btn btn-secondary"
                                         >Cancel</a
                                     >
@@ -82,7 +91,7 @@
         </div>
         <script>
             async function fetchCampuses() {
-                const response = await fetch("/api/getAllCampuses");
+                const response = await fetch("/api/campus/all");
                 const campuses = await response.json();
                 const campusSelect = document.getElementById("campusId");
                 for (const campus of campuses) {
@@ -100,7 +109,7 @@
             function displayMessage(message, type) {
                 messageArea.textContent = message;
                 messageArea.className = `alert alert-${type}`;
-                messageArea.classList.remove('d-none');
+                messageArea.classList.remove("d-none");
             }
 
             // Client-side password validation function (same as in utils.ts)
@@ -127,7 +136,7 @@
                 const password = passwordInput.value;
                 const passwordError = validatePassword(password);
                 if (passwordError) {
-                    displayMessage(passwordError, 'danger');
+                    displayMessage(passwordError, "danger");
                     return; // Stop form submission
                 }
 
@@ -135,17 +144,17 @@
                 const data = Object.fromEntries(formData.entries());
                 data.campusId = parseInt(data.campusId, 10);
 
-                const response = await fetch("/api/root/addAdmin", {
+                const response = await fetch("/api/root/admin/add", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data),
                 });
 
                 if (response.ok) {
-                    displayMessage('Admin added successfully!', 'success');
+                    displayMessage("Admin added successfully!", "success");
                     form.reset(); // Clear the form
                     setTimeout(() => {
-                        window.location.href = '/root/admins'; // Redirect back to admins list
+                        window.location.href = "/root/admin/all"; // Redirect back to admins list
                     }, 2000); // Redirect after 2 seconds
                 } else {
                     let message =
@@ -158,7 +167,7 @@
                     } catch (e) {
                         // Ignore JSON parsing errors if the response is not JSON
                     }
-                    displayMessage(message, 'danger');
+                    displayMessage(message, "danger");
                 }
             });
 
