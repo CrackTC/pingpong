@@ -77,3 +77,51 @@ export function updateCoachAvatarPath(id: number, avatarPath: string) {
   const stmt = db.prepare("UPDATE coaches SET avatarPath = ? WHERE id = ?");
   stmt.run(avatarPath, id);
 }
+
+export function updateCoach(id: number, data: {
+  realName?: string;
+  sex?: number | null;
+  birthYear?: number | null;
+  phone?: string;
+  email?: string | null;
+  comment?: string | null;
+}) {
+  let query = "UPDATE coaches SET ";
+  const params: (string | number | null)[] = [];
+  const updates: string[] = [];
+
+  if (data.realName !== undefined) {
+    updates.push("realName = ?");
+    params.push(data.realName);
+  }
+  if (data.sex !== undefined) {
+    updates.push("sex = ?");
+    params.push(data.sex);
+  }
+  if (data.birthYear !== undefined) {
+    updates.push("birthYear = ?");
+    params.push(data.birthYear);
+  }
+  if (data.phone !== undefined) {
+    updates.push("phone = ?");
+    params.push(data.phone);
+  }
+  if (data.email !== undefined) {
+    updates.push("email = ?");
+    params.push(data.email);
+  }
+  if (data.comment !== undefined) {
+    updates.push("comment = ?");
+    params.push(data.comment);
+  }
+
+  if (updates.length === 0) {
+    return; // No fields to update
+  }
+
+  query += updates.join(", ") + " WHERE id = ?";
+  params.push(id);
+
+  const stmt = db.prepare(query);
+  stmt.run(...params);
+}

@@ -43,6 +43,10 @@ import { useCoachPassword } from "./routes/coach/password.ts";
 import { useApiCoachPassword } from "./routes/api/coach/password.ts";
 import { useCoachAvatar } from "./routes/coach/avatar.ts";
 import { useApiCoachAvatar } from "./routes/api/coach/avatar.ts";
+import { useStudentEdit } from "./routes/student/edit.ts";
+import { useApiStudentEdit } from "./routes/api/student/edit.ts";
+import { useCoachEdit } from "./routes/coach/edit.ts";
+import { useApiCoachEdit } from "./routes/api/coach/edit.ts";
 
 const app = new Hono();
 
@@ -97,6 +101,10 @@ useCoachPassword(app);
 useApiCoachPassword(app);
 useCoachAvatar(app);
 useApiCoachAvatar(app);
+useStudentEdit(app);
+useApiStudentEdit(app);
+useCoachEdit(app);
+useApiCoachEdit(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);
