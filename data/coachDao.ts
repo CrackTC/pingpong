@@ -125,3 +125,24 @@ export function updateCoach(id: number, data: {
   const stmt = db.prepare(query);
   stmt.run(...params);
 }
+
+export function searchCoaches(campusId: number, realName?: string, sex?: number, birthYear?: number): (Coach & { campusName: string })[] {
+  let query = "SELECT co.id, co.username, co.realName, co.sex, co.birthYear, co.campusId, co.phone, co.email, co.avatarPath, co.comment, co.type, ca.name as campusName FROM coaches co JOIN campuses ca ON co.campusId = ca.id WHERE co.campusId = ?";
+  const params: (string | number)[] = [campusId];
+
+  if (realName) {
+    query += " AND co.realName LIKE ?";
+    params.push(`%${realName}%`);
+  }
+  if (sex) {
+    query += " AND co.sex = ?";
+    params.push(sex);
+  }
+  if (birthYear) {
+    query += " AND co.birthYear = ?";
+    params.push(birthYear);
+  }
+
+  const stmt = db.prepare(query);
+  return stmt.all(...params) as (Coach & { campusName: string })[];
+}

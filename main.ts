@@ -47,6 +47,8 @@ import { useStudentEdit } from "./routes/student/edit.ts";
 import { useApiStudentEdit } from "./routes/api/student/edit.ts";
 import { useCoachEdit } from "./routes/coach/edit.ts";
 import { useApiCoachEdit } from "./routes/api/coach/edit.ts";
+import { useStudentCoachSearch } from "./routes/student/coach/search.ts";
+import { useApiStudentCoachSearch } from "./routes/api/student/coach/search.ts";
 
 const app = new Hono();
 
@@ -105,6 +107,8 @@ useStudentEdit(app);
 useApiStudentEdit(app);
 useCoachEdit(app);
 useApiCoachEdit(app);
+useStudentCoachSearch(app);
+useApiStudentCoachSearch(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);
