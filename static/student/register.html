@@ -97,7 +97,7 @@
             }
 
             async function fetchCampuses() {
-                const response = await fetch("/api/getAllCampuses");
+                const response = await fetch("/api/campus/all");
                 const campuses = await response.json();
                 const campusSelect = document.getElementById("campusId");
                 for (const campus of campuses) {

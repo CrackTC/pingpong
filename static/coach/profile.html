@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Coach Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+</head>
+
+<body class="bg-light">
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-center mb-4">Coach Profile</h3>
+                        <div id="profile-data"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        fetch('/api/coach/me')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('profile-data').innerText = data.error;
+                } else {
+                    document.getElementById('profile-data').innerHTML = `
+                        <p><strong>Username:</strong> ${data.username}</p>
+                        <p><strong>Real Name:</strong> ${data.realName}</p>
+                        <p><strong>Sex:</strong> ${data.sex}</p>
+                        <p><strong>Birth Year:</strong> ${data.birthYear}</p>
+                        <p><strong>Campus ID:</strong> ${data.campusId}</p>
+                        <p><strong>Phone:</strong> ${data.phone}</p>
+                        <p><strong>Email:</strong> ${data.email}</p>
+                        <p><strong>Type:</strong> ${data.type}</p>
+                        <p><strong>Comment:</strong> ${data.comment}</p>
+                    `;
+                }
+            });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+</html>

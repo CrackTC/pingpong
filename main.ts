@@ -30,6 +30,10 @@ import { useAdminCoaches } from "./routes/admin/coach.ts";
 import { useApiGetCoaches } from "./routes/api/admin/coach/pending.ts";
 import { useApiApproveCoach } from "./routes/api/admin/coach/approve.ts";
 import { useAdminHome } from "./routes/admin/home.ts";
+import { useApiStudentMe } from "./routes/api/student/me.ts";
+import { useStudentProfile } from "./routes/student/profile.ts";
+import { useApiCoachMe } from "./routes/api/coach/me.ts";
+import { useCoachProfile } from "./routes/coach/profile.ts";
 
 const app = new Hono();
 
@@ -70,6 +74,10 @@ useAdminCoaches(app);
 useApiGetCoaches(app);
 useApiApproveCoach(app);
 useAdminHome(app);
+useApiStudentMe(app);
+useStudentProfile(app);
+useApiCoachMe(app);
+useCoachProfile(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

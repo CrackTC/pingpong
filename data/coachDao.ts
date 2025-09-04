@@ -41,15 +41,23 @@ export function addCoach(
 }
 
 export function getCoachByUsername(username: string): Coach | undefined {
-  const stmt = db.prepare("SELECT * FROM coaches WHERE username = ?");
+  const stmt = db.prepare("SELECT id, username, realName, sex, birthYear, campusId, phone, email, avatarPath, comment, type FROM coaches WHERE username = ?");
   const row = stmt.get(username);
   if (row) {
     return row as Coach;
   }
 }
 
+export function getCoachById(id: number): Coach | undefined {
+  const stmt = db.prepare("SELECT id, username, realName, sex, birthYear, campusId, phone, email, avatarPath, comment, type FROM coaches WHERE id = ?");
+  const row = stmt.get(id);
+  if (row) {
+    return row as Coach;
+  }
+}
+
 export function getPendingCoaches(): Coach[] {
-  const stmt = db.prepare("SELECT * FROM coaches WHERE type = ?");
+  const stmt = db.prepare("SELECT id, username, realName, sex, birthYear, campusId, phone, email, avatarPath, comment, type FROM coaches WHERE type = ?");
   return stmt.all(CoachType.Pending) as Coach[];
 }
 

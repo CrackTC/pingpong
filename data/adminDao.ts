@@ -13,7 +13,7 @@ export function addAdmin(username: string, password: string, campusId: number) {
 }
 
 export function getAdminByUsername(username: string): Admin | undefined {
-  const stmt = db.prepare("SELECT * FROM admins WHERE username = ?");
+  const stmt = db.prepare("SELECT id, campusId as campus, username FROM admins WHERE username = ?");
   const row = stmt.get(username);
   if (row) {
     return row as Admin;

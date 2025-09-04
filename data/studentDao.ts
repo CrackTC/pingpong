@@ -40,8 +40,16 @@ export function addStudent(
 }
 
 export function getStudentByUsername(username: string): Student | undefined {
-  const stmt = db.prepare("SELECT * FROM students WHERE username = ?");
+  const stmt = db.prepare("SELECT id, username, realName, sex, birthYear, campusId, phone, email, balance FROM students WHERE username = ?");
   const row = stmt.get(username);
+  if (row) {
+    return row as Student;
+  }
+}
+
+export function getStudentById(id: number): Student | undefined {
+  const stmt = db.prepare("SELECT id, username, realName, sex, birthYear, campusId, phone, email, balance FROM students WHERE id = ?");
+  const row = stmt.get(id);
   if (row) {
     return row as Student;
   }
