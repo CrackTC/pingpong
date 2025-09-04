@@ -22,6 +22,8 @@ import { useCoachLogin } from "./routes/coach/login.ts";
 import { useApiCoachLogin } from "./routes/api/coach/login.ts";
 import { useStudentRegister } from "./routes/student/register.ts";
 import { useApiStudentRegister } from "./routes/api/student/register.ts";
+import { useCoachRegister } from "./routes/coach/register.ts";
+import { useApiCoachRegister } from "./routes/api/coach/register.ts";
 import { adminAuth } from "./auth/admin.ts";
 import { studentAuth } from "./auth/student.ts";
 import { coachAuth } from "./auth/coach.ts";
@@ -58,6 +60,8 @@ useStudentLogin(app);
 useApiStudentLogin(app);
 useCoachLogin(app);
 useApiCoachLogin(app);
+useCoachRegister(app);
+useApiCoachRegister(app);
 useStudentRegister(app);
 useApiStudentRegister(app);
 

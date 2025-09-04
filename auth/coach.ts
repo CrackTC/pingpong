@@ -12,7 +12,10 @@ export async function coachAuth(c: Context, next: Next) {
 
   // If the user is trying to access /coach/login and is not authenticated as coach,
   // or if they are trying to access /api/coach/login, proceed.
-  if (c.req.path === "/coach/login" || c.req.path === "/api/coach/login") {
+  if (
+    c.req.path === "/coach/login" || c.req.path === "/api/coach/login" ||
+    c.req.path === "/coach/register" || c.req.path === "/api/coach/register"
+  ) {
     await next();
     return;
   }

@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { addStudent, getStudentByUsername } from "../../../data/studentDao.ts";
 import { getCampusById } from "../../../data/campusDao.ts";
 import { Sex } from "../../../models/sex.ts";
+import { validatePassword } from "../../../utils.ts";
 
 export function useApiStudentRegister(app: Hono) {
   app.post("/api/student/register", async (c) => {
@@ -14,14 +15,22 @@ export function useApiStudentRegister(app: Hono) {
     if (!password || typeof password !== "string" || password.trim() === "") {
       return c.json({ success: false, message: "Password is required." }, 400);
     }
+
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      return c.json({ success: false, message: passwordError }, 400);
+    }
+
     if (!realName || typeof realName !== "string" || realName.trim() === "") {
       return c.json({ success: false, message: "Real Name is required." }, 400);
     }
-    if (typeof sex !== "number" || !(sex in Sex)) {
-      return c.json({ success: false, message: "Valid Sex is required." }, 400);
+    // Sex is optional
+    if (sex !== null && sex !== undefined && (typeof sex !== "number" || !(sex in Sex))) {
+      return c.json({ success: false, message: "Valid Sex is required if provided." }, 400);
     }
-    if (typeof birthYear !== "number" || birthYear < 1900 || birthYear > new Date().getFullYear()) {
-      return c.json({ success: false, message: "Valid Birth Year is required." }, 400);
+    // Birth Year is optional
+    if (birthYear !== null && birthYear !== undefined && (typeof birthYear !== "number" || birthYear < 1900 || birthYear > new Date().getFullYear())) {
+      return c.json({ success: false, message: "Valid Birth Year is required if provided." }, 400);
     }
     if (typeof campusId !== "number") {
       return c.json({ success: false, message: "Campus is required." }, 400);

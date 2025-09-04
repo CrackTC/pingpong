@@ -20,7 +20,7 @@ export function getAdminByUsername(username: string): Admin | undefined {
   }
 }
 
-export function getAllAdmins(): any[] {
+export function getAllAdmins() {
   const stmt = db.prepare(
     "SELECT a.id, a.username, c.name as campusName FROM admins a JOIN campuses c ON a.campusId = c.id",
   );

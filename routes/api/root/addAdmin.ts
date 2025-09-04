@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { addAdmin, getAdminByUsername } from "../../../data/adminDao.ts";
 import { getCampusById } from "../../../data/campusDao.ts";
+import { validatePassword } from "../../../utils.ts";
 
 export function useApiAddAdmin(app: Hono) {
   app.post("/api/root/addAdmin", async (c) => {
@@ -12,6 +13,12 @@ export function useApiAddAdmin(app: Hono) {
     if (!password || typeof password !== "string" || password.trim() === "") {
       return c.json({ success: false, message: "Password is required." }, 400);
     }
+
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      return c.json({ success: false, message: passwordError }, 400);
+    }
+
     if (!campusId || typeof campusId !== "number") {
       return c.json({
         success: false,

@@ -4,10 +4,10 @@ export type Student = {
   id: number;
   username: string;
   realName: string;
-  sex?: Sex;
-  birthYear?: number;
+  sex: Sex | null;
+  birthYear: number | null;
   campusId: number;
   phone: string;
-  email?: string;
+  email: string | null;
   balance: number;
-}
+};

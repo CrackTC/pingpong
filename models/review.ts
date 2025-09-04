@@ -13,7 +13,7 @@ export type Review = {
   campusId: number;
   appointmentId: number;
   type: ReviewType;
-  text?: string;
-  rating?: number;
+  text: string | null;
+  rating: number | null;
   status: ReviewStatus;
 };

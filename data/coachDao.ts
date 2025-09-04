@@ -1,19 +1,42 @@
-import { Coach } from "../models/coach.ts";
 import { db } from "./db.ts";
-// import { Coach } from "../models/coach.ts"; // Uncomment if needed for other functions
+import { Coach, CoachType } from "../models/coach.ts";
 
-export function verifyCoach(
-  username: string,
-  password_input: string,
-): number | undefined {
+export function verifyCoach(username: string, password_input: string): number | undefined {
   // ASSUMPTION: The 'coaches' table has a 'password' column.
   // If not, the authentication mechanism for coaches needs to be clarified.
-  const stmt = db.prepare(
-    "SELECT id FROM coaches WHERE username = ? AND password = ?",
-  );
-  const row = stmt.get<Coach>(username, password_input);
+  const stmt = db.prepare("SELECT id FROM coaches WHERE username = ? AND password = ?");
+  const row = stmt.get(username, password_input);
   if (row) {
     return row.id as number;
   }
   return undefined;
+}
+
+export function addCoach(coach: Omit<Coach, "id" | "type"> & { password: string }) {
+  // ASSUMPTION: The 'coaches' table has a 'password' column.
+  // The 'type' column will be initialized to CoachType.Pending (1).
+  const stmt = db.prepare(
+    "INSERT INTO coaches (username, password, realName, sex, birthYear, campusId, phone, email, avatarPath, comment, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+  );
+  stmt.run(
+    coach.username,
+    coach.password,
+    coach.realName,
+    coach.sex,
+    coach.birthYear,
+    coach.campusId,
+    coach.phone,
+    coach.email,
+    coach.avatarPath,
+    coach.comment,
+    CoachType.Pending, // Always set type to Pending
+  );
+}
+
+export function getCoachByUsername(username: string): Coach | undefined {
+  const stmt = db.prepare("SELECT * FROM coaches WHERE username = ?");
+  const row = stmt.get(username);
+  if (row) {
+    return row as Coach;
+  }
 }

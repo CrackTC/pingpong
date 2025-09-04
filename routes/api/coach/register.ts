@@ -1,0 +1,123 @@
+import { Hono } from "hono";
+import { addCoach, getCoachByUsername } from "../../../data/coachDao.ts";
+import { getCampusById } from "../../../data/campusDao.ts";
+import { Sex } from "../../../models/sex.ts";
+import { validatePassword } from "../../../utils.ts";
+
+export function useApiCoachRegister(app: Hono) {
+  app.post("/api/coach/register", async (c) => {
+    const formData = await c.req.formData();
+
+    const username = formData.get("username") as string;
+    const password = formData.get("password") as string;
+    const realName = formData.get("realName") as string;
+    const sex = formData.get("sex") != "null"
+      ? parseInt(formData.get("sex") as string)
+      : null;
+    const birthYear = formData.get("birthYear") != "null"
+      ? parseInt(formData.get("birthYear") as string)
+      : null;
+    const campusId = parseInt(formData.get("campusId") as string);
+    const phone = formData.get("phone") as string;
+    const email = formData.get("email") != "null"
+      ? formData.get("email") as string
+      : null;
+    const comment = formData.get("comment") as string;
+    const avatarFile = formData.get("avatar") as File;
+
+    // Basic validation
+    if (!username || username.trim() === "") {
+      return c.json({ success: false, message: "Username is required." }, 400);
+    }
+    if (!password || password.trim() === "") {
+      return c.json({ success: false, message: "Password is required." }, 400);
+    }
+
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      return c.json({ success: false, message: passwordError }, 400);
+    }
+
+    if (!realName || realName.trim() === "") {
+      return c.json({ success: false, message: "Real Name is required." }, 400);
+    }
+    // Sex is optional
+    if (sex !== null && sex !== undefined && (isNaN(sex) || !(sex in Sex))) {
+      return c.json({
+        success: false,
+        message: "Valid Sex is required if provided.",
+      }, 400);
+    }
+    // Birth Year is optional
+    if (
+      birthYear !== null && birthYear !== undefined &&
+      (isNaN(birthYear) || birthYear < 1900 ||
+        birthYear > new Date().getFullYear())
+    ) {
+      return c.json({
+        success: false,
+        message: "Valid Birth Year is required if provided.",
+      }, 400);
+    }
+    if (isNaN(campusId)) {
+      return c.json({ success: false, message: "Campus is required." }, 400);
+    }
+    if (!phone || phone.trim() === "") {
+      return c.json({ success: false, message: "Phone is required." }, 400);
+    }
+    if (!comment || comment.trim() === "") {
+      return c.json({ success: false, message: "Comment is required." }, 400);
+    }
+
+    // Check if username already exists
+    const existingCoach = getCoachByUsername(username);
+    if (existingCoach) {
+      return c.json(
+        { success: false, message: "Username already exists." },
+        409,
+      );
+    }
+
+    // Check if campusId is valid
+    const campus = getCampusById(campusId);
+    if (!campus) {
+      return c.json({ success: false, message: "Invalid Campus ID." }, 400);
+    }
+
+    let avatarPath: string = "";
+    if (avatarFile && avatarFile.size > 0) {
+      const uploadsDir = "./static/avatars/coaches";
+      await Deno.mkdir(uploadsDir, { recursive: true });
+      const filename = `${crypto.randomUUID()}-${avatarFile.name}`;
+      avatarPath = `${uploadsDir}/${filename}`;
+      await Deno.writeFile(
+        avatarPath,
+        new Uint8Array(await avatarFile.arrayBuffer()),
+      );
+    } else {
+      return c.json({ success: false, message: "Avatar is required." }, 400);
+    }
+
+    try {
+      addCoach({
+        username,
+        password,
+        realName,
+        sex,
+        birthYear,
+        campusId,
+        phone,
+        email: email || null,
+        avatarPath: avatarPath, // Store empty string if no avatar
+        comment: comment,
+      });
+      return c.json({ success: true });
+    } catch (error) {
+      console.error("Error registering coach:", error);
+      return c.json({
+        success: false,
+        message: "An unexpected error occurred.",
+      }, 500);
+    }
+  });
+}

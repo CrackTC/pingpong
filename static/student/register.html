@@ -28,6 +28,9 @@
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Password</label>
                                     <input type="password" class="form-control" id="password" name="password" required>
+                                    <small id="passwordHelp" class="form-text text-muted">
+                                        Password must be 8-16 characters, contain at least one letter, one number, and one special symbol.
+                                    </small>
                                 </div>
                                 <div class="mb-3">
                                     <label for="realName" class="form-label">Real Name</label>
@@ -68,11 +71,29 @@
         </div>
         <script>
             const messageArea = document.getElementById('message-area');
+            const passwordInput = document.getElementById('password');
 
             function displayMessage(message, type) {
                 messageArea.textContent = message;
                 messageArea.className = `alert alert-${type}`;
                 messageArea.classList.remove('d-none');
+            }
+
+            // Client-side password validation function (same as in utils.ts)
+            function validatePassword(password) {
+                if (password.length < 8 || password.length > 16) {
+                    return "Password must be between 8 and 16 characters long.";
+                }
+                if (!/[a-zA-Z]/.test(password)) {
+                    return "Password must contain at least one alphabet character.";
+                }
+                if (!/\d/.test(password)) {
+                    return "Password must contain at least one number.";
+                }
+                if (!/[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]/.test(password)) {
+                    return "Password must contain at least one special symbol.";
+                }
+                return null; // Password is valid
             }
 
             async function fetchCampuses() {
@@ -91,13 +112,21 @@
                 event.preventDefault();
                 messageArea.classList.add('d-none'); // Hide message on new submission
 
+                const password = passwordInput.value;
+                const passwordError = validatePassword(password);
+                if (passwordError) {
+                    displayMessage(passwordError, 'danger');
+                    return; // Stop form submission
+                }
+
                 const formData = new FormData(this);
                 const studentData = Object.fromEntries(formData.entries());
 
-                // Convert numeric fields
-                studentData.sex = parseInt(studentData.sex);
-                studentData.birthYear = parseInt(studentData.birthYear);
-                studentData.campusId = parseInt(studentData.campusId);
+                // Convert numeric fields, handle optionality
+                studentData.sex = studentData.sex ? parseInt(studentData.sex) : null;
+                studentData.birthYear = studentData.birthYear ? parseInt(studentData.birthYear) : null;
+                studentData.campusId = parseInt(studentData.campusId); // Campus is still required
+                studentData.email = studentData.email || null; // Store null if email is empty
 
                 const response = await fetch('/api/student/register', {
                     method: 'POST',
