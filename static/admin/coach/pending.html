@@ -27,10 +27,12 @@
                                         <th scope="col">ID</th>
                                         <th scope="col">Username</th>
                                         <th scope="col">Real Name</th>
+                                        <th scope="col">Avatar</th>
                                         <th scope="col">Phone</th>
                                         <th scope="col">Email</th>
-                                        <th scope="col">Campus ID</th>
+                                        <th scope="col">Campus</th>
                                         <th scope="col">Type</th>
+                                        <th scope="col">Comment</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -48,6 +50,22 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="commentModalLabel">Coach Comment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p id="modal-comment-text"></p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <script>
             async function fetchPendingCoaches() {
                 const response = await fetch("/api/admin/coach/pending");
@@ -58,21 +76,28 @@
                 tableBody.innerHTML = "";
                 for (const coach of coaches) {
                     const row = document.createElement("tr");
+                    const imagePath = coach.avatarPath.startsWith('./') ? coach.avatarPath.substring(1) : coach.avatarPath;
                     row.innerHTML = `
-                    <td>${coach.id}</td>
-                    <td>${coach.username}</td>
-                    <td>${coach.realName}</td>
-                    <td>${coach.phone}</td>
-                    <td>${coach.email}</td>
-                    <td>${coach.campusId}</td>
-                    <td>
+                    <td class="align-middle">${coach.id}</td>
+                    <td class="align-middle">${coach.username}</td>
+                    <td class="align-middle">${coach.realName}</td>
+                    <td class="align-middle"><img src="${imagePath}" alt="Avatar" width="50" height="50"></td>
+                    <td class="align-middle">${coach.phone}</td>
+                    <td class="align-middle">${coach.email}</td>
+                    <td class="align-middle">${coach.campusName}</td>
+                    <td class="align-middle">
                         <select class="form-select" id="coach-type-${coach.id}">
                             <option value="2">Junior</option>
                             <option value="3">Intermediate</option>
                             <option value="4">Senior</option>
                         </select>
                     </td>
-                    <td>
+                    <td class="align-middle">
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#commentModal" data-bs-comment="${coach.comment}">
+                            View
+                        </button>
+                    </td>
+                    <td class="align-middle">
                         <button class="btn btn-success btn-sm" onclick="approveCoach(${coach.id})">Approve</button>
                     </td>
                 `;
@@ -103,6 +128,14 @@
             }
 
             fetchPendingCoaches();
+
+            const commentModal = document.getElementById('commentModal')
+            commentModal.addEventListener('show.bs.modal', function (event) {
+              const button = event.relatedTarget
+              const comment = button.getAttribute('data-bs-comment')
+              const modalCommentText = commentModal.querySelector('#modal-comment-text')
+              modalCommentText.textContent = comment
+            })
         </script>
         <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"

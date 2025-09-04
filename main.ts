@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { serveStatic } from "hono/deno";
 import { useSession } from "npm:@hono/session";
 import { getClaim } from "./auth/claim.ts";
 import { useRootLogin } from "./routes/root/login.ts";
@@ -36,6 +37,8 @@ import { useApiCoachMe } from "./routes/api/coach/me.ts";
 import { useCoachProfile } from "./routes/coach/profile.ts";
 
 const app = new Hono();
+
+app.use('/static/avatars/*', serveStatic({ root: './' }))
 
 app.use(useSession({ secret: "SkoUqVOXTewLQiZSrdgK/DFKYQHDxmTMN1m5/0M9YLw=" }));
 

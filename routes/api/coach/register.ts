@@ -86,12 +86,12 @@ export function useApiCoachRegister(app: Hono) {
 
     let avatarPath: string = "";
     if (avatarFile && avatarFile.size > 0) {
-      const uploadsDir = "./static/avatars/coaches";
+      const uploadsDir = "static/avatars/coaches";
       await Deno.mkdir(uploadsDir, { recursive: true });
       const filename = `${crypto.randomUUID()}-${avatarFile.name}`;
-      avatarPath = `${uploadsDir}/${filename}`;
+      avatarPath = `/${uploadsDir}/${filename}`;
       await Deno.writeFile(
-        avatarPath,
+        `./${uploadsDir}/${filename}`,
         new Uint8Array(await avatarFile.arrayBuffer()),
       );
     } else {
