@@ -67,3 +67,13 @@ export function approveCoach(coachId: number, type: CoachType) {
   const stmt = db.prepare("UPDATE coaches SET type = ? WHERE id = ?");
   stmt.run(type, coachId);
 }
+
+export function updateCoachPassword(id: number, newPassword: string) {
+  const stmt = db.prepare("UPDATE coaches SET password = ? WHERE id = ?");
+  stmt.run(newPassword, id);
+}
+
+export function updateCoachAvatarPath(id: number, avatarPath: string) {
+  const stmt = db.prepare("UPDATE coaches SET avatarPath = ? WHERE id = ?");
+  stmt.run(avatarPath, id);
+}

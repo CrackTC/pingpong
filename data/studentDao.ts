@@ -54,3 +54,8 @@ export function getStudentById(id: number): (Student & { campusName: string }) |
     return row as (Student & { campusName: string });
   }
 }
+
+export function updateStudentPassword(id: number, newPassword: string) {
+  const stmt = db.prepare("UPDATE students SET password = ? WHERE id = ?");
+  stmt.run(newPassword, id);
+}
