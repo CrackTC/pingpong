@@ -16,7 +16,15 @@ import { useApiAddCampus } from "./routes/api/root/addCampus.ts";
 import { useApiRootLogin } from "./routes/api/root/login.ts";
 import { useAdminLogin } from "./routes/admin/login.ts";
 import { useApiAdminLogin } from "./routes/api/admin/login.ts";
+import { useStudentLogin } from "./routes/student/login.ts";
+import { useApiStudentLogin } from "./routes/api/student/login.ts";
+import { useCoachLogin } from "./routes/coach/login.ts";
+import { useApiCoachLogin } from "./routes/api/coach/login.ts";
+import { useStudentRegister } from "./routes/student/register.ts";
+import { useApiStudentRegister } from "./routes/api/student/register.ts";
 import { adminAuth } from "./auth/admin.ts";
+import { studentAuth } from "./auth/student.ts";
+import { coachAuth } from "./auth/coach.ts";
 
 const app = new Hono();
 
@@ -26,6 +34,10 @@ app.use("/root/*", rootAuth);
 app.use("/api/root/*", rootAuth);
 app.use("/admin/*", adminAuth);
 app.use("/api/admin/*", adminAuth);
+app.use("/student/*", studentAuth);
+app.use("/api/student/*", studentAuth);
+app.use("/coach/*", coachAuth);
+app.use("/api/coach/*", coachAuth);
 app.use("/api/getAllCampuses", userAuth);
 app.use("/campuses", userAuth);
 
@@ -42,6 +54,12 @@ useApiAddCampus(app);
 useApiRootLogin(app);
 useAdminLogin(app);
 useApiAdminLogin(app);
+useStudentLogin(app);
+useApiStudentLogin(app);
+useCoachLogin(app);
+useApiCoachLogin(app);
+useStudentRegister(app);
+useApiStudentRegister(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);
