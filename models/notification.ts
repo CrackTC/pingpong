@@ -11,4 +11,5 @@ export type Notification = {
   message: string;
   link: string;
   timestamp: number;
+  isRead: boolean;
 };

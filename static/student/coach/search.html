@@ -1,135 +1,213 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Search Coaches</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-</head>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Search Coaches</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+    </head>
 
-<body class="bg-light">
-    <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-10">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title text-center mb-4">Search Coaches</h3>
-                        <div id="message" class="alert d-none" role="alert"></div>
-                        <form id="coach-search-form" class="mb-4">
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <label for="realName" class="form-label">Real Name</label>
-                                    <input type="text" class="form-control" id="realName" name="realName">
+    <body class="bg-light">
+        <div class="container">
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-10">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">
+                                Search Coaches
+                            </h3>
+                            <div
+                                id="message"
+                                class="alert d-none"
+                                role="alert"
+                            ></div>
+                            <form id="coach-search-form" class="mb-4">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label for="realName" class="form-label"
+                                            >Real Name</label
+                                        >
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="realName"
+                                            name="realName"
+                                        />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="sex" class="form-label"
+                                            >Sex</label
+                                        >
+                                        <select
+                                            class="form-select"
+                                            id="sex"
+                                            name="sex"
+                                        >
+                                            <option value="">Any</option>
+                                            <option value="1">Male</option>
+                                            <option value="2">Female</option>
+                                            <option value="3">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="age" class="form-label"
+                                            >Age</label
+                                        >
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            id="age"
+                                            name="age"
+                                            min="18"
+                                            max="100"
+                                        />
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="sex" class="form-label">Sex</label>
-                                    <select class="form-select" id="sex" name="sex">
-                                        <option value="">Any</option>
-                                        <option value="1">Male</option>
-                                        <option value="2">Female</option>
-                                        <option value="3">Other</option>
-                                    </select>
+                                <div
+                                    class="d-grid gap-2 d-md-flex justify-content-md-end mt-3"
+                                >
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary"
+                                    >
+                                        Search
+                                    </button>
+                                    <a
+                                        href="/student/home"
+                                        class="btn btn-secondary"
+                                        >Back to Home</a
+                                    >
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="age" class="form-label">Age</label>
-                                    <input type="number" class="form-control" id="age" name="age" min="18" max="100">
-                                </div>
-                            </div>
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                                <button type="submit" class="btn btn-primary">Search</button>
-                                <a href="/student/home" class="btn btn-secondary">Back to Home</a>
-                            </div>
-                        </form>
+                            </form>
 
-                        <h4>Search Results</h4>
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Avatar</th>
-                                        <th>Real Name</th>
-                                        <th>Sex</th>
-                                        <th>Age</th>
-                                        <th>Campus</th>
-                                        <th>Phone</th>
-                                        <th>Email</th>
-                                        <th>Type</th>
-                                        <th>Comment</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="coach-results-body">
-                                    <tr>
-                                        <td colspan="9" class="text-center">No coaches found.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <h4>Search Results</h4>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Avatar</th>
+                                            <th>Real Name</th>
+                                            <th>Sex</th>
+                                            <th>Age</th>
+                                            <th>Campus</th>
+                                            <th>Phone</th>
+                                            <th>Email</th>
+                                            <th>Type</th>
+                                            <th>Comment</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="coach-results-body">
+                                        <tr>
+                                            <td colspan="9" class="text-center">
+                                                No coaches found.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="commentModalLabel">Coach Comment</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <p id="modal-comment-text"></p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
+        <div
+            class="modal fade"
+            id="commentModal"
+            tabindex="-1"
+            aria-labelledby="commentModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="commentModalLabel">
+                            Coach Comment
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="modal-comment-text"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <script>
-        function getSexString(sex) {
-            switch (sex) {
-                case 1: return "Male";
-                case 2: return "Female";
-                case 3: return "Other";
-                default: return "Not specified";
+        <script>
+            function getSexString(sex) {
+                switch (sex) {
+                    case 1:
+                        return "Male";
+                    case 2:
+                        return "Female";
+                    case 3:
+                        return "Other";
+                    default:
+                        return "Not specified";
+                }
             }
-        }
 
-        function getCoachTypeString(type) {
-            switch (type) {
-                case 1: return "Pending";
-                case 2: return "Junior";
-                case 3: return "Intermediate";
-                case 4: return "Senior";
-                default: return "Unknown";
+            function getCoachTypeString(type) {
+                switch (type) {
+                    case 1:
+                        return "Pending";
+                    case 2:
+                        return "Junior";
+                    case 3:
+                        return "Intermediate";
+                    case 4:
+                        return "Senior";
+                    default:
+                        return "Unknown";
+                }
             }
-        }
 
-        document.getElementById('coach-search-form').addEventListener('submit', async function(event) {
-            event.preventDefault();
+            document
+                .getElementById("coach-search-form")
+                .addEventListener("submit", async function (event) {
+                    event.preventDefault();
 
-            const realName = document.getElementById('realName').value;
-            const sex = document.getElementById('sex').value;
-            const age = document.getElementById('age').value;
-            const messageDiv = document.getElementById('message');
-            const resultsBody = document.getElementById('coach-results-body');
+                    const realName = document.getElementById("realName").value;
+                    const sex = document.getElementById("sex").value;
+                    const age = document.getElementById("age").value;
+                    const messageDiv = document.getElementById("message");
+                    const resultsBody =
+                        document.getElementById("coach-results-body");
 
-            const queryParams = new URLSearchParams();
-            if (realName) queryParams.append('realName', realName);
-            if (sex) queryParams.append('sex', sex);
-            if (age) queryParams.append('age', age);
+                    const queryParams = new URLSearchParams();
+                    if (realName) queryParams.append("realName", realName);
+                    if (sex) queryParams.append("sex", sex);
+                    if (age) queryParams.append("age", age);
 
-            const response = await fetch(`/api/student/coach/search?${queryParams.toString()}`);
-            const data = await response.json();
+                    const response = await fetch(
+                        `/api/student/coach/search?${queryParams.toString()}`,
+                    );
+                    const data = await response.json();
 
-            resultsBody.innerHTML = ''; // Clear previous results
+                    resultsBody.innerHTML = ""; // Clear previous results
 
-            if (response.ok && data.length > 0) {
-                data.forEach(coach => {
-                    const row = resultsBody.insertRow();
-                    row.innerHTML = `
+                    if (response.ok && data.length > 0) {
+                        data.forEach((coach) => {
+                            const row = resultsBody.insertRow();
+                            row.innerHTML = `
                         <td class="align-middle"><img src="${coach.avatarPath}" alt="Avatar" width="50" height="50"></td>
                         <td class="align-middle">${coach.realName}</td>
                         <td class="align-middle">${getSexString(coach.sex)}</td>
@@ -139,7 +217,7 @@
                         <td class="align-middle">${coach.email || "Not specified"}</td>
                         <td class="align-middle">${getCoachTypeString(coach.type)}</td>
                         <td class="align-middle">
-                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#commentModal" data-bs-comment="${coach.comment || 'No comment provided.'}">
+                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#commentModal" data-bs-comment="${coach.comment || "No comment provided."}">
                                 View
                             </button>
                         </td>
@@ -147,30 +225,70 @@
                             <button type="button" class="btn btn-success btn-sm select-coach-btn" data-coach-id="${coach.id}">Select</button>
                         </td>
                     `;
+                        });
+                    } else if (response.ok && data.length === 0) {
+                        resultsBody.innerHTML = `<tr><td colspan="10" class="text-center">No coaches found matching your criteria.</td></tr>`;
+                    } else {
+                        messageDiv.textContent =
+                            data.message || "An error occurred during search.";
+                        messageDiv.className = "alert alert-danger";
+                        messageDiv.classList.remove("d-none");
+                        resultsBody.innerHTML = `<tr><td colspan="10" class="text-center">Error loading coaches.</td></tr>`;
+                    }
                 });
-            } else if (response.ok && data.length === 0) {
-                resultsBody.innerHTML = `<tr><td colspan="10" class="text-center">No coaches found matching your criteria.</td></tr>`;
-            } else {
-                messageDiv.textContent = data.message || 'An error occurred during search.';
-                messageDiv.className = 'alert alert-danger';
-                messageDiv.classList.remove('d-none');
-                resultsBody.innerHTML = `<tr><td colspan="10" class="text-center">Error loading coaches.</td></tr>`;
-            }
-        });
 
-        // Initial search on page load (to list all coaches in campus)
-        document.getElementById('coach-search-form').dispatchEvent(new Event('submit'));
+            // Initial search on page load (to list all coaches in campus)
+            document
+                .getElementById("coach-search-form")
+                .dispatchEvent(new Event("submit"));
 
-        const commentModal = document.getElementById('commentModal')
-        commentModal.addEventListener('show.bs.modal', function (event) {
-          const button = event.relatedTarget
-          const comment = button.getAttribute('data-bs-comment')
-          const modalCommentText = commentModal.querySelector('#modal-comment-text')
-          modalCommentText.textContent = comment
-        })
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-</body>
+            const commentModal = document.getElementById("commentModal");
+            commentModal.addEventListener("show.bs.modal", function (event) {
+                const button = event.relatedTarget;
+                const comment = button.getAttribute("data-bs-comment");
+                const modalCommentText = commentModal.querySelector(
+                    "#modal-comment-text",
+                );
+                modalCommentText.textContent = comment;
+            });
+
+            document
+                .getElementById("coach-results-body")
+                .addEventListener("click", async function (event) {
+                    if (event.target.classList.contains("select-coach-btn")) {
+                        const coachId = event.target.dataset.coachId;
+                        const response = await fetch(
+                            "/api/student/coach/select",
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({
+                                    coachId: parseInt(coachId),
+                                }),
+                            },
+                        );
+                        const data = await response.json();
+                        const messageDiv = document.getElementById("message");
+                        if (response.ok) {
+                            messageDiv.textContent = data.message;
+                            messageDiv.className = "alert alert-success";
+                            messageDiv.classList.remove("d-none");
+                            // Optionally disable the button or update UI
+                            event.target.disabled = true;
+                        } else {
+                            messageDiv.textContent = data.message;
+                            messageDiv.className = "alert alert-danger";
+                            messageDiv.classList.remove("d-none");
+                        }
+                    }
+                });
+        </script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"
+        ></script>
+    </body>
 </html>

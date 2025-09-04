@@ -19,12 +19,29 @@
                         <div class="d-grid gap-2">
                             <a href="/student/profile" class="btn btn-primary">My Profile</a>
                             <a href="/student/coach/search" class="btn btn-primary">Search Coaches</a>
+    <a href="/student/selection/pending" class="btn btn-primary">My Selections</a>
+    <a href="/student/notifications" id="notifications-btn" class="btn btn-secondary">Notifications</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        fetch('/api/student/home')
+            .then(response => response.json())
+            .then(data => {
+                const notificationsBtn = document.getElementById('notifications-btn');
+                if (data.unreadNotificationCount > 0) {
+                    notificationsBtn.classList.remove('btn-secondary');
+                    notificationsBtn.classList.add('btn-warning');
+                    notificationsBtn.textContent = `Notifications (${data.unreadNotificationCount})`;
+                } else {
+                    notificationsBtn.textContent = `Notifications`;
+                }
+            })
+            .catch(error => console.error('Error fetching student home data:', error));
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>

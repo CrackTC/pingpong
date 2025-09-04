@@ -49,6 +49,23 @@ import { useCoachEdit } from "./routes/coach/edit.ts";
 import { useApiCoachEdit } from "./routes/api/coach/edit.ts";
 import { useStudentCoachSearch } from "./routes/student/coach/search.ts";
 import { useApiStudentCoachSearch } from "./routes/api/student/coach/search.ts";
+import { useApiStudentSelectCoach } from "./routes/api/student/coach/select.ts";
+import { useCoachSelectionPending } from "./routes/coach/selection/pending.ts";
+import { useApiCoachSelectionPending } from "./routes/api/coach/selection/pending.ts";
+import { useApiCoachSelectionApprove } from "./routes/api/coach/selection/approve.ts";
+import { useApiCoachSelectionReject } from "./routes/api/coach/selection/reject.ts";
+import { useStudentSelectionPending } from "./routes/student/selection/pending.ts";
+import { useApiStudentSelectionPending } from "./routes/api/student/selection/pending.ts";
+import { useStudentNotifications } from "./routes/student/notifications.ts";
+import { useApiStudentNotifications } from "./routes/api/student/notifications.ts";
+import { useApiStudentNotificationsMarkRead } from "./routes/api/student/notifications/mark-read.ts";
+import { useCoachNotifications } from "./routes/coach/notifications.ts";
+import { useApiCoachNotifications } from "./routes/api/coach/notifications.ts";
+import { useApiCoachNotificationsMarkRead } from "./routes/api/coach/notifications/mark-read.ts";
+import { useApiStudentHome } from "./routes/api/student/home.ts";
+import { useApiCoachHome } from "./routes/api/coach/home.ts";
+import { useApiCoachStudents } from "./routes/api/coach/students.ts";
+import { useCoachStudents } from "./routes/coach/students.ts";
 
 const app = new Hono();
 
@@ -109,6 +126,23 @@ useCoachEdit(app);
 useApiCoachEdit(app);
 useStudentCoachSearch(app);
 useApiStudentCoachSearch(app);
+useApiStudentSelectCoach(app);
+useCoachSelectionPending(app);
+useApiCoachSelectionPending(app);
+useApiCoachSelectionApprove(app);
+useApiCoachSelectionReject(app);
+useStudentSelectionPending(app);
+useApiStudentSelectionPending(app);
+useStudentNotifications(app);
+useApiStudentNotifications(app);
+useApiStudentNotificationsMarkRead(app);
+useCoachNotifications(app);
+useApiCoachNotifications(app);
+useApiCoachNotificationsMarkRead(app);
+useApiStudentHome(app);
+useApiCoachHome(app);
+useApiCoachStudents(app);
+useCoachStudents(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

@@ -1,6 +1,6 @@
 import { Database } from "@db/sqlite";
 
-export const db = new Database("data.db");
+export const db = new Database("data.db", { int64: true });
 
 db.exec(`
 CREATE TABLE IF NOT EXISTS roots (
@@ -177,6 +177,7 @@ CREATE TABLE IF NOT EXISTS notifications (
   message TEXT NOT NULL,
   link TEXT NOT NULL,
   timestamp INTEGER NOT NULL,
+  isRead INTEGER NOT NULL DEFAULT 0, -- Added field
   FOREIGN KEY (campusId) REFERENCES campuses(id)
 )
 `);
