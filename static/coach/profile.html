@@ -16,6 +16,9 @@
                     <div class="card-body">
                         <h3 class="card-title text-center mb-4">Coach Profile</h3>
                         <div id="profile-data"></div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="/coach/home" class="btn btn-primary">Home</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -28,7 +31,9 @@
                 if (data.error) {
                     document.getElementById('profile-data').innerText = data.error;
                 } else {
+                    const imagePath = data.avatarPath.startsWith('./') ? data.avatarPath.substring(1) : data.avatarPath;
                     document.getElementById('profile-data').innerHTML = `
+                        <p><img src="${imagePath}" alt="Avatar" width="100" height="100"></p>
                         <p><strong>Username:</strong> ${data.username}</p>
                         <p><strong>Real Name:</strong> ${data.realName}</p>
                         <p><strong>Sex:</strong> ${data.sex}</p>

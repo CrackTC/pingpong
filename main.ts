@@ -35,6 +35,8 @@ import { useApiStudentMe } from "./routes/api/student/me.ts";
 import { useStudentProfile } from "./routes/student/profile.ts";
 import { useApiCoachMe } from "./routes/api/coach/me.ts";
 import { useCoachProfile } from "./routes/coach/profile.ts";
+import { useStudentHome } from "./routes/student/home.ts";
+import { useCoachHome } from "./routes/coach/home.ts";
 
 const app = new Hono();
 
@@ -81,6 +83,8 @@ useApiStudentMe(app);
 useStudentProfile(app);
 useApiCoachMe(app);
 useCoachProfile(app);
+useStudentHome(app);
+useCoachHome(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);
