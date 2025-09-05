@@ -104,3 +104,30 @@ export function getSelectionByStudentAndCoachId(studentId: number, coachId: numb
   }
   return undefined;
 }
+
+export function getApprovedCoachesForStudent(studentId: number): any[] {
+  const stmt = db.prepare(`
+    SELECT
+      co.id AS coachId,
+      co.username AS coachUsername,
+      co.realName AS coachRealName,
+      co.sex AS coachSex,
+      co.birthYear AS coachBirthYear,
+      co.campusId AS coachCampusId,
+      ca.name AS coachCampusName,
+      co.phone AS coachPhone,
+      co.email AS coachEmail,
+      co.avatarPath AS coachAvatarPath,
+      co.comment AS coachComment,
+      co.type AS coachType
+    FROM
+      selections s
+    JOIN
+      coaches co ON s.coachId = co.id
+    JOIN
+      campuses ca ON co.campusId = ca.id
+    WHERE
+      s.studentId = ? AND s.status = ?
+  `);
+  return stmt.all(studentId, SelectionStatus.Approved);
+}

@@ -75,8 +75,13 @@ import { useApiCoachStudents } from "./routes/api/coach/students.ts";
 import { useCoachStudents } from "./routes/coach/students.ts";
 import { useApiCoachTimeslotAll } from "./routes/api/coach/timeslot/all.ts";
 import { useApiCoachTimeslotAdd } from "./routes/api/coach/timeslot/add.ts";
+import { useApiStudentCoachTimeslots } from "./routes/api/student/coach/timeslots.ts";
 import { useCoachTimeslotAll } from "./routes/coach/timeslot/all.ts";
 import { useCoachTimeslotAdd } from "./routes/coach/timeslot/add.ts";
+import { useApiStudentMeCoaches } from "./routes/api/student/me/coaches.ts";
+import { useStudentAppointmentSearch } from "./routes/student/appointment/search.ts";
+import { useApiStudentTableAvailable } from "./routes/api/student/table/available.ts";
+import { useApiStudentAppointmentBook } from "./routes/api/student/appointment/book.ts";
 
 const app = new Hono();
 
@@ -164,7 +169,12 @@ useCoachStudents(app);
 useCoachTimeslotAll(app);
 useApiCoachTimeslotAll(app);
 useCoachTimeslotAdd(app);
+useStudentAppointmentSearch(app);
+useApiStudentMeCoaches(app);
+useApiStudentCoachTimeslots(app);
 useApiCoachTimeslotAdd(app);
+useApiStudentTableAvailable(app);
+useApiStudentAppointmentBook(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

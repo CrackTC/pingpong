@@ -1,7 +1,9 @@
 import { db } from "./db.ts";
 import { Timeslot } from "../models/timeslot.ts"; // Import the existing Timeslot interface
 
-export function getAllTimeslots(coachId?: number): (Timeslot & { coachName: string })[] {
+export function getAllTimeslots(
+  coachId?: number,
+): (Timeslot & { coachName: string })[] {
   let query = `
     SELECT
       t.*,
@@ -62,6 +64,15 @@ export function hasTimeslotOverlap(
     coachId,
     newStartMinutes,
     newEndMinutes,
-  ) as { 'COUNT(*)': number };
-  return count['COUNT(*)'] > 0;
+  ) as { "COUNT(*)": number };
+  return count["COUNT(*)"] > 0;
+}
+
+export function getTimeslotById(id: number): Timeslot | undefined {
+  const stmt = db.prepare("SELECT * FROM timeslots WHERE id = ?");
+  const row = stmt.get(id);
+  if (row) {
+    return row as Timeslot;
+  }
+  return undefined;
 }

@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Search Coach Timeslots</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body class="bg-light">
+        <div class="container">
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">
+                                Search Coach Timeslots
+                            </h3>
+                            <div
+                                id="message-area"
+                                class="alert d-none"
+                                role="alert"
+                            ></div>
+
+                            <div class="mb-3">
+                                <label for="coachSelect" class="form-label"
+                                    >Select Coach:</label
+                                >
+                                <select class="form-select" id="coachSelect">
+                                    <option value="">
+                                        -- Select a Coach --
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div id="timeslots-list" class="mt-4">
+                                <p class="text-center">
+                                    Select a coach to view their timeslots.
+                                </p>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-3">
+                                <a
+                                    href="/student/home"
+                                    class="btn btn-secondary"
+                                    >Back to Home</a
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="bookAppointmentModal" tabindex="-1" aria-labelledby="bookAppointmentModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bookAppointmentModalLabel">Book Appointment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="tableSelect" class="form-label">Select Table:</label>
+                            <select class="form-select" id="tableSelect">
+                                <option value="">Let system select</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="confirmBookingBtn">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"
+        ></script>
+        <script>
+            const messageArea = document.getElementById("message-area");
+            const coachSelect = document.getElementById("coachSelect");
+            const timeslotsListDiv = document.getElementById("timeslots-list");
+            const bookAppointmentModal = new bootstrap.Modal(document.getElementById('bookAppointmentModal'));
+            const tableSelect = document.getElementById('tableSelect');
+            const confirmBookingBtn = document.getElementById('confirmBookingBtn');
+            let selectedTimeslotId = null;
+
+            function displayMessage(message, type) {
+                messageArea.textContent = message;
+                messageArea.className = `alert alert-${type}`;
+                messageArea.classList.remove("d-none");
+            }
+
+            function getWeekdayString(weekday) {
+                const weekdays = [
+                    "Sunday",
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                ];
+                return weekdays[weekday];
+            }
+
+            async function fetchStudentCoaches() {
+                try {
+                    const response = await fetch("/api/student/me/coaches");
+                    const coaches = await response.json();
+
+                    if (response.ok) {
+                        if (coaches.length > 0) {
+                            coaches.forEach((coach) => {
+                                const option = document.createElement("option");
+                                option.value = coach.coachId;
+                                option.textContent =
+                                    coach.coachRealName ||
+                                    coach.coachUsername ||
+                                    `Coach ID: ${coach.coachId}`;
+                                coachSelect.appendChild(option);
+                            });
+                        } else {
+                            const option = document.createElement("option");
+                            option.value = "";
+                            option.textContent = "No coaches found.";
+                            option.disabled = true;
+                            coachSelect.appendChild(option);
+                        }
+                    } else {
+                        displayMessage(
+                            coaches.message || "Failed to fetch coaches.",
+                            "danger",
+                        );
+                    }
+                } catch (error) {
+                    displayMessage(
+                        "An unexpected error occurred while fetching coaches.",
+                        "danger",
+                    );
+                }
+            }
+
+            async function fetchCoachTimeslots(coachId) {
+                if (!coachId) {
+                    timeslotsListDiv.innerHTML =
+                        '<p class="text-center">Select a coach to view their timeslots.</p>';
+                    return;
+                }
+                // Get the selected coach's name
+                const selectedCoachOption =
+                    coachSelect.options[coachSelect.selectedIndex];
+                const selectedCoachName = selectedCoachOption.textContent;
+
+                try {
+                    const response = await fetch(
+                        "/api/student/coach/timeslots",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                coachId: parseInt(coachId),
+                            }),
+                        },
+                    );
+                    const timeslots = await response.json();
+
+                    if (response.ok) {
+                        if (timeslots.length > 0) {
+                            let timeslotsHtml = `<h4 class="text-center mb-3">Timeslots for ${selectedCoachName}</h4>`;
+                            timeslotsHtml +=
+                                '<table class="table table-striped"><thead><tr><th>Weekday</th><th>Start Time</th><th>End Time</th><th>Status</th><th></th></tr></thead><tbody>';
+                            timeslots.forEach((ts) => {
+                                const startTime =
+                                    String(ts.startHour).padStart(2, "0") +
+                                    ":" +
+                                    String(ts.startMinute).padStart(2, "0");
+                                const endTime =
+                                    String(ts.endHour).padStart(2, "0") +
+                                    ":" +
+                                    String(ts.endMinute).padStart(2, "0");
+                                const status = ts.isBooked ? `<span class="text-danger">Booked (${ts.tableName})</span>` : `<span class="text-success">Available</span>`;
+                                const bookButton = ts.isBooked ? '' : `<button class="btn btn-primary btn-sm book-btn" data-timeslot-id="${ts.id}">Book</button>`;
+                                timeslotsHtml += `<tr><td>${getWeekdayString(ts.weekday)}</td><td>${startTime}</td><td>${endTime}</td><td>${status}</td><td>${bookButton}</td></tr>`;
+                            });
+                            timeslotsHtml += "</tbody></table>";
+                            timeslotsListDiv.innerHTML = timeslotsHtml;
+
+                            document.querySelectorAll('.book-btn').forEach(button => {
+                                button.addEventListener('click', async (event) => {
+                                    selectedTimeslotId = event.target.dataset.timeslotId;
+                                    
+                                    const response = await fetch('/api/student/table/available', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ timeslotId: selectedTimeslotId })
+                                    });
+
+                                    if (response.ok) {
+                                        const availableTables = await response.json();
+                                        tableSelect.innerHTML = '<option value="">Let system select</option>';
+                                        availableTables.forEach(table => {
+                                            const option = document.createElement('option');
+                                            option.value = table.id;
+                                            option.textContent = table.name;
+                                            tableSelect.appendChild(option);
+                                        });
+                                        bookAppointmentModal.show();
+                                    } else {
+                                        const error = await response.json();
+                                        displayMessage(error.message || 'Failed to fetch available tables.', 'danger');
+                                    }
+                                });
+                            });
+                        } else {
+                            timeslotsListDiv.innerHTML = `<h4 class="text-center mb-3">Timeslots for ${selectedCoachName}</h4><p class="text-center">No timeslots found for this coach.</p>`;
+                        }
+                    } else {
+                        displayMessage(
+                            timeslots.message || "Failed to fetch timeslots.",
+                            "danger",
+                        );
+                        timeslotsListDiv.innerHTML = `<h4 class="text-center mb-3">Timeslots for ${selectedCoachName}</h4><p class="text-center">Failed to load timeslots.</p>`;
+                    }
+                } catch (error) {
+                    displayMessage(
+                        "An unexpected error occurred while fetching timeslots.",
+                        "danger",
+                    );
+                    timeslotsListDiv.innerHTML = `<h4 class="text-center mb-3">Timeslots for ${selectedCoachName}</h4><p class="text-center">An error occurred while loading timeslots.</p>`;
+                }
+            }
+
+            coachSelect.addEventListener("change", (event) => {
+                const selectedCoachId = event.target.value;
+                fetchCoachTimeslots(selectedCoachId);
+            });
+
+            confirmBookingBtn.addEventListener('click', async () => {
+                const tableId = tableSelect.value;
+                const response = await fetch('/api/student/appointment/book', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ timeslotId: selectedTimeslotId, tableId: tableId ? parseInt(tableId) : null })
+                });
+
+                if (response.ok) {
+                    displayMessage('Appointment booked successfully!', 'success');
+                    bookAppointmentModal.hide();
+                    fetchCoachTimeslots(coachSelect.value);
+                } else {
+                    const error = await response.json();
+                    displayMessage(error.message || 'Failed to book appointment.', 'danger');
+                }
+            });
+
+            fetchStudentCoaches(); // Initial fetch of coaches
+        </script>
+    </body>
+</html>
