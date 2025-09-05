@@ -41,3 +41,11 @@ export function verifyAdmin(
   }
   return undefined;
 }
+
+export function getAdminById(id: number): Admin | undefined {
+  const stmt = db.prepare("SELECT id, campusId as campus, username FROM admins WHERE id = ?");
+  const row = stmt.get(id);
+  if (row) {
+    return row as Admin;
+  }
+}
