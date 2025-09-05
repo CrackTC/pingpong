@@ -39,7 +39,7 @@ export function useApiCoachSelectionApprove(app: Hono) {
         NotificationTarget.Student,
         selection.studentId,
         `Your coach selection request for ${coach.realName} has been approved!`, // Use coach.realName
-        `/student/profile`, // Link to student's profile
+        `/student/selection/all`, // Link to student's profile
         Date.now()
       );
       return c.json({ message: "Selection approved successfully" });

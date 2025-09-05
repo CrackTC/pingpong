@@ -57,7 +57,7 @@ export function getSelectionById(selectionId: number): Selection | undefined {
   return undefined;
 }
 
-export function getActiveSelectionForStudent(studentId: number): any | undefined {
+export function getAllSelectionsForStudent(studentId: number): any[] {
   const stmt = db.prepare(`
     SELECT
       s.id AS selectionId,
@@ -81,32 +81,9 @@ export function getActiveSelectionForStudent(studentId: number): any | undefined
     JOIN
       campuses ca ON co.campusId = ca.id
     WHERE
-      s.studentId = ? AND (s.status = ? OR s.status = ?)
+      s.studentId = ?
   `);
-  const row = stmt.get(studentId, SelectionStatus.Pending, SelectionStatus.Approved);
-  if (row) {
-    return {
-      selection: {
-        id: row.selectionId,
-        status: row.selectionStatus,
-      },
-      coach: {
-        id: row.coachId,
-        username: row.coachUsername,
-        realName: row.coachRealName,
-        sex: row.coachSex,
-        birthYear: row.coachBirthYear,
-        campusId: row.coachCampusId,
-        phone: row.coachPhone,
-        email: row.coachEmail,
-        avatarPath: row.coachAvatarPath,
-        comment: row.coachComment,
-        type: row.coachType,
-        campusName: row.coachCampusName,
-      }
-    };
-  }
-  return undefined;
+  return stmt.all(studentId);
 }
 
 export function getStudentsByCoachId(coachId: number): Student[] {
