@@ -21,10 +21,7 @@
                                 <thead>
                                     <tr>
                                         <th>Student Name</th>
-                                        <th>Sex</th>
-                                        <th>Birth Year</th>
-                                        <th>Phone</th>
-                                        <th>Email</th>
+                                        <th>Details</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -39,6 +36,25 @@
                             <a href="/coach/home" class="btn btn-primary">Home</a>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="studentDetailsModal" tabindex="-1" aria-labelledby="studentDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="studentDetailsModalLabel">Student Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Sex:</strong> <span id="modal-sex-text"></span></p>
+                    <p><strong>Birth Year:</strong> <span id="modal-birthyear-text"></span></p>
+                    <p><strong>Phone:</strong> <span id="modal-phone-text"></span></p>
+                    <p><strong>Email:</strong> <span id="modal-email-text"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -64,10 +80,11 @@
                     const row = tableBody.insertRow();
                     row.innerHTML = `
                         <td class="align-middle">${selection.studentRealName}</td>
-                        <td class="align-middle">${getSexString(selection.studentSex)}</td>
-                        <td class="align-middle">${selection.studentBirthYear || "Not specified"}</td>
-                        <td class="align-middle">${selection.studentPhone}</td>
-                        <td class="align-middle">${selection.studentEmail || "Not specified"}</td>
+                        <td class="align-middle">
+                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#studentDetailsModal" data-bs-sex="${selection.studentSex}" data-bs-birthyear="${selection.studentBirthYear}" data-bs-phone="${selection.studentPhone}" data-bs-email="${selection.studentEmail}">
+                                Details
+                            </button>
+                        </td>
                         <td class="align-middle">
                             <button type="button" class="btn btn-success btn-sm approve-btn" data-selection-id="${selection.id}">Approve</button>
                             <button type="button" class="btn btn-danger btn-sm reject-btn" data-selection-id="${selection.id}">Reject</button>
@@ -119,6 +136,26 @@
         });
 
         fetchPendingSelections();
+
+        const studentDetailsModal = document.getElementById('studentDetailsModal');
+        studentDetailsModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const sex = button.getAttribute('data-bs-sex');
+            const birthYear = button.getAttribute('data-bs-birthyear');
+            const phone = button.getAttribute('data-bs-phone');
+            const email = button.getAttribute('data-bs-email');
+
+            const modalSexText = studentDetailsModal.querySelector('#modal-sex-text');
+            const modalBirthYearText = studentDetailsModal.querySelector('#modal-birthyear-text');
+            const modalPhoneText = studentDetailsModal.querySelector('#modal-phone-text');
+            const modalEmailText = studentDetailsModal.querySelector('#modal-email-text');
+
+            modalSexText.textContent = getSexString(parseInt(sex));
+            modalBirthYearText.textContent = birthYear || "Not specified";
+            modalPhoneText.textContent = phone || "Not specified";
+            const displayEmail = (email === "null" || email === null) ? "Not specified" : email;
+            modalEmailText.textContent = displayEmail;
+        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
