@@ -127,8 +127,8 @@ export function updateCoach(id: number, data: {
 }
 
 export function searchCoaches(campusId: number, realName?: string, sex?: number, birthYear?: number): (Coach & { campusName: string })[] {
-  let query = "SELECT co.id, co.username, co.realName, co.sex, co.birthYear, co.campusId, co.phone, co.email, co.avatarPath, co.comment, co.type, ca.name as campusName FROM coaches co JOIN campuses ca ON co.campusId = ca.id WHERE co.campusId = ?";
-  const params: (string | number)[] = [campusId];
+  let query = "SELECT co.id, co.username, co.realName, co.sex, co.birthYear, co.campusId, co.phone, co.email, co.avatarPath, co.comment, co.type, ca.name as campusName FROM coaches co JOIN campuses ca ON co.campusId = ca.id WHERE co.campusId = ? AND co.type != ?";
+  const params: (string | number)[] = [campusId, CoachType.Pending];
 
   if (realName) {
     query += " AND co.realName LIKE ?";
