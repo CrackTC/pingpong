@@ -69,10 +69,10 @@ import { useApiStudentHome } from "./routes/api/student/home.ts";
 import { useApiCoachHome } from "./routes/api/coach/home.ts";
 import { useApiCoachStudents } from "./routes/api/coach/students.ts";
 import { useCoachStudents } from "./routes/coach/students.ts";
-import { useAdminTimeslotAll } from "./routes/admin/timeslot/all.ts";
-import { useApiTimeslotAll } from "./routes/api/timeslot/all.ts";
-import { useApiAdminTimeslotAdd } from "./routes/api/admin/timeslot/add.ts";
-import { useAdminTimeslotAdd } from "./routes/admin/timeslot/add.ts";
+import { useApiCoachTimeslotAll } from "./routes/api/coach/timeslot/all.ts";
+import { useApiCoachTimeslotAdd } from "./routes/api/coach/timeslot/add.ts";
+import { useCoachTimeslotAll } from "./routes/coach/timeslot/all.ts";
+import { useCoachTimeslotAdd } from "./routes/coach/timeslot/add.ts";
 
 const app = new Hono();
 
@@ -90,7 +90,6 @@ app.use("/api/student/*", studentAuth);
 app.use("/coach/*", coachAuth);
 app.use("/api/coach/*", coachAuth);
 app.use("/api/campus/*", userAuth);
-app.use("/api/timeslot/*", userAuth);
 
 useRootLogin(app);
 useRootLogout(app);
@@ -99,7 +98,6 @@ useStudentLogout(app);
 useAdminLogout(app);
 useRootHome(app);
 useApiGetAllCampuses(app);
-useApiTimeslotAll(app);
 useRootCampuses(app);
 useRootAdmins(app);
 useApiGetAllAdmins(app);
@@ -155,9 +153,10 @@ useApiStudentHome(app);
 useApiCoachHome(app);
 useApiCoachStudents(app);
 useCoachStudents(app);
-useAdminTimeslotAll(app);
-useAdminTimeslotAdd(app);
-useApiAdminTimeslotAdd(app);
+useCoachTimeslotAll(app);
+useApiCoachTimeslotAll(app);
+useCoachTimeslotAdd(app);
+useApiCoachTimeslotAdd(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

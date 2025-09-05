@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Add My Timeslot</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+    </head>
+
+    <body class="bg-light">
+        <div class="container">
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">
+                                Add New Timeslot
+                            </h3>
+                            <div
+                                id="message-area"
+                                class="alert d-none"
+                                role="alert"
+                            ></div>
+                            <form id="add-timeslot-form">
+                                <div class="mb-3">
+                                    <label for="weekday" class="form-label"
+                                        >Weekday</label
+                                    >
+                                    <select
+                                        class="form-select"
+                                        id="weekday"
+                                        name="weekday"
+                                        required
+                                    >
+                                        <option value="0">Sunday</option>
+                                        <option value="1">Monday</option>
+                                        <option value="2">Tuesday</option>
+                                        <option value="3">Wednesday</option>
+                                        <option value="4">Thursday</option>
+                                        <option value="5">Friday</option>
+                                        <option value="6">Saturday</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="startTime" class="form-label"
+                                        >Start Time</label
+                                    >
+                                    <input
+                                        type="time"
+                                        class="form-control"
+                                        id="startTime"
+                                        name="startTime"
+                                        required
+                                    />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="endTime" class="form-label"
+                                        >End Time</label
+                                    >
+                                    <input
+                                        type="time"
+                                        class="form-control"
+                                        id="endTime"
+                                        name="endTime"
+                                        required
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary w-100"
+                                >
+                                    Add Timeslot
+                                </button>
+                            </form>
+                            <div class="d-grid gap-2 mt-3">
+                                <a
+                                    href="/coach/timeslot/all"
+                                    class="btn btn-secondary"
+                                    >Back to My Timeslots</a
+                                >
+                                <!-- Changed link -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"
+        ></script>
+        <script>
+            function displayMessage(message, type) {
+                const messageArea = document.getElementById("message-area");
+                messageArea.textContent = message;
+                messageArea.className = `alert alert-${type}`;
+                messageArea.classList.remove("d-none");
+            }
+
+            function timeToMinutes(hour, minute) {
+                return hour * 60 + minute;
+            }
+
+            function validateTimeslot(timeslotData) {
+                // Check if hour/minute components are present and valid numbers
+                if (
+                    isNaN(timeslotData.startHour) ||
+                    isNaN(timeslotData.startMinute) ||
+                    isNaN(timeslotData.endHour) ||
+                    isNaN(timeslotData.endMinute)
+                ) {
+                    return "Start and End times must be valid numbers.";
+                }
+
+                const startTotalMinutes = timeToMinutes(
+                    timeslotData.startHour,
+                    timeslotData.startMinute,
+                );
+                const endTotalMinutes = timeToMinutes(
+                    timeslotData.endHour,
+                    timeslotData.endMinute,
+                );
+
+                if (startTotalMinutes >= endTotalMinutes) {
+                    return "End time must be after start time.";
+                }
+                return null; // No error
+            }
+
+            document
+                .getElementById("add-timeslot-form")
+                .addEventListener("submit", async function (event) {
+                    event.preventDefault();
+                    const messageArea = document.getElementById("message-area");
+                    messageArea.classList.add("d-none");
+
+                    const formData = new FormData(this);
+                    const startTimeStr = formData.get("startTime");
+                    const endTimeStr = formData.get("endTime");
+
+                    // Parse HH:MM strings here
+                    const [startHour, startMinute] = startTimeStr
+                        .split(":")
+                        .map(Number);
+                    const [endHour, endMinute] = endTimeStr
+                        .split(":")
+                        .map(Number);
+
+                    const timeslotData = {
+                        weekday: parseInt(formData.get("weekday")),
+                        startHour: startHour,
+                        startMinute: startMinute,
+                        endHour: endHour,
+                        endMinute: endMinute,
+                        // coachId will be set on the backend from the claim
+                    };
+
+                    const validationError = validateTimeslot(timeslotData);
+                    if (validationError) {
+                        displayMessage(validationError, "danger");
+                        return;
+                    }
+
+                    const response = await fetch("/api/coach/timeslot/add", {
+                        // Changed API endpoint
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(timeslotData),
+                    });
+
+                    if (response.ok) {
+                        displayMessage(
+                            "Timeslot added successfully! Redirecting...",
+                            "success",
+                        );
+                        setTimeout(() => {
+                            window.location.href = "/coach/timeslot/all";
+                        }, 1000); // Redirect after 1 second
+                    } else {
+                        const errorData = await response.json();
+                        displayMessage(
+                            "Failed to add timeslot: " +
+                                (errorData.message || "Unknown error"),
+                            "danger",
+                        );
+                    }
+                });
+        </script>
+    </body>
+</html>

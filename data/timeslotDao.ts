@@ -1,22 +1,30 @@
 import { db } from "./db.ts";
 import { Timeslot } from "../models/timeslot.ts"; // Import the existing Timeslot interface
 
-export function getAllTimeslots(): (Timeslot & { campusName: string })[] {
-  const stmt = db.prepare(`
+export function getAllTimeslots(coachId?: number): (Timeslot & { coachName: string })[] {
+  let query = `
     SELECT
       t.*,
-      c.name AS campusName
+      co.realName AS coachName
     FROM
       timeslots t
     JOIN
-      campuses c ON t.campusId = c.id
-  `);
-  return stmt.all() as (Timeslot & { campusName: string })[];
+      coaches co ON t.coachId = co.id
+  `;
+  const params: (string | number)[] = [];
+
+  if (coachId !== undefined) {
+    query += " WHERE t.coachId = ?";
+    params.push(coachId);
+  }
+
+  const stmt = db.prepare(query);
+  return stmt.all(...params) as (Timeslot & { coachName: string })[];
 }
 
 export function addTimeslot(timeslot: Omit<Timeslot, "id">) {
   const stmt = db.prepare(`
-    INSERT INTO timeslots (weekday, startHour, startMinute, endHour, endMinute, campusId)
+    INSERT INTO timeslots (weekday, startHour, startMinute, endHour, endMinute, coachId)
     VALUES (?, ?, ?, ?, ?, ?)
   `);
   stmt.run(
@@ -25,7 +33,7 @@ export function addTimeslot(timeslot: Omit<Timeslot, "id">) {
     timeslot.startMinute,
     timeslot.endHour,
     timeslot.endMinute,
-    timeslot.campusId,
+    timeslot.coachId,
   );
 }
 
@@ -35,7 +43,7 @@ export function hasTimeslotOverlap(
   startMinute: number,
   endHour: number,
   endMinute: number,
-  campusId: number,
+  coachId: number,
 ): boolean {
   const newStartMinutes = startHour * 60 + startMinute;
   const newEndMinutes = endHour * 60 + endMinute;
@@ -43,7 +51,7 @@ export function hasTimeslotOverlap(
   const stmt = db.prepare(`
     SELECT COUNT(*) FROM timeslots
     WHERE
-      weekday = ? AND campusId = ? AND
+      weekday = ? AND coachId = ? AND
       (
         (? < (endHour * 60 + endMinute)) AND
         (? > (startHour * 60 + startMinute))
@@ -51,7 +59,7 @@ export function hasTimeslotOverlap(
   `);
   const count = stmt.get(
     weekday,
-    campusId,
+    coachId,
     newStartMinutes,
     newEndMinutes,
   ) as { 'COUNT(*)': number };

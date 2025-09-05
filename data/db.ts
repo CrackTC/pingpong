@@ -94,8 +94,8 @@ CREATE TABLE IF NOT EXISTS timeslots (
   startMinute INTEGER NOT NULL,
   endHour INTEGER NOT NULL,
   endMinute INTEGER NOT NULL,
-  campusId INTEGER NOT NULL,
-  FOREIGN KEY (campusId) REFERENCES campuses(id)
+  coachId INTEGER NOT NULL,
+  FOREIGN KEY (coachId) REFERENCES coaches(id)
 )
 `);
 

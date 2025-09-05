@@ -5,5 +5,5 @@ export type Timeslot = {
   startMinute: number;
   endHour: number;
   endMinute: number;
-  campusId: number;
+  coachId: number;
 }
