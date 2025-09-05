@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>All Appointments</title>
+        <title>Pending Appointments</title>
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -18,7 +18,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h3 class="card-title text-center mb-4">
-                                All Appointments
+                                Pending Appointments
                             </h3>
                             <div
                                 id="message-area"
@@ -32,7 +32,7 @@
 
                             <div class="d-grid gap-2 mt-3">
                                 <a
-                                    href="/student/home"
+                                    href="/coach/home"
                                     class="btn btn-secondary"
                                     >Back to Home</a
                                 >
@@ -49,8 +49,7 @@
         ></script>
         <script>
             const messageArea = document.getElementById("message-area");
-            const appointmentsListDiv =
-                document.getElementById("appointments-list");
+            const appointmentsListDiv = document.getElementById("appointments-list");
 
             function displayMessage(message, type) {
                 messageArea.textContent = message;
@@ -71,31 +70,15 @@
                 return weekdays[weekday];
             }
 
-            function getStatusString(status) {
-                const statuses = {
-                    1: "Pending",
-                    2: "Approved",
-                    3: "Rejected",
-                    4: "Student Cancelling",
-                    5: "Coach Cancelling",
-                    6: "Student Cancelled",
-                    7: "Coach Cancelled",
-                    8: "Completed",
-                };
-                return statuses[status] || "Unknown";
-            }
-
-            async function fetchAppointments() {
+            async function fetchPendingAppointments() {
                 try {
-                    const response = await fetch(
-                        "/api/student/appointment/all",
-                    );
+                    const response = await fetch("/api/coach/appointment/pending");
                     const appointments = await response.json();
 
                     if (response.ok) {
                         if (appointments.length > 0) {
                             let appointmentsHtml =
-                                '<table class="table table-striped"><thead><tr><th>Coach</th><th>Table</th><th>Weekday</th><th>Start Time</th><th>End Time</th><th>Status</th></tr></thead><tbody>';
+                                '<table class="table table-striped"><thead><tr><th>Student</th><th>Table</th><th>Weekday</th><th>Start Time</th><th>End Time</th><th>Actions</th></tr></thead><tbody>';
                             appointments.forEach((a) => {
                                 const startTime =
                                     String(a.startHour).padStart(2, "0") +
@@ -105,30 +88,66 @@
                                     String(a.endHour).padStart(2, "0") +
                                     ":" +
                                     String(a.endMinute).padStart(2, "0");
-                                appointmentsHtml += `<tr><td>${a.coachName}</td><td>${a.tableName}</td><td>${getWeekdayString(a.weekday)}</td><td>${startTime}</td><td>${endTime}</td><td>${getStatusString(a.status)}</td></tr>`;
+                                appointmentsHtml += `<tr><td>${a.studentName}</td><td>${a.tableName}</td><td>${getWeekdayString(a.weekday)}</td><td>${startTime}</td><td>${endTime}</td><td><button class="btn btn-success btn-sm approve-btn" data-appointment-id="${a.id}">Approve</button> <button class="btn btn-danger btn-sm reject-btn" data-appointment-id="${a.id}">Reject</button></td></tr>`;
                             });
                             appointmentsHtml += "</tbody></table>";
                             appointmentsListDiv.innerHTML = appointmentsHtml;
+
+                            document.querySelectorAll('.approve-btn').forEach(button => {
+                                button.addEventListener('click', async (event) => {
+                                    const appointmentId = event.target.dataset.appointmentId;
+                                    const response = await fetch('/api/coach/appointment/approve', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ appointmentId: parseInt(appointmentId) })
+                                    });
+
+                                    if (response.ok) {
+                                        displayMessage('Appointment approved successfully!', 'success');
+                                        fetchPendingAppointments(); // Refresh the list
+                                    } else {
+                                        const error = await response.json();
+                                        displayMessage(error.message || 'Failed to approve appointment.', 'danger');
+                                    }
+                                });
+                            });
+
+                            document.querySelectorAll('.reject-btn').forEach(button => {
+                                button.addEventListener('click', async (event) => {
+                                    const appointmentId = event.target.dataset.appointmentId;
+                                    const response = await fetch('/api/coach/appointment/reject', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ appointmentId: parseInt(appointmentId) })
+                                    });
+
+                                    if (response.ok) {
+                                        displayMessage('Appointment rejected successfully!', 'success');
+                                        fetchPendingAppointments(); // Refresh the list
+                                    } else {
+                                        const error = await response.json();
+                                        displayMessage(error.message || 'Failed to reject appointment.', 'danger');
+                                    }
+                                });
+                            });
                         } else {
-                            appointmentsListDiv.innerHTML =
-                                '<p class="text-center">No appointments found.</p>';
+                            appointmentsListDiv.innerHTML = '<p class="text-center">No pending appointments found.</p>';
                         }
                     } else {
                         displayMessage(
-                            appointments.message ||
-                                "Failed to fetch appointments.",
+                            appointments.message || "Failed to fetch pending appointments.",
                             "danger",
                         );
                     }
                 } catch (error) {
                     displayMessage(
-                        "An unexpected error occurred while fetching appointments.",
+                        "An unexpected error occurred while fetching pending appointments.",
                         "danger",
                     );
                 }
             }
 
-            fetchAppointments();
+            fetchPendingAppointments();
         </script>
     </body>
 </html>

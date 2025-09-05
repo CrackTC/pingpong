@@ -83,6 +83,10 @@ import { useStudentAppointmentSearch } from "./routes/student/appointment/search
 import { useApiStudentTableAvailable } from "./routes/api/student/table/available.ts";
 import { useApiStudentAppointmentBook } from "./routes/api/student/appointment/book.ts";
 import { useApiStudentAppointmentAll } from "./routes/api/student/appointment/all.ts";
+import { useApiCoachAppointmentPending } from "./routes/api/coach/appointment/pending.ts";
+import { useApiCoachAppointmentApprove } from "./routes/api/coach/appointment/approve.ts";
+import { useApiCoachAppointmentReject } from "./routes/api/coach/appointment/reject.ts";
+import { useCoachAppointmentPending } from "./routes/coach/appointment/pending.ts";
 import { useStudentAppointmentAll } from "./routes/student/appointment/all.ts";
 
 const app = new Hono();
@@ -179,6 +183,10 @@ useApiStudentTableAvailable(app);
 useApiStudentAppointmentBook(app);
 useApiStudentAppointmentAll(app);
 useStudentAppointmentAll(app);
+useApiCoachAppointmentPending(app);
+useApiCoachAppointmentApprove(app);
+useApiCoachAppointmentReject(app);
+useCoachAppointmentPending(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

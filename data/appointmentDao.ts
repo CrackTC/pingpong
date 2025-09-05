@@ -76,3 +76,49 @@ export function addAppointment(appointment: Omit<Appointment, "id">) {
     appointment.status
   );
 }
+
+export function getPendingAppointmentsByCoachId(coachId: number): (Appointment & {
+  studentName: string;
+  tableName: string;
+  weekday: number;
+  startHour: number;
+  startMinute: number;
+  endHour: number;
+  endMinute: number;
+})[] {
+  const stmt = db.prepare(`
+    SELECT
+      a.*,
+      s.realName AS studentName,
+      t.name AS tableName,
+      ts.weekday,
+      ts.startHour,
+      ts.startMinute,
+      ts.endHour,
+      ts.endMinute
+    FROM
+      appointments a
+    JOIN
+      students s ON a.studentId = s.id
+    JOIN
+      tables t ON a.tableId = t.id
+    JOIN
+      timeslots ts ON a.timeslotId = ts.id
+    WHERE
+      a.coachId = ? AND a.status = ?
+  `);
+  return stmt.all(coachId, AppointmentStatus.Pending) as (Appointment & {
+    studentName: string;
+    tableName: string;
+    weekday: number;
+    startHour: number;
+    startMinute: number;
+    endHour: number;
+    endMinute: number;
+  })[];
+}
+
+export function updateAppointmentStatus(id: number, status: AppointmentStatus) {
+  const stmt = db.prepare("UPDATE appointments SET status = ? WHERE id = ?");
+  stmt.run(status, id);
+}
