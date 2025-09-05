@@ -82,6 +82,8 @@ import { useApiStudentMeCoaches } from "./routes/api/student/me/coaches.ts";
 import { useStudentAppointmentSearch } from "./routes/student/appointment/search.ts";
 import { useApiStudentTableAvailable } from "./routes/api/student/table/available.ts";
 import { useApiStudentAppointmentBook } from "./routes/api/student/appointment/book.ts";
+import { useApiStudentAppointmentAll } from "./routes/api/student/appointment/all.ts";
+import { useStudentAppointmentAll } from "./routes/student/appointment/all.ts";
 
 const app = new Hono();
 
@@ -175,6 +177,8 @@ useApiStudentCoachTimeslots(app);
 useApiCoachTimeslotAdd(app);
 useApiStudentTableAvailable(app);
 useApiStudentAppointmentBook(app);
+useApiStudentAppointmentAll(app);
+useStudentAppointmentAll(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

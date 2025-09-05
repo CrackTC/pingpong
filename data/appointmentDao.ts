@@ -1,9 +1,45 @@
 import { db } from "./db.ts";
 import { Appointment, AppointmentStatus } from "../models/appointment.ts";
 
-export function getAppointmentsByStudentId(studentId: number): Appointment[] {
-  const stmt = db.prepare("SELECT * FROM appointments WHERE studentId = ?");
-  return stmt.all(studentId) as Appointment[];
+export function getAppointmentsByStudentId(studentId: number): (Appointment & {
+  coachName: string;
+  tableName: string;
+  weekday: number;
+  startHour: number;
+  startMinute: number;
+  endHour: number;
+  endMinute: number;
+})[] {
+  const stmt = db.prepare(`
+    SELECT
+      a.*,
+      co.realName AS coachName,
+      t.name AS tableName,
+      ts.weekday,
+      ts.startHour,
+      ts.startMinute,
+      ts.endHour,
+      ts.endMinute
+    FROM
+      appointments a
+    JOIN
+      coaches co ON a.coachId = co.id
+    JOIN
+      tables t ON a.tableId = t.id
+    JOIN
+      timeslots ts ON a.timeslotId = ts.id
+    WHERE
+      a.studentId = ?
+  `);
+  return stmt.all(studentId) as (Appointment & {
+    coachName: string;
+    tableName: string;
+    weekday: number;
+    startHour: number;
+    startMinute: number;
+    endHour: number;
+    endMinute: number;
+  })[];
 }
 
 export function getAppointmentsByCoachId(coachId: number): Appointment[] {
