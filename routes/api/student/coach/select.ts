@@ -3,7 +3,7 @@ import { getClaim } from "../../../../auth/claim.ts";
 import { getStudentById } from "../../../../data/studentDao.ts";
 import { getCoachById } from "../../../../data/coachDao.ts";
 import { CoachType } from "../../../../models/coach.ts";
-import { addSelection, getSelectionCountForCoach, getActiveSelectionCountForStudent } from "../../../../data/selectionDao.ts";
+import { addSelection, getSelectionCountForCoach, getActiveSelectionCountForStudent, getSelectionByStudentAndCoachId } from "../../../../data/selectionDao.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
 import { SelectionStatus } from "../../../../models/selection.ts";
@@ -27,6 +27,12 @@ export function useApiStudentSelectCoach(app: Hono) {
 
     if (coach.type === CoachType.Pending) {
       return c.json({ message: "This coach is currently pending approval and cannot be selected." }, 400);
+    }
+
+    // Check if student already has an active selection with this specific coach
+    const existingSelection = getSelectionByStudentAndCoachId(student.id, coachId);
+    if (existingSelection) {
+      return c.json({ message: "You have already made a selection to this coach." }, 400);
     }
 
     // Check if student already has 2 active selections

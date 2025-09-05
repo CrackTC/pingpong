@@ -118,3 +118,12 @@ export function getStudentsByCoachId(coachId: number): Student[] {
   `);
   return stmt.all(coachId, SelectionStatus.Approved) as Student[];
 }
+
+export function getSelectionByStudentAndCoachId(studentId: number, coachId: number): Selection | undefined {
+  const stmt = db.prepare("SELECT * FROM selections WHERE studentId = ? AND coachId = ? AND (status = ? OR status = ?)");
+  const row = stmt.get(studentId, coachId, SelectionStatus.Pending, SelectionStatus.Approved);
+  if (row) {
+    return row as Selection;
+  }
+  return undefined;
+}
