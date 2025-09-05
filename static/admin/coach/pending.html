@@ -21,18 +21,14 @@
                             <h3 class="card-title text-center mb-4">
                                 Pending Coach Registrations
                             </h3>
-                            <table class="table">
+                            <table class="table" style="table-layout: fixed;">
                                 <thead>
                                     <tr>
-                                        <th scope="col">ID</th>
                                         <th scope="col">Username</th>
                                         <th scope="col">Real Name</th>
-                                        <th scope="col">Avatar</th>
-                                        <th scope="col">Phone</th>
-                                        <th scope="col">Email</th>
                                         <th scope="col">Campus</th>
+                                        <th scope="col">Details</th>
                                         <th scope="col">Type</th>
-                                        <th scope="col">Comment</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -54,11 +50,15 @@
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="commentModalLabel">Coach Comment</h5>
+                <h5 class="modal-title" id="commentModalLabel">Coach Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <p id="modal-comment-text"></p>
+                <p class="text-center"><img id="modal-avatar" src="" alt="Avatar" width="100" height="100"></p>
+                <p><strong>ID:</strong> <span id="modal-id-text"></span></p>
+                <p><strong>Phone:</strong> <span id="modal-phone-text"></span></p>
+                <p><strong>Email:</strong> <span id="modal-email-text"></span></p>
+                <p><strong>Comment:</strong> <span id="modal-comment-text"></span></p>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -78,24 +78,20 @@
                     const row = document.createElement("tr");
                     const imagePath = coach.avatarPath.startsWith('./') ? coach.avatarPath.substring(1) : coach.avatarPath;
                     row.innerHTML = `
-                    <td class="align-middle">${coach.id}</td>
-                    <td class="align-middle">${coach.username}</td>
-                    <td class="align-middle">${coach.realName}</td>
-                    <td class="align-middle"><img src="${imagePath}" alt="Avatar" width="50" height="50"></td>
-                    <td class="align-middle">${coach.phone}</td>
-                    <td class="align-middle">${coach.email}</td>
+                    <td class="align-middle text-break">${coach.username}</td>
+                    <td class="align-middle text-break">${coach.realName}</td>
                     <td class="align-middle">${coach.campusName}</td>
+                    <td class="align-middle">
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#commentModal" data-bs-id="${coach.id}" data-bs-avatar="${imagePath}" data-bs-phone="${coach.phone}" data-bs-email="${coach.email}" data-bs-comment="${coach.comment}">
+                            Details
+                        </button>
+                    </td>
                     <td class="align-middle">
                         <select class="form-select" id="coach-type-${coach.id}">
                             <option value="2">Junior</option>
                             <option value="3">Intermediate</option>
                             <option value="4">Senior</option>
                         </select>
-                    </td>
-                    <td class="align-middle">
-                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#commentModal" data-bs-comment="${coach.comment}">
-                            View
-                        </button>
                     </td>
                     <td class="align-middle">
                         <button class="btn btn-success btn-sm" onclick="approveCoach(${coach.id})">Approve</button>
@@ -132,8 +128,20 @@
             const commentModal = document.getElementById('commentModal')
             commentModal.addEventListener('show.bs.modal', function (event) {
               const button = event.relatedTarget
+              const id = button.getAttribute('data-bs-id')
+              const avatarPath = button.getAttribute('data-bs-avatar')
+              const phone = button.getAttribute('data-bs-phone')
+              const email = button.getAttribute('data-bs-email')
               const comment = button.getAttribute('data-bs-comment')
+              const modalIdText = commentModal.querySelector('#modal-id-text')
+              const modalAvatar = commentModal.querySelector('#modal-avatar')
+              const modalPhoneText = commentModal.querySelector('#modal-phone-text')
+              const modalEmailText = commentModal.querySelector('#modal-email-text')
               const modalCommentText = commentModal.querySelector('#modal-comment-text')
+              modalIdText.textContent = id
+              modalAvatar.src = avatarPath
+              modalPhoneText.textContent = phone
+              modalEmailText.textContent = email
               modalCommentText.textContent = comment
             })
         </script>
