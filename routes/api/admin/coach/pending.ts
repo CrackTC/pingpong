@@ -1,9 +1,29 @@
 import { Hono } from "hono";
 import { getPendingCoaches } from "../../../../data/coachDao.ts";
+import { getClaim } from "../../../../auth/claim.ts"; // Import getClaim
+import { getAdminById } from "../../../../data/adminDao.ts"; // Import getAdminById
 
-export function useApiGetCoaches(app: Hono) {
-  app.get("/api/admin/coach/pending", (c) => {
-    const pendingCoaches = getPendingCoaches();
-    return c.json(pendingCoaches);
+export function useApiAdminCoachPending(app: Hono) { // Renamed function
+  app.get("/api/admin/coach/pending", async (c) => {
+    const claim = await getClaim(c);
+
+    if (!claim) {
+      return c.json({ message: "Unauthorized" }, 401);
+    }
+
+    let coaches;
+    if (claim.type === "admin") {
+      const admin = await getAdminById(claim.id);
+      if (!admin) {
+        return c.json({ message: "Admin not found" }, 404);
+      }
+      coaches = await getPendingCoaches(admin.campus); // Pass admin's campusId
+    } else if (claim.type === "root") {
+      coaches = await getPendingCoaches(); // Root sees all pending coaches
+    } else {
+      return c.json({ message: "Forbidden" }, 403);
+    }
+
+    return c.json(coaches);
   });
 }

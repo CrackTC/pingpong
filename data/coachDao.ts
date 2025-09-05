@@ -56,11 +56,17 @@ export function getCoachById(id: number): (Coach & { campusName: string }) | und
   }
 }
 
-export function getPendingCoaches(): (Coach & { campusName: string })[] {
-  const stmt = db.prepare(
-    "SELECT co.*, ca.name as campusName FROM coaches co JOIN campuses ca ON co.campusId = ca.id WHERE co.type = ?"
-  );
-  return stmt.all(CoachType.Pending) as (Coach & { campusName: string })[];
+export function getPendingCoaches(campusId?: number): (Coach & { campusName: string })[] {
+  let query = "SELECT co.*, ca.name as campusName FROM coaches co JOIN campuses ca ON co.campusId = ca.id WHERE co.type = ?";
+  const params: (string | number)[] = [CoachType.Pending];
+
+  if (campusId !== undefined) {
+    query += " AND co.campusId = ?";
+    params.push(campusId);
+  }
+
+  const stmt = db.prepare(query);
+  return stmt.all(...params) as (Coach & { campusName: string })[];
 }
 
 export function approveCoach(coachId: number, type: CoachType) {
