@@ -92,13 +92,7 @@
                                         <tr>
                                             <th>Avatar</th>
                                             <th>Real Name</th>
-                                            <th>Sex</th>
-                                            <th>Age</th>
-                                            <th>Campus</th>
-                                            <th>Phone</th>
-                                            <th>Email</th>
-                                            <th>Type</th>
-                                            <th>Comment</th>
+                                            <th>Details</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -118,16 +112,16 @@
         </div>
         <div
             class="modal fade"
-            id="commentModal"
+            id="coachDetailsModal"
             tabindex="-1"
-            aria-labelledby="commentModalLabel"
+            aria-labelledby="coachDetailsModalLabel"
             aria-hidden="true"
         >
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="commentModalLabel">
-                            Coach Comment
+                        <h5 class="modal-title" id="coachDetailsModalLabel">
+                            Coach Details
                         </h5>
                         <button
                             type="button"
@@ -137,7 +131,12 @@
                         ></button>
                     </div>
                     <div class="modal-body">
-                        <p id="modal-comment-text"></p>
+                        <p><strong>Sex:</strong> <span id="modal-sex-text"></span></p>
+                        <p><strong>Age:</strong> <span id="modal-age-text"></span></p>
+                        <p><strong>Phone:</strong> <span id="modal-phone-text"></span></p>
+                        <p><strong>Email:</strong> <span id="modal-email-text"></span></p>
+                        <p><strong>Type:</strong> <span id="modal-type-text"></span></p>
+                        <p><strong>Comment:</strong> <span id="modal-comment-text"></span></p>
                     </div>
                     <div class="modal-footer">
                         <button
@@ -210,15 +209,9 @@
                             row.innerHTML = `
                         <td class="align-middle"><img src="${coach.avatarPath}" alt="Avatar" width="50" height="50"></td>
                         <td class="align-middle">${coach.realName}</td>
-                        <td class="align-middle">${getSexString(coach.sex)}</td>
-                        <td class="align-middle">${new Date().getFullYear() - coach.birthYear}</td>
-                        <td class="align-middle">${coach.campusName}</td>
-                        <td class="align-middle">${coach.phone}</td>
-                        <td class="align-middle">${coach.email || "Not specified"}</td>
-                        <td class="align-middle">${getCoachTypeString(coach.type)}</td>
                         <td class="align-middle">
-                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#commentModal" data-bs-comment="${coach.comment || "No comment provided."}">
-                                View
+                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#coachDetailsModal" data-bs-sex="${coach.sex}" data-bs-birthyear="${coach.birthYear}" data-bs-phone="${coach.phone}" data-bs-email="${coach.email}" data-bs-type="${coach.type}" data-bs-comment="${coach.comment || "No comment provided."}">
+                                Details
                             </button>
                         </td>
                         <td class="align-middle">
@@ -227,7 +220,7 @@
                     `;
                         });
                     } else if (response.ok && data.length === 0) {
-                        resultsBody.innerHTML = `<tr><td colspan="10" class="text-center">No coaches found matching your criteria.</td></tr>`;
+                        resultsBody.innerHTML = `<tr><td colspan="4" class="text-center">No coaches found matching your criteria.</td></tr>`;
                     } else {
                         messageDiv.textContent =
                             data.message || "An error occurred during search.";
@@ -242,14 +235,30 @@
                 .getElementById("coach-search-form")
                 .dispatchEvent(new Event("submit"));
 
-            const commentModal = document.getElementById("commentModal");
-            commentModal.addEventListener("show.bs.modal", function (event) {
+            const coachDetailsModal = document.getElementById("coachDetailsModal");
+            coachDetailsModal.addEventListener("show.bs.modal", function (event) {
                 const button = event.relatedTarget;
+                const sex = button.getAttribute("data-bs-sex");
+                const birthYear = button.getAttribute("data-bs-birthyear");
+                const phone = button.getAttribute("data-bs-phone");
+                const email = button.getAttribute("data-bs-email");
+                const type = button.getAttribute("data-bs-type");
                 const comment = button.getAttribute("data-bs-comment");
-                const modalCommentText = commentModal.querySelector(
-                    "#modal-comment-text",
-                );
-                modalCommentText.textContent = comment;
+
+                const modalSexText = coachDetailsModal.querySelector("#modal-sex-text");
+                const modalAgeText = coachDetailsModal.querySelector("#modal-age-text");
+                const modalPhoneText = coachDetailsModal.querySelector("#modal-phone-text");
+                const modalEmailText = coachDetailsModal.querySelector("#modal-email-text");
+                const modalTypeText = coachDetailsModal.querySelector("#modal-type-text");
+                const modalCommentText = coachDetailsModal.querySelector("#modal-comment-text");
+
+                modalSexText.textContent = getSexString(parseInt(sex));
+                modalAgeText.textContent = (new Date().getFullYear() - parseInt(birthYear)) || "Not specified";
+                modalPhoneText.textContent = phone || "Not specified";
+                const displayEmail = (email === "null" || email === null) ? "Not specified" : email;
+                modalEmailText.textContent = displayEmail;
+                modalTypeText.textContent = getCoachTypeString(parseInt(type));
+                modalCommentText.textContent = comment || "Not specified";
             });
 
             document
