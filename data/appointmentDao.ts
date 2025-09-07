@@ -183,3 +183,85 @@ export function getAppointmentById(id: number): (Appointment & {
     startMinute: number;
   }) | undefined;
 }
+
+export function getStudentCancellingAppointmentsByCoachId(coachId: number): (Appointment & {
+  studentName: string;
+  tableName: string;
+  weekday: number;
+  startHour: number;
+  startMinute: number;
+  endHour: number;
+  endMinute: number;
+})[] {
+  const stmt = db.prepare(`
+    SELECT
+      a.*,
+      s.realName AS studentName,
+      t.name AS tableName,
+      ts.weekday,
+      ts.startHour,
+      ts.startMinute,
+      ts.endHour,
+      ts.endMinute
+    FROM
+      appointments a
+    JOIN
+      students s ON a.studentId = s.id
+    JOIN
+      tables t ON a.tableId = t.id
+    JOIN
+      timeslots ts ON a.timeslotId = ts.id
+    WHERE
+      a.coachId = ? AND a.status = ?
+  `);
+  return stmt.all(coachId, AppointmentStatus.StudentCancelling) as (Appointment & {
+    studentName: string;
+    tableName: string;
+    weekday: number;
+    startHour: number;
+    startMinute: number;
+    endHour: number;
+    endMinute: number;
+  })[];
+}
+
+export function getCoachCancellingAppointmentsByStudentId(studentId: number): (Appointment & {
+  coachName: string;
+  tableName: string;
+  weekday: number;
+  startHour: number;
+  startMinute: number;
+  endHour: number;
+  endMinute: number;
+})[] {
+  const stmt = db.prepare(`
+    SELECT
+      a.*,
+      c.realName AS coachName,
+      t.name AS tableName,
+      ts.weekday,
+      ts.startHour,
+      ts.startMinute,
+      ts.endHour,
+      ts.endMinute
+    FROM
+      appointments a
+    JOIN
+      coaches c ON a.coachId = c.id
+    JOIN
+      tables t ON a.tableId = t.id
+    JOIN
+      timeslots ts ON a.timeslotId = ts.id
+    WHERE
+      a.studentId = ? AND a.status = ?
+  `);
+  return stmt.all(studentId, AppointmentStatus.CoachCancelling) as (Appointment & {
+    coachName: string;
+    tableName: string;
+    weekday: number;
+    startHour: number;
+    startMinute: number;
+    endHour: number;
+    endMinute: number;
+  })[];
+}

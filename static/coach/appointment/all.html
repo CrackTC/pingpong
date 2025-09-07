@@ -10,7 +10,7 @@
             integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
             crossorigin="anonymous"
         />
-    <style>
+        <style>
             .table td,
             .table th {
                 vertical-align: middle;
@@ -32,14 +32,16 @@
                                 role="alert"
                             ></div>
 
-                            <div id="appointments-list" class="mt-4" style="overflow-x: auto;">
+                            <div
+                                id="appointments-list"
+                                class="mt-4"
+                                style="overflow-x: auto"
+                            >
                                 <!-- Appointments will be loaded here -->
                             </div>
 
                             <div class="d-grid gap-2 mt-3">
-                                <a
-                                    href="/coach/home"
-                                    class="btn btn-secondary"
+                                <a href="/coach/home" class="btn btn-secondary"
                                     >Back to Home</a
                                 >
                             </div>
@@ -55,7 +57,8 @@
         ></script>
         <script>
             const messageArea = document.getElementById("message-area");
-            const appointmentsListDiv = document.getElementById("appointments-list");
+            const appointmentsListDiv =
+                document.getElementById("appointments-list");
 
             function displayMessage(message, type) {
                 messageArea.textContent = message;
@@ -75,16 +78,17 @@
                 ];
                 return weekdays[weekday];
             }
-            
+
             function getStatusString(status) {
                 const statuses = {
                     1: "Pending",
                     2: "Approved",
-                    3: "Student Cancelling",
-                    4: "Coach Cancelling",
-                    5: "Student Cancelled",
-                    6: "Coach Cancelled",
-                    7: "Completed",
+                    3: "Rejected",
+                    4: "Student Cancelling",
+                    5: "Coach Cancelling",
+                    6: "Student Cancelled",
+                    7: "Coach Cancelled",
+                    8: "Completed",
                 };
                 return statuses[status] || "Unknown";
             }
@@ -110,18 +114,33 @@
 
                                 const now = new Date();
                                 const appointmentDate = new Date();
-                                appointmentDate.setHours(a.startHour, a.startMinute, 0, 0);
+                                appointmentDate.setHours(
+                                    a.startHour,
+                                    a.startMinute,
+                                    0,
+                                    0,
+                                );
 
                                 let diff = a.weekday - now.getDay();
-                                if (diff < 0 || (diff === 0 && appointmentDate.getTime() < now.getTime())) {
+                                if (
+                                    diff < 0 ||
+                                    (diff === 0 &&
+                                        appointmentDate.getTime() <
+                                            now.getTime())
+                                ) {
                                     diff += 7;
                                 }
                                 appointmentDate.setDate(now.getDate() + diff);
 
-                                const appointmentDateStr = appointmentDate.toLocaleDateString();
+                                const appointmentDateStr =
+                                    appointmentDate.toLocaleDateString();
 
-                                let cancelButton = '';
-                                if ((a.status === 1 || a.status === 2) && appointmentDate.getTime() - now.getTime() > 24 * 60 * 60 * 1000) {
+                                let cancelButton = "";
+                                if (
+                                    (a.status === 1 || a.status === 2) &&
+                                    appointmentDate.getTime() - now.getTime() >
+                                        24 * 60 * 60 * 1000
+                                ) {
                                     cancelButton = `<button class="btn btn-danger btn-sm cancel-btn" data-appointment-id="${a.id}">Cancel</button>`;
                                 }
 
@@ -132,30 +151,58 @@
                             appointmentsHtml += "</tbody></table>";
                             appointmentsListDiv.innerHTML = appointmentsHtml;
 
-                            document.querySelectorAll('.cancel-btn').forEach(button => {
-                                button.addEventListener('click', async (event) => {
-                                    const appointmentId = event.target.dataset.appointmentId;
-                                    const response = await fetch('/api/coach/appointment/cancel', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ appointmentId: parseInt(appointmentId) })
-                                    });
+                            document
+                                .querySelectorAll(".cancel-btn")
+                                .forEach((button) => {
+                                    button.addEventListener(
+                                        "click",
+                                        async (event) => {
+                                            const appointmentId =
+                                                event.target.dataset
+                                                    .appointmentId;
+                                            const response = await fetch(
+                                                "/api/coach/appointment/cancel",
+                                                {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Content-Type":
+                                                            "application/json",
+                                                    },
+                                                    body: JSON.stringify({
+                                                        appointmentId:
+                                                            parseInt(
+                                                                appointmentId,
+                                                            ),
+                                                    }),
+                                                },
+                                            );
 
-                                    if (response.ok) {
-                                        displayMessage('Appointment cancellation request sent.', 'success');
-                                        fetchAppointments();
-                                    } else {
-                                        const error = await response.json();
-                                        displayMessage(error.message || 'Failed to cancel appointment.', 'danger');
-                                    }
+                                            if (response.ok) {
+                                                displayMessage(
+                                                    "Appointment cancellation request sent.",
+                                                    "success",
+                                                );
+                                                fetchAppointments();
+                                            } else {
+                                                const error =
+                                                    await response.json();
+                                                displayMessage(
+                                                    error.message ||
+                                                        "Failed to cancel appointment.",
+                                                    "danger",
+                                                );
+                                            }
+                                        },
+                                    );
                                 });
-                            });
                         } else {
-                            appointmentsListDiv.innerHTML = '<p class="text-center">No appointments found.</p>';
+                            appointmentsListDiv.innerHTML =
+                                '<p class="text-center">No appointments found.</p>';
                         }
                     } else {
                         displayMessage(
-                            appointments.message || "Failed to fetch appointments.",
+                            appointments.message ||
+                                "Failed to fetch appointments.",
                             "danger",
                         );
                     }

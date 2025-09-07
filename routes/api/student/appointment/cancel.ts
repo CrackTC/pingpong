@@ -1,6 +1,9 @@
 import { Hono } from "hono";
 import { getAppointmentById, updateAppointmentStatus } from "../../../../data/appointmentDao.ts";
 import { AppointmentStatus } from "../../../../models/appointment.ts";
+import { getStudentById } from "../../../../data/studentDao.ts";
+import { addNotification } from "../../../../data/notificationDao.ts";
+import { NotificationTarget } from "../../../../models/notification.ts";
 
 export function useApiStudentAppointmentCancel(app: Hono) {
   app.post("/api/student/appointment/cancel", async (c) => {
@@ -30,7 +33,22 @@ export function useApiStudentAppointmentCancel(app: Hono) {
         return c.json({ message: "Cannot cancel appointment within 24 hours." }, 400);
       }
 
+      const student = getStudentById(appointment.studentId);
+      if (!student) {
+        return c.json({ message: "Student not found" }, 404);
+      }
+
       updateAppointmentStatus(appointmentId, AppointmentStatus.StudentCancelling);
+
+      addNotification(
+        appointment.campusId,
+        NotificationTarget.Coach,
+        appointment.coachId,
+        `Student ${student.realName} has requested to cancel an appointment.`,
+        `/coach/appointments/cancelling`,
+        Date.now()
+      );
+
       return c.json({ message: "Appointment cancellation request sent." });
     } catch (error) {
       console.error("Error cancelling appointment:", error);
