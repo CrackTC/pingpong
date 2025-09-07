@@ -10,6 +10,12 @@
             integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
             crossorigin="anonymous"
         />
+        <style>
+            .table td,
+            .table th {
+                vertical-align: middle;
+            }
+        </style>
     </head>
     <body class="bg-light">
         <div class="container">
@@ -26,7 +32,7 @@
                                 role="alert"
                             ></div>
 
-                            <div id="appointments-list" class="mt-4">
+                            <div id="appointments-list" class="mt-4" style="overflow-x: auto;">
                                 <!-- Appointments will be loaded here -->
                             </div>
 
@@ -95,7 +101,7 @@
                     if (response.ok) {
                         if (appointments.length > 0) {
                             let appointmentsHtml =
-                                '<table class="table table-striped"><thead><tr><th>Coach</th><th>Table</th><th>Weekday</th><th>Start Time</th><th>End Time</th><th>Status</th></tr></thead><tbody>';
+                                '<table class="table table-striped"><thead><tr><th>Time</th><th>Coach</th><th>Table</th><th>Weekday</th><th>Status</th><th></th></tr></thead><tbody>';
                             appointments.forEach((a) => {
                                 const startTime =
                                     String(a.startHour).padStart(2, "0") +
@@ -105,10 +111,49 @@
                                     String(a.endHour).padStart(2, "0") +
                                     ":" +
                                     String(a.endMinute).padStart(2, "0");
-                                appointmentsHtml += `<tr><td>${a.coachName}</td><td>${a.tableName}</td><td>${getWeekdayString(a.weekday)}</td><td>${startTime}</td><td>${endTime}</td><td>${getStatusString(a.status)}</td></tr>`;
+
+                                const now = new Date();
+                                const appointmentDate = new Date();
+                                appointmentDate.setHours(a.startHour, a.startMinute, 0, 0);
+
+                                let diff = a.weekday - now.getDay();
+                                if (diff < 0 || (diff === 0 && appointmentDate.getTime() < now.getTime())) {
+                                    diff += 7;
+                                }
+                                appointmentDate.setDate(now.getDate() + diff);
+
+                                const appointmentDateStr = appointmentDate.toLocaleDateString();
+
+                                let cancelButton = '';
+                                if ((a.status === 1 || a.status === 2) && appointmentDate.getTime() - now.getTime() > 24 * 60 * 60 * 1000) {
+                                    cancelButton = `<button class="btn btn-danger btn-sm cancel-btn" data-appointment-id="${a.id}">Cancel</button>`;
+                                }
+
+                                const timeStr = `${appointmentDateStr} ${startTime} - ${endTime}`;
+
+                                appointmentsHtml += `<tr><td>${timeStr}</td><td>${a.coachName}</td><td>${a.tableName}</td><td>${getWeekdayString(a.weekday)}</td><td>${getStatusString(a.status)}</td><td>${cancelButton}</td></tr>`;
                             });
                             appointmentsHtml += "</tbody></table>";
                             appointmentsListDiv.innerHTML = appointmentsHtml;
+
+                            document.querySelectorAll('.cancel-btn').forEach(button => {
+                                button.addEventListener('click', async (event) => {
+                                    const appointmentId = event.target.dataset.appointmentId;
+                                    const response = await fetch('/api/student/appointment/cancel', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ appointmentId: parseInt(appointmentId) })
+                                    });
+
+                                    if (response.ok) {
+                                        displayMessage('Appointment cancellation request sent.', 'success');
+                                        fetchAppointments();
+                                    } else {
+                                        const error = await response.json();
+                                        displayMessage(error.message || 'Failed to cancel appointment.', 'danger');
+                                    }
+                                });
+                            });
                         } else {
                             appointmentsListDiv.innerHTML =
                                 '<p class="text-center">No appointments found.</p>';

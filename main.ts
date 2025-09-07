@@ -90,6 +90,8 @@ import { useCoachAppointmentPending } from "./routes/coach/appointment/pending.t
 import { useStudentAppointmentAll } from "./routes/student/appointment/all.ts";
 import { useApiCoachAppointmentAll } from "./routes/api/coach/appointment/all.ts";
 import { useCoachAppointmentAll } from "./routes/coach/appointment/all.ts";
+import { useApiStudentAppointmentCancel } from "./routes/api/student/appointment/cancel.ts";
+import { useApiCoachAppointmentCancel } from "./routes/api/coach/appointment/cancel.ts";
 
 const app = new Hono();
 
@@ -191,6 +193,8 @@ useApiCoachAppointmentReject(app);
 useCoachAppointmentPending(app);
 useApiCoachAppointmentAll(app);
 useCoachAppointmentAll(app);
+useApiStudentAppointmentCancel(app);
+useApiCoachAppointmentCancel(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

@@ -158,3 +158,28 @@ export function updateAppointmentStatus(id: number, status: AppointmentStatus) {
   const stmt = db.prepare("UPDATE appointments SET status = ? WHERE id = ?");
   stmt.run(status, id);
 }
+
+export function getAppointmentById(id: number): (Appointment & {
+  weekday: number;
+  startHour: number;
+  startMinute: number;
+}) | undefined {
+  const stmt = db.prepare(`
+    SELECT
+      a.*,
+      ts.weekday,
+      ts.startHour,
+      ts.startMinute
+    FROM
+      appointments a
+    JOIN
+      timeslots ts ON a.timeslotId = ts.id
+    WHERE
+      a.id = ?
+  `);
+  return stmt.get(id) as (Appointment & {
+    weekday: number;
+    startHour: number;
+    startMinute: number;
+  }) | undefined;
+}

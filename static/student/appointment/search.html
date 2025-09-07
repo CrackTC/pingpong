@@ -178,7 +178,7 @@
                         if (timeslots.length > 0) {
                             let timeslotsHtml = `<h4 class="text-center mb-3">Timeslots for ${selectedCoachName}</h4>`;
                             timeslotsHtml +=
-                                '<table class="table table-striped"><thead><tr><th>Weekday</th><th>Start Time</th><th>End Time</th><th>Status</th><th></th></tr></thead><tbody>';
+                                '<table class="table table-striped"><thead><tr><th>Time</th><th>Weekday</th><th>Status</th><th></th></tr></thead><tbody>';
                             timeslots.forEach((ts) => {
                                 const startTime =
                                     String(ts.startHour).padStart(2, "0") +
@@ -188,9 +188,23 @@
                                     String(ts.endHour).padStart(2, "0") +
                                     ":" +
                                     String(ts.endMinute).padStart(2, "0");
+
+                                const now = new Date();
+                                const appointmentDate = new Date();
+                                appointmentDate.setHours(ts.startHour, ts.startMinute, 0, 0);
+
+                                let diff = ts.weekday - now.getDay();
+                                if (diff < 0 || (diff === 0 && appointmentDate.getTime() < now.getTime())) {
+                                    diff += 7;
+                                }
+                                appointmentDate.setDate(now.getDate() + diff);
+
+                                const appointmentDateStr = appointmentDate.toLocaleDateString();
+                                const timeStr = `${appointmentDateStr} ${startTime} - ${endTime}`;
+
                                 const status = ts.isBooked ? `<span class="text-danger">Booked (${ts.tableName})</span>` : `<span class="text-success">Available</span>`;
                                 const bookButton = ts.isBooked ? '' : `<button class="btn btn-primary btn-sm book-btn" data-timeslot-id="${ts.id}">Book</button>`;
-                                timeslotsHtml += `<tr><td>${getWeekdayString(ts.weekday)}</td><td>${startTime}</td><td>${endTime}</td><td>${status}</td><td>${bookButton}</td></tr>`;
+                                timeslotsHtml += `<tr><td>${timeStr}</td><td>${getWeekdayString(ts.weekday)}</td><td>${status}</td><td>${bookButton}</td></tr>`;
                             });
                             timeslotsHtml += "</tbody></table>";
                             timeslotsListDiv.innerHTML = timeslotsHtml;
