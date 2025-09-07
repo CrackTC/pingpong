@@ -5,6 +5,9 @@ import { getCoachById } from "../../../../data/coachDao.ts";
 import { getAvailableTables } from "../../../../data/tableDao.ts";
 import { addAppointment } from "../../../../data/appointmentDao.ts";
 import { AppointmentStatus } from "../../../../models/appointment.ts";
+import { addNotification } from "../../../../data/notificationDao.ts";
+import { NotificationTarget } from "../../../../models/notification.ts";
+import { getStudentById } from "../../../../data/studentDao.ts";
 
 export function useApiStudentAppointmentBook(app: Hono) {
   app.post("/api/student/appointment/book", async (c) => {
@@ -27,13 +30,21 @@ export function useApiStudentAppointmentBook(app: Hono) {
       }
 
       const studentId = claim.id;
+      const student = getStudentById(studentId);
+      if (!student) {
+        return c.json({ message: "Student not found" }, 404);
+      }
+
       let selectedTableId = tableId;
 
       if (!selectedTableId) {
         // "Let the system select"
         const availableTables = getAvailableTables(coach.campusId, timeslot);
         if (availableTables.length === 0) {
-          return c.json({ message: "No available tables for this timeslot." }, 400);
+          return c.json(
+            { message: "No available tables for this timeslot." },
+            400,
+          );
         }
         selectedTableId = availableTables[0].id;
       }
@@ -46,6 +57,15 @@ export function useApiStudentAppointmentBook(app: Hono) {
         timeslotId,
         status: AppointmentStatus.Pending,
       });
+
+      addNotification(
+        coach.campusId,
+        NotificationTarget.Coach,
+        coach.id,
+        `New appointment request from ${student.realName}`,
+        `/coach/appointment/pending`, // Link for coach to view pending appointments
+        Date.now(),
+      );
 
       return c.json({ message: "Appointment booked successfully." });
     } catch (error) {

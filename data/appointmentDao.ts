@@ -42,9 +42,45 @@ export function getAppointmentsByStudentId(studentId: number): (Appointment & {
   })[];
 }
 
-export function getAppointmentsByCoachId(coachId: number): Appointment[] {
-  const stmt = db.prepare("SELECT * FROM appointments WHERE coachId = ?");
-  return stmt.all(coachId) as Appointment[];
+export function getAppointmentsByCoachId(coachId: number): (Appointment & {
+  studentName: string;
+  tableName: string;
+  weekday: number;
+  startHour: number;
+  startMinute: number;
+  endHour: number;
+  endMinute: number;
+})[] {
+  const stmt = db.prepare(`
+    SELECT
+      a.*,
+      s.realName AS studentName,
+      t.name AS tableName,
+      ts.weekday,
+      ts.startHour,
+      ts.startMinute,
+      ts.endHour,
+      ts.endMinute
+    FROM
+      appointments a
+    JOIN
+      students s ON a.studentId = s.id
+    JOIN
+      tables t ON a.tableId = t.id
+    JOIN
+      timeslots ts ON a.timeslotId = ts.id
+    WHERE
+      a.coachId = ?
+  `);
+  return stmt.all(coachId) as (Appointment & {
+    studentName: string;
+    tableName: string;
+    weekday: number;
+    startHour: number;
+    startMinute: number;
+    endHour: number;
+    endMinute: number;
+  })[];
 }
 
 export function getActiveAppointmentsByCoachId(coachId: number): Appointment[] {
