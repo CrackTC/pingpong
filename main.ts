@@ -100,6 +100,8 @@ import { useApiCoachApproveCancellation } from "./routes/api/coach/appointment/c
 import { useApiStudentApproveCancellation } from "./routes/api/student/appointment/cancel/approve.ts";
 import { useApiAdminCoachSearch } from "./routes/api/admin/coach/search.ts";
 import { useAdminCoachSearch } from "./routes/admin/coach/search.ts";
+import { useAdminCoachEdit } from "./routes/admin/coach/edit.ts";
+import { useApiAdminCoachEdit } from "./routes/api/admin/coach/edit.ts";
 
 const app = new Hono();
 
@@ -211,6 +213,8 @@ useApiCoachApproveCancellation(app);
 useApiStudentApproveCancellation(app);
 useApiAdminCoachSearch(app);
 useAdminCoachSearch(app);
+useAdminCoachEdit(app);
+useApiAdminCoachEdit(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

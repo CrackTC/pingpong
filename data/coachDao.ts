@@ -93,6 +93,7 @@ export function updateCoach(id: number, data: {
   email?: string | null;
   idCardNumber?: string | null;
   comment?: string | null;
+  type?: CoachType | null;
 }) {
   let query = "UPDATE coaches SET ";
   const params: (string | number | null)[] = [];
@@ -125,6 +126,10 @@ export function updateCoach(id: number, data: {
   if (data.comment !== undefined) {
     updates.push("comment = ?");
     params.push(data.comment);
+  }
+  if (data.type !== undefined) {
+    updates.push("type = ?");
+    params.push(data.type);
   }
 
   if (updates.length === 0) {

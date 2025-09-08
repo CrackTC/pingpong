@@ -75,6 +75,7 @@
                         <!-- Coach details will be loaded here -->
                     </div>
                     <div class="modal-footer">
+                        <a href="#" id="editCoachBtn" class="btn btn-primary">Edit</a>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -158,6 +159,7 @@
                                             <p><strong>Comment:</strong> ${coach.comment || "Not specified"}</p>
                                         `;
                                         const coachDetailsModal = new bootstrap.Modal(document.getElementById('coachDetailsModal'));
+                                        document.getElementById('editCoachBtn').href = `/admin/coach/edit/${coach.id}`;
                                         coachDetailsModal.show();
                                     }
                                 });
