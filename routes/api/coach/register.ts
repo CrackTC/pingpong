@@ -62,8 +62,8 @@ export function useApiCoachRegister(app: Hono) {
     if (isNaN(campusId)) {
       return c.json({ success: false, message: "Campus is required." }, 400);
     }
-    if (!phone || phone.trim() === "") {
-      return c.json({ success: false, message: "Phone is required." }, 400);
+    if (!phone || !/^\d{11}$/.test(phone)) {
+      return c.json({ success: false, message: "Phone must be 11 digits." }, 400);
     }
     if (!comment || comment.trim() === "") {
       return c.json({ success: false, message: "Comment is required." }, 400);

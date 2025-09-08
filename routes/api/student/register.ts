@@ -35,8 +35,8 @@ export function useApiStudentRegister(app: Hono) {
     if (typeof campusId !== "number") {
       return c.json({ success: false, message: "Campus is required." }, 400);
     }
-    if (!phone || typeof phone !== "string" || phone.trim() === "") {
-      return c.json({ success: false, message: "Phone is required." }, 400);
+    if (!phone || typeof phone !== "string" || !/^\d{11}$/.test(phone)) {
+      return c.json({ success: false, message: "Phone must be 11 digits." }, 400);
     }
 
     // Check if username already exists
