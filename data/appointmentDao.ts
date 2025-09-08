@@ -85,23 +85,29 @@ export function getAppointmentsByCoachId(coachId: number): (Appointment & {
 
 export function getActiveAppointmentsByCoachId(coachId: number): Appointment[] {
   const stmt = db.prepare(
-    "SELECT * FROM appointments WHERE coachId = ? AND status NOT IN (?, ?)",
+    "SELECT * FROM appointments WHERE coachId = ? AND status NOT IN (?, ?, ?)",
   );
   return stmt.all(
     coachId,
     AppointmentStatus.StudentCancelled,
     AppointmentStatus.CoachCancelled,
+    AppointmentStatus.Completed,
   ) as Appointment[];
 }
 
 export function getAllActiveAppointments(): Appointment[] {
-  const stmt = db.prepare("SELECT * FROM appointments WHERE status NOT IN (?, ?)");
-  return stmt.all(AppointmentStatus.StudentCancelled, AppointmentStatus.CoachCancelled) as Appointment[];
+  const stmt = db.prepare(
+    "SELECT * FROM appointments WHERE status NOT IN (?, ?)",
+  );
+  return stmt.all(
+    AppointmentStatus.StudentCancelled,
+    AppointmentStatus.CoachCancelled,
+  ) as Appointment[];
 }
 
 export function addAppointment(appointment: Omit<Appointment, "id">) {
   const stmt = db.prepare(
-    "INSERT INTO appointments (campusId, studentId, coachId, tableId, timeslotId, status) VALUES (?, ?, ?, ?, ?, ?)"
+    "INSERT INTO appointments (campusId, studentId, coachId, tableId, timeslotId, status) VALUES (?, ?, ?, ?, ?, ?)",
   );
   stmt.run(
     appointment.campusId,
@@ -109,11 +115,13 @@ export function addAppointment(appointment: Omit<Appointment, "id">) {
     appointment.coachId,
     appointment.tableId,
     appointment.timeslotId,
-    appointment.status
+    appointment.status,
   );
 }
 
-export function getPendingAppointmentsByCoachId(coachId: number): (Appointment & {
+export function getPendingAppointmentsByCoachId(
+  coachId: number,
+): (Appointment & {
   studentName: string;
   tableName: string;
   weekday: number;
@@ -159,11 +167,13 @@ export function updateAppointmentStatus(id: number, status: AppointmentStatus) {
   stmt.run(status, id);
 }
 
-export function getAppointmentById(id: number): (Appointment & {
-  weekday: number;
-  startHour: number;
-  startMinute: number;
-}) | undefined {
+export function getAppointmentById(id: number):
+  | (Appointment & {
+    weekday: number;
+    startHour: number;
+    startMinute: number;
+  })
+  | undefined {
   const stmt = db.prepare(`
     SELECT
       a.*,
@@ -177,14 +187,18 @@ export function getAppointmentById(id: number): (Appointment & {
     WHERE
       a.id = ?
   `);
-  return stmt.get(id) as (Appointment & {
-    weekday: number;
-    startHour: number;
-    startMinute: number;
-  }) | undefined;
+  return stmt.get(id) as
+    | (Appointment & {
+      weekday: number;
+      startHour: number;
+      startMinute: number;
+    })
+    | undefined;
 }
 
-export function getStudentCancellingAppointmentsByCoachId(coachId: number): (Appointment & {
+export function getStudentCancellingAppointmentsByCoachId(
+  coachId: number,
+): (Appointment & {
   studentName: string;
   tableName: string;
   weekday: number;
@@ -214,7 +228,10 @@ export function getStudentCancellingAppointmentsByCoachId(coachId: number): (App
     WHERE
       a.coachId = ? AND a.status = ?
   `);
-  return stmt.all(coachId, AppointmentStatus.StudentCancelling) as (Appointment & {
+  return stmt.all(
+    coachId,
+    AppointmentStatus.StudentCancelling,
+  ) as (Appointment & {
     studentName: string;
     tableName: string;
     weekday: number;
@@ -225,7 +242,9 @@ export function getStudentCancellingAppointmentsByCoachId(coachId: number): (App
   })[];
 }
 
-export function getCoachCancellingAppointmentsByStudentId(studentId: number): (Appointment & {
+export function getCoachCancellingAppointmentsByStudentId(
+  studentId: number,
+): (Appointment & {
   coachName: string;
   tableName: string;
   weekday: number;
@@ -255,7 +274,10 @@ export function getCoachCancellingAppointmentsByStudentId(studentId: number): (A
     WHERE
       a.studentId = ? AND a.status = ?
   `);
-  return stmt.all(studentId, AppointmentStatus.CoachCancelling) as (Appointment & {
+  return stmt.all(
+    studentId,
+    AppointmentStatus.CoachCancelling,
+  ) as (Appointment & {
     coachName: string;
     tableName: string;
     weekday: number;
