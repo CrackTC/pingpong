@@ -1,5 +1,7 @@
 import { Hono } from "hono";
 import { updateCoach, getCoachById } from "../../../../data/coachDao.ts";
+import { addNotification } from "../../../../data/notificationDao.ts";
+import { NotificationTarget } from "../../../../models/notification.ts";
 
 export function useApiAdminCoachEdit(app: Hono) {
   app.post("/api/admin/coach/edit/:id", async (c) => {
@@ -20,6 +22,19 @@ export function useApiAdminCoachEdit(app: Hono) {
 
     try {
       updateCoach(id, { realName, sex, birthYear, phone, email, idCardNumber, comment, type });
+      
+      const coach = getCoachById(id);
+      if (coach) {
+        addNotification(
+          coach.campusId,
+          NotificationTarget.Coach,
+          id,
+          "Your profile has been updated by an administrator.",
+          "/coach/profile",
+          Date.now()
+        );
+      }
+
       return c.json({ message: "Coach profile updated successfully" });
     } catch (error) {
       console.error("Error updating coach profile:", error);
