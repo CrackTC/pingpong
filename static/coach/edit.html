@@ -51,6 +51,10 @@
                                 <input type="email" class="form-control" id="email" name="email">
                             </div>
                             <div class="mb-3">
+                                <label for="idCardNumber" class="form-label">ID Card Number</label>
+                                <input type="text" class="form-control" id="idCardNumber" name="idCardNumber" required>
+                            </div>
+                            <div class="mb-3">
                                 <label for="type" class="form-label">Coach Type</label>
                                 <input type="text" class="form-control" id="type" name="type" readonly>
                             </div>
@@ -90,6 +94,7 @@
                     document.getElementById('campusName').value = data.campusName;
                     document.getElementById('phone').value = data.phone;
                     document.getElementById('email').value = data.email || '';
+                    document.getElementById('idCardNumber').value = data.idCardNumber || '';
                     document.getElementById('type').value = getCoachTypeString(data.type);
                     document.getElementById('comment').value = data.comment || '';
                 }
@@ -103,6 +108,7 @@
             const birthYear = document.getElementById('birthYear').value;
             const phone = document.getElementById('phone').value;
             const email = document.getElementById('email').value;
+            const idCardNumber = document.getElementById('idCardNumber').value;
             const comment = document.getElementById('comment').value;
             const messageDiv = document.getElementById('message');
 
@@ -111,7 +117,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ realName, sex: sex ? parseInt(sex) : null, birthYear: birthYear ? parseInt(birthYear) : null, phone, email: email || null, comment: comment || null })
+                body: JSON.stringify({ realName, sex: sex ? parseInt(sex) : null, birthYear: birthYear ? parseInt(birthYear) : null, phone, email: email || null, idCardNumber: idCardNumber || null, comment: comment || null })
             });
 
             const data = await response.json();

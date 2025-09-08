@@ -23,7 +23,7 @@ export function addCoach(
   // ASSUMPTION: The 'coaches' table has a 'password' column.
   // The 'type' column will be initialized to CoachType.Pending (1).
   const stmt = db.prepare(
-    "INSERT INTO coaches (username, password, realName, sex, birthYear, campusId, phone, email, avatarPath, comment, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO coaches (username, password, realName, sex, birthYear, campusId, phone, email, idCardNumber, avatarPath, comment, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
   );
   stmt.run(
     coach.username,
@@ -34,6 +34,7 @@ export function addCoach(
     coach.campusId,
     coach.phone,
     coach.email,
+    coach.idCardNumber,
     coach.avatarPath,
     coach.comment,
     CoachType.Pending, // Always set type to Pending
@@ -41,7 +42,7 @@ export function addCoach(
 }
 
 export function getCoachByUsername(username: string): Coach | undefined {
-  const stmt = db.prepare("SELECT id, username, realName, sex, birthYear, campusId, phone, email, avatarPath, comment, type FROM coaches WHERE username = ?");
+  const stmt = db.prepare("SELECT id, username, realName, sex, birthYear, campusId, phone, email, idCardNumber, avatarPath, comment, type FROM coaches WHERE username = ?");
   const row = stmt.get(username);
   if (row) {
     return row as Coach;
@@ -49,7 +50,7 @@ export function getCoachByUsername(username: string): Coach | undefined {
 }
 
 export function getCoachById(id: number): (Coach & { campusName: string }) | undefined {
-  const stmt = db.prepare("SELECT co.id, co.username, co.realName, co.sex, co.birthYear, co.campusId, co.phone, co.email, co.avatarPath, co.comment, co.type, ca.name as campusName FROM coaches co JOIN campuses ca ON co.campusId = ca.id WHERE co.id = ?");
+  const stmt = db.prepare("SELECT co.id, co.username, co.realName, co.sex, co.birthYear, co.campusId, co.phone, co.email, co.idCardNumber, co.avatarPath, co.comment, co.type, ca.name as campusName FROM coaches co JOIN campuses ca ON co.campusId = ca.id WHERE co.id = ?");
   const row = stmt.get(id);
   if (row) {
     return row as (Coach & { campusName: string });
@@ -90,6 +91,7 @@ export function updateCoach(id: number, data: {
   birthYear?: number | null;
   phone?: string;
   email?: string | null;
+  idCardNumber?: string | null;
   comment?: string | null;
 }) {
   let query = "UPDATE coaches SET ";
@@ -116,6 +118,10 @@ export function updateCoach(id: number, data: {
     updates.push("email = ?");
     params.push(data.email);
   }
+  if (data.idCardNumber !== undefined) {
+    updates.push("idCardNumber = ?");
+    params.push(data.idCardNumber);
+  }
   if (data.comment !== undefined) {
     updates.push("comment = ?");
     params.push(data.comment);
@@ -133,7 +139,7 @@ export function updateCoach(id: number, data: {
 }
 
 export function searchCoaches(campusId: number, realName?: string, sex?: number, birthYear?: number): (Coach & { campusName: string })[] {
-  let query = "SELECT co.id, co.username, co.realName, co.sex, co.birthYear, co.campusId, co.phone, co.email, co.avatarPath, co.comment, co.type, ca.name as campusName FROM coaches co JOIN campuses ca ON co.campusId = ca.id WHERE co.campusId = ? AND co.type != ?";
+  let query = "SELECT co.id, co.username, co.realName, co.sex, co.birthYear, co.campusId, co.phone, co.email, co.idCardNumber, co.avatarPath, co.comment, co.type, ca.name as campusName FROM coaches co JOIN campuses ca ON co.campusId = ca.id WHERE co.campusId = ? AND co.type != ?";
   const params: (string | number)[] = [campusId, CoachType.Pending];
 
   if (realName) {

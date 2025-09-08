@@ -16,6 +16,7 @@ export type Coach = {
   campusId: number;
   phone: string;
   email: string | null;
+  idCardNumber: string | null;
   avatarPath: string;
   comment: string;
   type: CoachType;

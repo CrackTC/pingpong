@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS coaches (
   campusId INTEGER NOT NULL,
   phone TEXT NOT NULL,
   email TEXT,
+  idCardNumber TEXT,
   avatarPath TEXT NOT NULL,
   comment TEXT NOT NULL,
   type INTEGER NOT NULL,

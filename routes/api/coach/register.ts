@@ -22,6 +22,7 @@ export function useApiCoachRegister(app: Hono) {
     const email = formData.get("email") != "null"
       ? formData.get("email") as string
       : null;
+    const idCardNumber = formData.get("idCardNumber") as string;
     const comment = formData.get("comment") as string;
     const avatarFile = formData.get("avatar") as File;
 
@@ -64,6 +65,9 @@ export function useApiCoachRegister(app: Hono) {
     }
     if (!phone || !/^\d{11}$/.test(phone)) {
       return c.json({ success: false, message: "Phone must be 11 digits." }, 400);
+    }
+    if (!idCardNumber || !/^\d{18}$/.test(idCardNumber)) {
+      return c.json({ success: false, message: "ID card number must be 18 digits." }, 400);
     }
     if (!comment || comment.trim() === "") {
       return c.json({ success: false, message: "Comment is required." }, 400);
@@ -108,6 +112,7 @@ export function useApiCoachRegister(app: Hono) {
         campusId,
         phone,
         email: email || null,
+        idCardNumber: idCardNumber,
         avatarPath: avatarPath, // Store empty string if no avatar
         comment: comment,
       });

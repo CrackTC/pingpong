@@ -7,6 +7,10 @@ export function useApiStudentEdit(app: Hono) {
     const { realName, sex, birthYear, phone, email } = await c.req.json();
     const claim = await getClaim(c);
 
+    if (phone && !/^\d{11}$/.test(phone)) {
+      return c.json({ message: "Phone must be 11 digits." }, 400);
+    }
+
     try {
       updateStudent(claim.id, { realName, sex, birthYear, phone, email });
       return c.json({ message: "Profile updated successfully" });
