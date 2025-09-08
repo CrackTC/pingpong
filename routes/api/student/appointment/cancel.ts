@@ -45,7 +45,7 @@ export function useApiStudentAppointmentCancel(app: Hono) {
         NotificationTarget.Coach,
         appointment.coachId,
         `Student ${student.realName} has requested to cancel an appointment.`,
-        `/coach/appointments/cancelling`,
+        `/coach/appointment/cancelling`,
         Date.now()
       );
 

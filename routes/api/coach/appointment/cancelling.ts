@@ -2,8 +2,8 @@ import { Hono } from "hono";
 import { getClaim } from "../../../../auth/claim.ts";
 import { getStudentCancellingAppointmentsByCoachId } from "../../../../data/appointmentDao.ts";
 
-export function useApiCoachAppointmentsCancelling(app: Hono) {
-  app.get("/api/coach/appointments/cancelling", async (c) => {
+export function useApiCoachAppointmentCancelling(app: Hono) {
+  app.get("/api/coach/appointment/cancelling", async (c) => {
     const claim = await getClaim(c);
     const coachId = claim.id;
 

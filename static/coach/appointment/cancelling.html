@@ -78,7 +78,7 @@
 
             async function fetchCancellingAppointments() {
                 try {
-                    const response = await fetch("/api/coach/appointments/cancelling");
+                    const response = await fetch("/api/coach/appointment/cancelling");
                     const appointments = await response.json();
 
                     if (response.ok) {
