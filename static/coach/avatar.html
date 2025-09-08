@@ -17,12 +17,17 @@
                         <h3 class="card-title text-center mb-4">Change Coach Avatar</h3>
                         <div id="message" class="alert d-none" role="alert"></div>
                         <form id="change-avatar-form">
-                            <div class="mb-3">
-                                <label for="avatar" class="form-label">New Avatar</label>
-                                <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*" required>
+                            <div class="mb-3 text-center">
+                                <img id="avatar-preview" src="/static/avatars/default.png" alt="Avatar Preview" style="width: 150px; height: 150px; object-fit: fill; border: 1px solid #dee2e6;">
+                                <div class="mt-2">
+                                    <label for="avatar" class="btn btn-primary">Select New Avatar</label>
+                                    <input type="file" class="form-control d-none" id="avatar" name="avatar" accept="image/*" required>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Change Avatar</button>
-                            <a href="/coach/profile" class="btn btn-secondary">Cancel</a>
+                            <div class="text-end mt-3">
+                                <button type="submit" class="btn btn-primary">Change Avatar</button>
+                                <a href="/coach/profile" class="btn btn-secondary">Cancel</a>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -30,11 +35,32 @@
         </div>
     </div>
     <script>
+        const avatarInput = document.getElementById('avatar');
+        const avatarPreview = document.getElementById('avatar-preview');
+        const messageDiv = document.getElementById('message');
+
+        // Fetch current coach data and display avatar
+        fetch('/api/coach/me')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.error && data.avatarPath) {
+                    avatarPreview.src = data.avatarPath;
+                }
+            });
+
+        // Preview selected avatar
+        avatarInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
         document.getElementById('change-avatar-form').addEventListener('submit', async function(event) {
             event.preventDefault();
-
-            const avatarInput = document.getElementById('avatar');
-            const messageDiv = document.getElementById('message');
 
             if (avatarInput.files.length === 0) {
                 messageDiv.textContent = 'Please select an image file.';

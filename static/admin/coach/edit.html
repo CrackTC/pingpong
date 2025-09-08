@@ -16,7 +16,15 @@
                     <div class="card-body">
                         <h3 class="card-title text-center mb-4">Edit Coach Profile</h3>
                         <div id="message" class="alert d-none" role="alert"></div>
-                        <form id="edit-profile-form">
+                        <form id="edit-profile-form" enctype="multipart/form-data">
+                            <form id="edit-profile-form" enctype="multipart/form-data">
+                            <div class="mb-3 text-center">
+                                <img id="avatar-preview" src="/static/avatars/default.png" alt="Avatar Preview" style="width: 150px; height: 150px; object-fit: fill; border: 1px solid #dee2e6;">
+                                <div class="mt-2">
+                                    <label for="avatar" class="btn btn-primary">Change Avatar</label>
+                                    <input type="file" class="form-control d-none" id="avatar" name="avatar" accept="image/*">
+                                </div>
+                            </div>
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" readonly>
@@ -76,6 +84,8 @@
     </div>
     <script>
         const coachId = window.location.pathname.split('/').pop();
+        const avatarPreview = document.getElementById('avatar-preview');
+        const avatarInput = document.getElementById('avatar');
 
         // Fetch current coach data and pre-fill the form
         fetch(`/api/admin/coach/${coachId}`)
@@ -92,37 +102,45 @@
                     document.getElementById('idCardNumber').value = data.idCardNumber || '';
                     document.getElementById('type').value = data.type;
                     document.getElementById('comment').value = data.comment || '';
+                    if (data.avatarPath) {
+                        avatarPreview.src = data.avatarPath;
+                    }
                 }
             });
+
+        // Preview selected avatar
+        avatarInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
 
         document.getElementById('edit-profile-form').addEventListener('submit', async function(event) {
             event.preventDefault();
 
-            const realName = document.getElementById('realName').value;
-            const sex = document.getElementById('sex').value;
-            const birthYear = document.getElementById('birthYear').value;
-            const phone = document.getElementById('phone').value;
-            const email = document.getElementById('email').value;
-            const idCardNumber = document.getElementById('idCardNumber').value;
-            const type = document.getElementById('type').value;
-            const comment = document.getElementById('comment').value;
             const messageDiv = document.getElementById('message');
+            const formData = new FormData();
+
+            formData.append('realName', document.getElementById('realName').value);
+            formData.append('sex', document.getElementById('sex').value);
+            formData.append('birthYear', document.getElementById('birthYear').value);
+            formData.append('phone', document.getElementById('phone').value);
+            formData.append('email', document.getElementById('email').value || '');
+            formData.append('idCardNumber', document.getElementById('idCardNumber').value || '');
+            formData.append('type', document.getElementById('type').value);
+            formData.append('comment', document.getElementById('comment').value || '');
+
+            if (avatarInput.files.length > 0) {
+                formData.append('avatar', avatarInput.files[0]);
+            }
 
             const response = await fetch(`/api/admin/coach/edit/${coachId}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 
-                    realName, 
-                    sex: sex ? parseInt(sex) : null, 
-                    birthYear: birthYear ? parseInt(birthYear) : null, 
-                    phone, 
-                    email: email || null, 
-                    idCardNumber: idCardNumber || null, 
-                    type: type ? parseInt(type) : null,
-                    comment: comment || null 
-                })
+                body: formData
             });
 
             const data = await response.json();
