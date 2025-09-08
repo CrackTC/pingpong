@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { getClaim } from "../../../auth/claim.ts";
-import { updateStudent } from "../../../data/studentDao.ts";
+import { updateStudent, getStudentById, getStudentByPhoneAndCampus } from "../../../data/studentDao.ts";
 
 export function useApiStudentEdit(app: Hono) {
   app.post("/api/student/edit", async (c) => {
@@ -9,6 +9,23 @@ export function useApiStudentEdit(app: Hono) {
 
     if (phone && !/^\d{11}$/.test(phone)) {
       return c.json({ message: "Phone must be 11 digits." }, 400);
+    }
+
+    if (!claim || !claim.id) {
+      return c.json({ message: "Unauthorized" }, 401);
+    }
+
+    const currentStudent = getStudentById(claim.id);
+    if (!currentStudent) {
+      return c.json({ message: "Student not found" }, 404);
+    }
+
+    // Check for duplicate phone number within the same campus, excluding the current student
+    if (phone && phone !== currentStudent.phone) { // Only check if phone is provided and changed
+      const existingStudentWithPhone = getStudentByPhoneAndCampus(phone, currentStudent.campusId, currentStudent.id);
+      if (existingStudentWithPhone) {
+        return c.json({ message: "Phone number already registered in this campus." }, 409);
+      }
     }
 
     try {

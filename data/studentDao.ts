@@ -102,3 +102,20 @@ export function updateStudent(id: number, data: {
   const stmt = db.prepare(query);
   stmt.run(...params);
 }
+
+export function getStudentByPhoneAndCampus(phone: string, campusId: number, excludeStudentId?: number): Student | undefined {
+  let query = "SELECT id, username, realName, sex, birthYear, campusId, phone, email, balance FROM students WHERE phone = ? AND campusId = ?";
+  const params: (string | number | null)[] = [phone, campusId];
+
+  if (excludeStudentId !== undefined) {
+    query += " AND id != ?";
+    params.push(excludeStudentId);
+  }
+
+  const stmt = db.prepare(query);
+  const row = stmt.get(...params);
+  if (row) {
+    return row as Student;
+  }
+  return undefined;
+}

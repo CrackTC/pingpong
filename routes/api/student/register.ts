@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { addStudent, getStudentByUsername } from "../../../data/studentDao.ts";
+import { addStudent, getStudentByUsername, getStudentByPhoneAndCampus } from "../../../data/studentDao.ts";
 import { getCampusById } from "../../../data/campusDao.ts";
 import { Sex } from "../../../models/sex.ts";
 import { validatePassword } from "../../../utils.ts";
@@ -37,6 +37,12 @@ export function useApiStudentRegister(app: Hono) {
     }
     if (!phone || typeof phone !== "string" || !/^\d{11}$/.test(phone)) {
       return c.json({ success: false, message: "Phone must be 11 digits." }, 400);
+    }
+
+    // Check if phone number already exists in the same campus
+    const existingStudentWithPhone = getStudentByPhoneAndCampus(phone, campusId);
+    if (existingStudentWithPhone) {
+      return c.json({ success: false, message: "Phone number already registered in this campus." }, 409);
     }
 
     // Check if username already exists
