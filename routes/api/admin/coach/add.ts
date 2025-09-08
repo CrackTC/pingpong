@@ -3,37 +3,35 @@ import {
   addCoach,
   getCoachByUsername,
   searchCoachesByIdCardOrPhone,
-} from "../../../data/coachDao.ts";
-import { getCampusById } from "../../../data/campusDao.ts";
-import { Sex } from "../../../models/sex.ts";
-import { validatePassword } from "../../../utils.ts";
+} from "../../../../data/coachDao.ts";
+import { getCampusById } from "../../../../data/campusDao.ts";
+import { Sex } from "../../../../models/sex.ts";
+import { validatePassword } from "../../../../utils.ts";
 
-export function useApiCoachRegister(app: Hono) {
-  app.post("/api/coach/register", async (c) => {
+export function useApiAdminCoachAdd(app: Hono) {
+  app.post("/api/admin/coach/add", async (c) => {
     const formData = await c.req.formData();
-
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
     const realName = formData.get("realName") as string;
-    const sex = formData.get("sex") != "null"
+    const sex = formData.get("sex")
       ? parseInt(formData.get("sex") as string)
       : null;
-    const birthYear = formData.get("birthYear") != "null"
+    const birthYear = formData.get("birthYear")
       ? parseInt(formData.get("birthYear") as string)
       : null;
     const campusId = parseInt(formData.get("campusId") as string);
     const phone = formData.get("phone") as string;
-    const email = formData.get("email") != "null"
-      ? formData.get("email") as string
-      : null;
+    const email = formData.get("email") as string;
     const idCardNumber = formData.get("idCardNumber") as string;
     const comment = formData.get("comment") as string;
     const avatarFile = formData.get("avatar") as File;
 
     // Basic validation
-    if (!username || username.trim() === "") {
+    if (!username || typeof username !== "string" || username.trim() === "") {
       return c.json({ success: false, message: "Username is required." }, 400);
     }
+
     if (!password || password.trim() === "") {
       return c.json({ success: false, message: "Password is required." }, 400);
     }
@@ -43,20 +41,21 @@ export function useApiCoachRegister(app: Hono) {
       return c.json({ success: false, message: passwordError }, 400);
     }
 
-    if (!realName || realName.trim() === "") {
+    if (!realName || typeof realName !== "string" || realName.trim() === "") {
       return c.json({ success: false, message: "Real Name is required." }, 400);
     }
-    // Sex is optional
-    if (sex !== null && sex !== undefined && (isNaN(sex) || !(sex in Sex))) {
+    if (
+      sex !== null && sex !== undefined &&
+      (typeof sex !== "number" || !(sex in Sex))
+    ) {
       return c.json({
         success: false,
         message: "Valid Sex is required if provided.",
       }, 400);
     }
-    // Birth Year is optional
     if (
       birthYear !== null && birthYear !== undefined &&
-      (isNaN(birthYear) || birthYear < 1900 ||
+      (typeof birthYear !== "number" || birthYear < 1900 ||
         birthYear > new Date().getFullYear())
     ) {
       return c.json({
@@ -79,9 +78,6 @@ export function useApiCoachRegister(app: Hono) {
         message: "ID card number must be 18 digits.",
       }, 400);
     }
-    if (!comment || comment.trim() === "") {
-      return c.json({ success: false, message: "Comment is required." }, 400);
-    }
 
     // Check if username already exists
     const existingCoach = getCoachByUsername(username);
@@ -93,10 +89,9 @@ export function useApiCoachRegister(app: Hono) {
     }
 
     // Check if phone or ID card number already exists
-    const existingCoachByPhoneOrIdCard = searchCoachesByIdCardOrPhone(
-      phone,
-      campusId,
-    ) || searchCoachesByIdCardOrPhone(idCardNumber, campusId);
+    const existingCoachByPhoneOrIdCard =
+      searchCoachesByIdCardOrPhone(phone, campusId) ||
+      searchCoachesByIdCardOrPhone(idCardNumber, campusId);
     if (existingCoachByPhoneOrIdCard) {
       return c.json(
         {
@@ -123,8 +118,6 @@ export function useApiCoachRegister(app: Hono) {
         `./${uploadsDir}/${filename}`,
         new Uint8Array(await avatarFile.arrayBuffer()),
       );
-    } else {
-      return c.json({ success: false, message: "Avatar is required." }, 400);
     }
 
     try {
@@ -138,12 +131,12 @@ export function useApiCoachRegister(app: Hono) {
         phone,
         email: email || null,
         idCardNumber: idCardNumber,
-        avatarPath: avatarPath, // Store empty string if no avatar
+        avatarPath: avatarPath,
         comment: comment,
       });
       return c.json({ success: true });
     } catch (error) {
-      console.error("Error registering coach:", error);
+      console.error("Error adding coach:", error);
       return c.json({
         success: false,
         message: "An unexpected error occurred.",

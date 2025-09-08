@@ -102,6 +102,8 @@ import { useApiAdminCoachSearch } from "./routes/api/admin/coach/search.ts";
 import { useAdminCoachSearch } from "./routes/admin/coach/search.ts";
 import { useAdminCoachEdit } from "./routes/admin/coach/edit.ts";
 import { useApiAdminCoachEdit } from "./routes/api/admin/coach/edit.ts";
+import { useAdminCoachAdd } from "./routes/admin/coach/add.ts";
+import { useApiAdminCoachAdd } from "./routes/api/admin/coach/add.ts";
 
 const app = new Hono();
 
@@ -215,6 +217,8 @@ useApiAdminCoachSearch(app);
 useAdminCoachSearch(app);
 useAdminCoachEdit(app);
 useApiAdminCoachEdit(app);
+useAdminCoachAdd(app);
+useApiAdminCoachAdd(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

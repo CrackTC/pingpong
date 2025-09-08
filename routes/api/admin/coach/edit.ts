@@ -1,15 +1,24 @@
 import { Hono } from "hono";
-import { updateCoach, getCoachById } from "../../../../data/coachDao.ts";
+import { getCoachById, updateCoach } from "../../../../data/coachDao.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
 
 export function useApiAdminCoachEdit(app: Hono) {
   app.post("/api/admin/coach/edit/:id", async (c) => {
     const id = parseInt(c.req.param("id"));
-    const { realName, sex, birthYear, phone, email, idCardNumber, comment, type } = await c.req.json();
+    const {
+      realName,
+      sex,
+      birthYear,
+      phone,
+      email,
+      idCardNumber,
+      comment,
+      type,
+    } = await c.req.json();
 
     if (isNaN(id)) {
-        return c.json({ message: "Invalid coach ID." }, 400);
+      return c.json({ message: "Invalid coach ID." }, 400);
     }
 
     if (phone && !/^\d{11}$/.test(phone)) {
@@ -21,8 +30,17 @@ export function useApiAdminCoachEdit(app: Hono) {
     }
 
     try {
-      updateCoach(id, { realName, sex, birthYear, phone, email, idCardNumber, comment, type });
-      
+      updateCoach(id, {
+        realName,
+        sex,
+        birthYear,
+        phone,
+        email,
+        idCardNumber,
+        comment,
+        type,
+      });
+
       const coach = getCoachById(id);
       if (coach) {
         addNotification(
@@ -31,7 +49,7 @@ export function useApiAdminCoachEdit(app: Hono) {
           id,
           "Your profile has been updated by an administrator.",
           "/coach/profile",
-          Date.now()
+          Date.now(),
         );
       }
 
@@ -42,20 +60,20 @@ export function useApiAdminCoachEdit(app: Hono) {
     }
   });
 
-  app.get("/api/admin/coach/:id", async (c) => {
+  app.get("/api/admin/coach/:id", (c) => {
     const id = parseInt(c.req.param("id"));
     if (isNaN(id)) {
-        return c.json({ message: "Invalid coach ID." }, 400);
+      return c.json({ message: "Invalid coach ID." }, 400);
     }
     try {
-        const coach = getCoachById(id);
-        if (!coach) {
-            return c.json({ message: "Coach not found." }, 404);
-        }
-        return c.json(coach);
+      const coach = getCoachById(id);
+      if (!coach) {
+        return c.json({ message: "Coach not found." }, 404);
+      }
+      return c.json(coach);
     } catch (error) {
-        console.error("Error fetching coach data:", error);
-        return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("Error fetching coach data:", error);
+      return c.json({ message: "An unexpected error occurred." }, 500);
     }
   });
 }
