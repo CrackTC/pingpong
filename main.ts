@@ -98,6 +98,8 @@ import { useApiStudentAppointmentCancelling } from "./routes/api/student/appoint
 import { useStudentAppointmentCancelling } from "./routes/student/appointment/cancelling.ts";
 import { useApiCoachApproveCancellation } from "./routes/api/coach/appointment/cancel/approve.ts";
 import { useApiStudentApproveCancellation } from "./routes/api/student/appointment/cancel/approve.ts";
+import { useApiAdminCoachSearch } from "./routes/api/admin/coach/search.ts";
+import { useAdminCoachSearch } from "./routes/admin/coach/search.ts";
 
 const app = new Hono();
 
@@ -207,6 +209,8 @@ useApiStudentAppointmentCancelling(app);
 useStudentAppointmentCancelling(app);
 useApiCoachApproveCancellation(app);
 useApiStudentApproveCancellation(app);
+useApiAdminCoachSearch(app);
+useAdminCoachSearch(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

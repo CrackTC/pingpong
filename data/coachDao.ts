@@ -158,3 +158,26 @@ export function searchCoaches(campusId: number, realName?: string, sex?: number,
   const stmt = db.prepare(query);
   return stmt.all(...params) as (Coach & { campusName: string })[];
 }
+
+export function searchCoachesByIdCardOrPhone(query: string, campusId?: number): (Coach & { campusName: string })[] {
+  let sql = `
+    SELECT
+      co.*,
+      ca.name as campusName
+    FROM
+      coaches co
+    JOIN
+      campuses ca ON co.campusId = ca.id
+    WHERE
+      (co.idCardNumber = ? OR co.phone = ?)
+  `;
+  const params: (string | number)[] = [query, query];
+
+  if (campusId !== undefined) {
+    sql += " AND co.campusId = ?";
+    params.push(campusId);
+  }
+
+  const stmt = db.prepare(sql);
+  return stmt.all(...params) as (Coach & { campusName: string })[];
+}

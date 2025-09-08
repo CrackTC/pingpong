@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Search Coach</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body class="bg-light">
+        <div class="container">
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">
+                                Search Coach
+                            </h3>
+                            <div
+                                id="message-area"
+                                class="alert d-none"
+                                role="alert"
+                            ></div>
+                            <form id="search-form">
+                                <div class="mb-3">
+                                    <label for="search-query" class="form-label"
+                                        >ID Card Number or Phone Number</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="search-query"
+                                        name="query"
+                                        required
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary w-100"
+                                >
+                                    Search
+                                </button>
+                            </form>
+
+                            <div id="results-list" class="mt-4">
+                                <!-- Search results will be loaded here -->
+                            </div>
+
+                            <div class="d-grid gap-2 mt-3">
+                                <a
+                                    href="/admin/home"
+                                    class="btn btn-secondary"
+                                    >Back to Home</a
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="coachDetailsModal" tabindex="-1" aria-labelledby="coachDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="coachDetailsModalLabel">Coach Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="coachDetailsModalBody">
+                        <!-- Coach details will be loaded here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"
+        ></script>
+        <script>
+            const messageArea = document.getElementById("message-area");
+            const resultsListDiv = document.getElementById("results-list");
+
+            function displayMessage(message, type) {
+                messageArea.textContent = message;
+                messageArea.className = `alert alert-${type}`;
+                messageArea.classList.remove("d-none");
+            }
+
+            function getSexString(sex) {
+                switch (sex) {
+                    case 1: return "Male";
+                    case 2: return "Female";
+                    case 3: return "Other";
+                    default: return "Not specified";
+                }
+            }
+
+            function getCoachTypeString(type) {
+                switch (type) {
+                    case 1: return "Pending";
+                    case 2: return "Junior";
+                    case 3: return "Intermediate";
+                    case 4: return "Senior";
+                    default: return "Unknown";
+                }
+            }
+
+            document.getElementById("search-form").addEventListener("submit", async function (event) {
+                event.preventDefault();
+                const query = document.getElementById("search-query").value;
+
+                try {
+                    const response = await fetch("/api/admin/coach/search", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ query }),
+                    });
+                    const coaches = await response.json();
+
+                    if (response.ok) {
+                        if (coaches.length > 0) {
+                            let resultsHtml = '<table class="table table-striped"><thead><tr><th>Real Name</th><th>Actions</th></tr></thead><tbody>';
+                            coaches.forEach((c) => {
+                                resultsHtml += `<tr><td>${c.realName}</td><td><button class="btn btn-primary btn-sm details-btn" data-coach-id="${c.id}">Details</button></td></tr>`;
+                            });
+                            resultsHtml += "</tbody></table>";
+                            resultsListDiv.innerHTML = resultsHtml;
+
+                            document.querySelectorAll('.details-btn').forEach(button => {
+                                button.addEventListener('click', (event) => {
+                                    const coachId = event.currentTarget.dataset.coachId;
+                                    const coach = coaches.find(c => c.id == coachId);
+                                    if (coach) {
+                                        // Populate and show modal
+                                        const modalBody = document.getElementById('coachDetailsModalBody');
+                                        modalBody.innerHTML = `
+                                            <p class="text-center"><img src="${coach.avatarPath}" alt="Avatar" width="100" height="100"></p>
+                                            <p><strong>Username:</strong> ${coach.username}</p>
+                                            <p><strong>Real Name:</strong> ${coach.realName}</p>
+                                            <p><strong>Sex:</strong> ${getSexString(coach.sex)}</p>
+                                            <p><strong>Birth Year:</strong> ${coach.birthYear || "Not specified"}</p>
+                                            <p><strong>Campus:</strong> ${coach.campusName}</p>
+                                            <p><strong>Phone:</strong> ${coach.phone}</p>
+                                            <p><strong>Email:</strong> ${coach.email || "Not specified"}</p>
+                                            <p><strong>ID Card Number:</strong> ${coach.idCardNumber || "Not specified"}</p>
+                                            <p><strong>Type:</strong> ${getCoachTypeString(coach.type)}</p>
+                                            <p><strong>Comment:</strong> ${coach.comment || "Not specified"}</p>
+                                        `;
+                                        const coachDetailsModal = new bootstrap.Modal(document.getElementById('coachDetailsModal'));
+                                        coachDetailsModal.show();
+                                    }
+                                });
+                            });
+                        } else {
+                            resultsListDiv.innerHTML = '<p class="text-center">No coaches found.</p>';
+                        }
+                    } else {
+                        displayMessage(
+                            coaches.message || "Failed to search coaches.",
+                            "danger",
+                        );
+                    }
+                } catch (error) {
+                    displayMessage(
+                        "An unexpected error occurred while searching coaches.",
+                        "danger",
+                    );
+                }
+            });
+        </script>
+    </body>
+</html>
