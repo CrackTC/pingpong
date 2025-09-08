@@ -6,6 +6,7 @@ import {
 } from "../../../../data/coachDao.ts";
 import { getCampusById } from "../../../../data/campusDao.ts";
 import { Sex } from "../../../../models/sex.ts";
+import { CoachType } from "../../../../models/coach.ts"; // Import CoachType
 import { validatePassword } from "../../../../utils.ts";
 
 export function useApiAdminCoachAdd(app: Hono) {
@@ -26,6 +27,12 @@ export function useApiAdminCoachAdd(app: Hono) {
     const idCardNumber = formData.get("idCardNumber") as string;
     const comment = formData.get("comment") as string;
     const avatarFile = formData.get("avatar") as File;
+    const type = parseInt(formData.get("type") as string);
+
+    // Validate coach type
+    if (isNaN(type) || !(type in CoachType) || type === CoachType.Pending) {
+      return c.json({ success: false, message: "Invalid coach type provided." }, 400);
+    }
 
     // Basic validation
     if (!username || typeof username !== "string" || username.trim() === "") {
@@ -134,6 +141,7 @@ export function useApiAdminCoachAdd(app: Hono) {
         idCardNumber: idCardNumber,
         avatarPath: avatarPath,
         comment: comment,
+        type: type, // Pass the selected type
       });
       return c.json({ success: true });
     } catch (error) {

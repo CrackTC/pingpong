@@ -53,6 +53,14 @@
                                 <select class="form-select" id="campusId" name="campusId" required></select>
                             </div>
                             <div class="mb-3">
+                                <label for="type" class="form-label">Coach Type</label>
+                                <select class="form-select" id="type" name="type">
+                                    <option value="2">Junior</option>
+                                    <option value="3">Intermediate</option>
+                                    <option value="4">Senior</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
                                 <label for="phone" class="form-label">Phone</label>
                                 <input type="text" class="form-control" id="phone" name="phone" required>
                             </div>
@@ -118,6 +126,7 @@
             const idCardNumber = document.getElementById('idCardNumber').value;
             const comment = document.getElementById('comment').value;
             const avatarFile = document.getElementById('avatar').files[0]; // Get the avatar file
+            const type = document.getElementById('type').value; // Get the type value
             const messageDiv = document.getElementById('message');
 
             const formData = new FormData(); // Use FormData for file upload
@@ -131,6 +140,7 @@
             formData.append('email', email);
             formData.append('idCardNumber', idCardNumber);
             formData.append('comment', comment);
+            formData.append('type', type); // Append the type to formData
             if (avatarFile) {
                 formData.append('avatar', avatarFile);
             }
