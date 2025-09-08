@@ -17,6 +17,13 @@
                         <h3 class="card-title text-center mb-4">Add New Coach</h3>
                         <div id="message" class="alert d-none" role="alert"></div>
                         <form id="add-coach-form" enctype="multipart/form-data">
+                            <div class="mb-3 text-center">
+                                <img id="avatar-preview" src="" alt="Avatar Preview" class="d-none" style="width: 150px; height: 150px; object-fit: fill; border: 1px solid #dee2e6;">
+                                <div class="mt-2">
+                                    <label for="avatar" class="btn btn-primary">Select Avatar</label>
+                                    <input type="file" class="form-control d-none" id="avatar" name="avatar" accept="image/*">
+                                </div>
+                            </div>
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" required>
@@ -61,10 +68,6 @@
                                 <label for="comment" class="form-label">Comment</label>
                                 <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
                             </div>
-                            <div class="mb-3">
-                                <label for="avatar" class="form-label">Avatar</label>
-                                <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*">
-                            </div>
                             <button type="submit" class="btn btn-primary">Add Coach</button>
                             <a href="/admin/home" class="btn btn-secondary">Cancel</a>
                         </form>
@@ -85,6 +88,21 @@
                 campusSelect.appendChild(option);
             }
         }
+
+        const avatarInput = document.getElementById('avatar');
+        const avatarPreview = document.getElementById('avatar-preview');
+
+        // Preview selected avatar
+        avatarInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarPreview.src = e.target.result;
+                    avatarPreview.classList.remove('d-none');
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
 
         document.getElementById('add-coach-form').addEventListener('submit', async function(event) {
             event.preventDefault();

@@ -20,6 +20,13 @@
                         </h3>
                         <div id="message-area" class="alert d-none" role="alert"></div>
                         <form id="register-form" enctype="multipart/form-data">
+                            <div class="mb-3 text-center">
+                                <img id="avatar-preview" src="" alt="Avatar Preview" class="d-none" style="width: 150px; height: 150px; object-fit: fill; border: 1px solid #dee2e6;">
+                                <div class="mt-2">
+                                    <label for="avatar" class="btn btn-primary">Select Avatar</label>
+                                    <input type="file" class="form-control d-none" id="avatar" name="avatar" accept="image/*" required />
+                                </div>
+                            </div>
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" required />
@@ -68,11 +75,6 @@
                                     required />
                             </div>
                             <div class="mb-3">
-                                <label for="avatar" class="form-label">Avatar</label>
-                                <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*"
-                                    required />
-                            </div>
-                            <div class="mb-3">
                                 <label for="comment" class="form-label">Comment</label>
                                 <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
                             </div>
@@ -91,6 +93,20 @@
     <script>
         const messageArea = document.getElementById("message-area");
         const passwordInput = document.getElementById("password");
+        const avatarInput = document.getElementById("avatar");
+        const avatarPreview = document.getElementById("avatar-preview");
+
+        // Preview selected avatar
+        avatarInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarPreview.src = e.target.result;
+                    avatarPreview.classList.remove('d-none');
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
 
         function displayMessage(message, type) {
             messageArea.textContent = message;

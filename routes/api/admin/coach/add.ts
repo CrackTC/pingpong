@@ -89,10 +89,11 @@ export function useApiAdminCoachAdd(app: Hono) {
     }
 
     // Check if phone or ID card number already exists
-    const existingCoachByPhoneOrIdCard =
-      searchCoachesByIdCardOrPhone(phone, campusId) ||
-      searchCoachesByIdCardOrPhone(idCardNumber, campusId);
-    if (existingCoachByPhoneOrIdCard) {
+    let existingCoachByPhoneOrIdCard = searchCoachesByIdCardOrPhone(phone, campusId)
+    if (existingCoachByPhoneOrIdCard.length == 0) {
+      existingCoachByPhoneOrIdCard = searchCoachesByIdCardOrPhone(idCardNumber, campusId)
+    }
+    if (existingCoachByPhoneOrIdCard.length > 0) {
       return c.json(
         {
           success: false,

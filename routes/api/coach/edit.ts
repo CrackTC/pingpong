@@ -26,9 +26,14 @@ export function useApiCoachEdit(app: Hono) {
     }
 
     // Check for duplicate phone or ID card number
-    const existingCoach = searchCoachesByIdCardOrPhone(phone, coach.campusId) ||
-      searchCoachesByIdCardOrPhone(idCardNumber, coach.campusId);
-    if (existingCoach) {
+    let existingCoach = searchCoachesByIdCardOrPhone(phone, coach.campusId);
+    if (existingCoach.length == 0) {
+      existingCoach = searchCoachesByIdCardOrPhone(
+        idCardNumber,
+        coach.campusId,
+      );
+    }
+    if (existingCoach.length > 0) {
       return c.json({
         message: "Phone number or ID card number already in use.",
       }, 409);

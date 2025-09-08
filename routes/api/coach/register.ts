@@ -93,11 +93,18 @@ export function useApiCoachRegister(app: Hono) {
     }
 
     // Check if phone or ID card number already exists
-    const existingCoachByPhoneOrIdCard = searchCoachesByIdCardOrPhone(
+    let existingCoachByPhoneOrIdCard = searchCoachesByIdCardOrPhone(
       phone,
       campusId,
-    ) || searchCoachesByIdCardOrPhone(idCardNumber, campusId);
-    if (existingCoachByPhoneOrIdCard) {
+    );
+    if (existingCoachByPhoneOrIdCard.length == 0) {
+      existingCoachByPhoneOrIdCard = searchCoachesByIdCardOrPhone(
+        idCardNumber,
+        campusId,
+      );
+    }
+
+    if (existingCoachByPhoneOrIdCard.length > 0) {
       return c.json(
         {
           success: false,
