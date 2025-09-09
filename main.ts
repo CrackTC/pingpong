@@ -104,6 +104,13 @@ import { useAdminCoachEdit } from "./routes/admin/coach/edit.ts";
 import { useApiAdminCoachEdit } from "./routes/api/admin/coach/edit.ts";
 import { useAdminCoachAdd } from "./routes/admin/coach/add.ts";
 import { useApiAdminCoachAdd } from "./routes/api/admin/coach/add.ts";
+import { useApiAdminStudentSearch } from "./routes/api/admin/student/search.ts";
+import { useAdminStudentSearch } from "./routes/admin/student/search.ts";
+import { useApiAdminStudentAdd } from "./routes/api/admin/student/add.ts";
+import { useAdminStudentAdd } from "./routes/admin/student/add.ts";
+import { useApiAdminStudentEdit } from "./routes/api/admin/student/edit.ts";
+import { useAdminStudentEdit } from "./routes/admin/student/edit.ts";
+import { useApiAdminStudentGet } from "./routes/api/admin/student/get.ts";
 
 const app = new Hono();
 
@@ -219,6 +226,13 @@ useAdminCoachEdit(app);
 useApiAdminCoachEdit(app);
 useAdminCoachAdd(app);
 useApiAdminCoachAdd(app);
+useApiAdminStudentSearch(app);
+useAdminStudentSearch(app);
+useApiAdminStudentAdd(app);
+useAdminStudentAdd(app);
+useApiAdminStudentEdit(app);
+useAdminStudentEdit(app);
+useApiAdminStudentGet(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

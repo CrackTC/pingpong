@@ -119,3 +119,26 @@ export function getStudentByPhoneAndCampus(phone: string, campusId: number, excl
   }
   return undefined;
 }
+
+export function searchStudentsByPhone(phone: string, campusId?: number): (Student & { campusName: string })[] {
+  let query = `
+    SELECT
+      s.*,
+      c.name as campusName
+    FROM
+      students s
+    JOIN
+      campuses c ON s.campusId = c.id
+    WHERE
+      s.phone = ?
+  `;
+  const params: (string | number)[] = [phone];
+
+  if (campusId !== undefined) {
+    query += " AND s.campusId = ?";
+    params.push(campusId);
+  }
+
+  const stmt = db.prepare(query);
+  return stmt.all(...params) as (Student & { campusName: string })[];
+}
