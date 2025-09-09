@@ -8,8 +8,8 @@ export function useApiStudentRecharge(app: Hono) {
     const { amount } = await c.req.json();
     const claim = await getClaim(c);
 
-    if (!amount || typeof amount !== "number" || amount <= 0) {
-      return c.json({ message: "Invalid amount." }, 400);
+    if (!amount || !Number.isInteger(amount) || amount < 10 || amount > 10000) {
+      return c.json({ message: "Invalid amount. Amount must be an integer between 10 and 10000." }, 400);
     }
 
     const orderNumber = `${Date.now()}${claim.id}`;
