@@ -111,6 +111,10 @@ import { useAdminStudentAdd } from "./routes/admin/student/add.ts";
 import { useApiAdminStudentEdit } from "./routes/api/admin/student/edit.ts";
 import { useAdminStudentEdit } from "./routes/admin/student/edit.ts";
 import { useApiAdminStudentGet } from "./routes/api/admin/student/get.ts";
+import { useStudentRecharge } from "./routes/student/recharge.ts";
+import { useApiStudentRecharge } from "./routes/api/student/recharge.ts";
+import { usePayment } from "./routes/payment.ts";
+import { useApiPayment } from "./routes/api/payment.ts";
 
 const app = new Hono();
 
@@ -233,6 +237,10 @@ useAdminStudentAdd(app);
 useApiAdminStudentEdit(app);
 useAdminStudentEdit(app);
 useApiAdminStudentGet(app);
+useStudentRecharge(app);
+useApiStudentRecharge(app);
+usePayment(app);
+useApiPayment(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

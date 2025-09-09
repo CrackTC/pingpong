@@ -142,3 +142,8 @@ export function searchStudentsByPhone(phone: string, campusId?: number): (Studen
   const stmt = db.prepare(query);
   return stmt.all(...params) as (Student & { campusName: string })[];
 }
+
+export function updateStudentBalance(id: number, amount: number): void {
+  const stmt = db.prepare("UPDATE students SET balance = balance + ? WHERE id = ?");
+  stmt.run(amount, id);
+}

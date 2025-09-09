@@ -1,13 +1,13 @@
 import { Hono } from "hono";
 import {
-  updateStudent,
   getStudentById,
   getStudentByPhoneAndCampus,
+  updateStudent,
 } from "../../../../data/studentDao.ts";
-import { Sex } from "../../../../models/sex.ts";
 import { getClaim } from "../../../../auth/claim.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
+import { getAdminById } from "../../../../data/adminDao.ts";
 
 export function useApiAdminStudentEdit(app: Hono) {
   app.post("/api/admin/student/edit/:id", async (c) => {
@@ -16,10 +16,16 @@ export function useApiAdminStudentEdit(app: Hono) {
     const claim = await getClaim(c);
 
     const realName = formData.get("realName") as string;
-    const sex = formData.get("sex") != "null" ? parseInt(formData.get("sex") as string) : null;
-    const birthYear = formData.get("birthYear") != "null" ? parseInt(formData.get("birthYear") as string) : null;
+    const sex = formData.get("sex") != "null"
+      ? parseInt(formData.get("sex") as string)
+      : null;
+    const birthYear = formData.get("birthYear") != "null"
+      ? parseInt(formData.get("birthYear") as string)
+      : null;
     const phone = formData.get("phone") as string;
-    const email = formData.get("email") != "null" ? formData.get("email") as string : null;
+    const email = formData.get("email") != "null"
+      ? formData.get("email") as string
+      : null;
 
     if (isNaN(id)) {
       return c.json({ message: "Invalid student ID." }, 400);
@@ -32,8 +38,11 @@ export function useApiAdminStudentEdit(app: Hono) {
     }
 
     // Authorization check
-    if (claim.type === "admin" && claim.campusId !== student.campusId) {
-      return c.json({ success: false, message: "Unauthorized" }, 401);
+    if (claim.type === "admin") {
+      const admin = getAdminById(claim.id);
+      if (admin?.campus !== student.campusId) {
+        return c.json({ success: false, message: "Unauthorized" }, 401);
+      }
     }
 
     if (phone && !/^\d{11}$/.test(phone)) {
@@ -41,12 +50,19 @@ export function useApiAdminStudentEdit(app: Hono) {
     }
 
     // Check if phone number already exists in the same campus for another student
-    const existingStudentByPhone = getStudentByPhoneAndCampus(phone, student.campusId, id);
+    const existingStudentByPhone = getStudentByPhoneAndCampus(
+      phone,
+      student.campusId,
+      id,
+    );
     if (existingStudentByPhone) {
-        return c.json(
-            { success: false, message: "Phone number already registered in this campus." },
-            409,
-        );
+      return c.json(
+        {
+          success: false,
+          message: "Phone number already registered in this campus.",
+        },
+        409,
+      );
     }
 
     try {

@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { getStudentById } from "../../../../data/studentDao.ts";
 import { getClaim } from "../../../../auth/claim.ts";
+import { getAdminById } from "../../../../data/adminDao.ts";
 
 export function useApiAdminStudentGet(app: Hono) {
   app.get("/api/admin/student/:id", async (c) => {
@@ -8,7 +9,10 @@ export function useApiAdminStudentGet(app: Hono) {
     const claim = await getClaim(c);
 
     if (!id) {
-      return c.json({ success: false, message: "Student ID is required." }, 400);
+      return c.json(
+        { success: false, message: "Student ID is required." },
+        400,
+      );
     }
 
     const student = getStudentById(parseInt(id));
@@ -16,8 +20,11 @@ export function useApiAdminStudentGet(app: Hono) {
       return c.json({ success: false, message: "Student not found." }, 404);
     }
 
-    if (claim.type === "admin" && claim.campusId !== student.campusId) {
-      return c.json({ success: false, message: "Unauthorized" }, 401);
+    if (claim.type === "admin") {
+      const admin = getAdminById(claim.id);
+      if (admin?.campus !== student.campusId) {
+        return c.json({ success: false, message: "Unauthorized" }, 401);
+      }
     }
 
     return c.json(student);

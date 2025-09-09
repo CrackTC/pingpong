@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Recharge</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+</head>
+
+<body class="bg-light">
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-center mb-4">Recharge</h3>
+                        <div id="message" class="alert d-none" role="alert"></div>
+                        <form id="recharge-form">
+                            <div class="mb-3">
+                                <label for="amount" class="form-label">Amount</label>
+                                <input type="number" class="form-control" id="amount" name="amount" min="1" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Submit</button>
+                        </form>
+                        <div id="qr-code-container" class="text-center mt-4 d-none">
+                            <p>Please scan the QR code to pay:</p>
+                            <div id="qr-code"></div>
+                            <p id="payment-url" class="mt-2"></p>
+                        </div>
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="/student/home" class="btn btn-secondary">Back to Home</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.js"></script>
+    <script>
+        document.getElementById('recharge-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const amount = document.getElementById('amount').value;
+            const messageDiv = document.getElementById('message');
+
+            const response = await fetch('/api/student/recharge', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    amount: parseInt(amount)
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                messageDiv.textContent = "Order created successfully!";
+                messageDiv.className = 'alert alert-success';
+                messageDiv.classList.remove('d-none');
+
+                const qrCodeContainer = document.getElementById('qr-code-container');
+                qrCodeContainer.classList.remove('d-none');
+
+                const paymentUrl = `${window.location.origin}/payment/${data.orderNumber}`;
+                const qrCodeDiv = document.getElementById('qr-code');
+                qrCodeDiv.innerHTML = ''; // Clear previous QR code
+                const qr = qrcode(0, 'L');
+                qr.addData(paymentUrl);
+                qr.make();
+                qrCodeDiv.innerHTML = qr.createImgTag(4);
+
+                const paymentUrlP = document.getElementById('payment-url');
+                paymentUrlP.innerHTML = `Or visit: <a href="${paymentUrl}" target="_blank">${paymentUrl}</a>`;
+
+            } else {
+                messageDiv.textContent = data.message;
+                messageDiv.className = 'alert alert-danger';
+                messageDiv.classList.remove('d-none');
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+</html>

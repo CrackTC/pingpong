@@ -182,3 +182,14 @@ CREATE TABLE IF NOT EXISTS notifications (
   FOREIGN KEY (campusId) REFERENCES campuses(id)
 )
 `);
+
+db.exec(`
+CREATE TABLE IF NOT EXISTS recharge_orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  orderNumber TEXT NOT NULL UNIQUE,
+  studentId INTEGER NOT NULL,
+  amount INTEGER NOT NULL,
+  status INTEGER NOT NULL,
+  FOREIGN KEY (studentId) REFERENCES students(id)
+)
+`);
