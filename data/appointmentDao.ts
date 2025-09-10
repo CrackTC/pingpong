@@ -174,6 +174,8 @@ export function getAppointmentById(id: number):
     startMinute: number;
     endHour: number;
     endMinute: number;
+    coachName: string;
+    tableName: string;
   })
   | undefined {
   const stmt = db.prepare(`
@@ -183,11 +185,17 @@ export function getAppointmentById(id: number):
       ts.startHour,
       ts.startMinute,
       ts.endHour,
-      ts.endMinute
+      ts.endMinute,
+      c.realName as coachName,
+      t.name as tableName
     FROM
       appointments a
     JOIN
       timeslots ts ON a.timeslotId = ts.id
+    JOIN
+      coaches c ON a.coachId = c.id
+    JOIN
+      tables t ON a.tableId = t.id
     WHERE
       a.id = ?
   `);
@@ -198,6 +206,8 @@ export function getAppointmentById(id: number):
       startMinute: number;
       endHour: number;
       endMinute: number;
+      coachName: string;
+      tableName: string;
     })
     | undefined;
 }
