@@ -101,6 +101,34 @@ export function useApiCoachAppointmentApprove(app: Hono) {
         updateAppointmentStatus(appointmentId, AppointmentStatus.Completed);
       }, startTime);
 
+      const reminderTime = new Date(startTime.getTime() - 24 * 60 * 60 * 1000);
+      scheduleTask(() => {
+        const appointment = getAppointmentById(appointmentId);
+        if (!appointment) return;
+        if (
+          appointment.status === AppointmentStatus.StudentCancelled ||
+          appointment.status === AppointmentStatus.CoachCancelled
+        ) return;
+
+        addNotification(
+          student.campusId,
+          NotificationTarget.Student,
+          student.id,
+          `You have an upcoming appointment in 24 hours.`,
+          "/student/appointment/all",
+          Date.now(),
+        );
+
+        addNotification(
+          coach.campusId,
+          NotificationTarget.Coach,
+          coach.id,
+          `You have an upcoming appointment in 24 hours.`,
+          "/coach/appointment/all",
+          Date.now(),
+        );
+      }, reminderTime);
+
       addNotification(
         student.campusId,
         NotificationTarget.Student,
