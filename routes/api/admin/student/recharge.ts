@@ -1,10 +1,14 @@
 import { Hono } from "hono";
 import { getClaim } from "../../../../auth/claim.ts";
-import { getStudentById, updateStudentBalance } from "../../../../data/studentDao.ts";
+import {
+  getStudentById,
+  updateStudentBalance,
+} from "../../../../data/studentDao.ts";
 import { addRechargeOrder } from "../../../../data/rechargeOrderDao.ts";
 import { RechargeOrderStatus } from "../../../../models/rechargeOrder.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
+import { getAdminById } from "../../../../data/adminDao.ts";
 
 export function useApiAdminStudentRecharge(app: Hono) {
   app.post("/api/admin/student/recharge", async (c) => {
@@ -12,7 +16,10 @@ export function useApiAdminStudentRecharge(app: Hono) {
     const claim = await getClaim(c);
 
     // Validation
-    if (!studentId || !amount || !Number.isInteger(amount) || amount < 10 || amount > 10000) {
+    if (
+      !studentId || !amount || !Number.isInteger(amount) || amount < 10 ||
+      amount > 10000
+    ) {
       return c.json({ message: "Invalid student ID or amount." }, 400);
     }
 
@@ -22,8 +29,11 @@ export function useApiAdminStudentRecharge(app: Hono) {
     }
 
     // Authorization
-    if (claim.type === "admin" && claim.campusId !== student.campusId) {
-      return c.json({ message: "Unauthorized" }, 401);
+    if (claim.type === "admin") {
+      const admin = getAdminById(claim.id);
+      if (admin?.campus !== student.campusId) {
+        return c.json({ message: "Unauthorized" }, 401);
+      }
     }
 
     const orderNumber = `${Date.now()}${studentId}`;
@@ -52,7 +62,10 @@ export function useApiAdminStudentRecharge(app: Hono) {
 
       const updatedStudent = getStudentById(studentId);
 
-      return c.json({ message: "Recharge successful.", newBalance: updatedStudent?.balance });
+      return c.json({
+        message: "Recharge successful.",
+        newBalance: updatedStudent?.balance,
+      });
     } catch (error) {
       console.error("Error recharging student account:", error);
       return c.json({ message: "An unexpected error occurred." }, 500);

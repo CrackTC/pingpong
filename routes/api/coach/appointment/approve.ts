@@ -33,20 +33,24 @@ export function useApiCoachAppointmentApprove(app: Hono) {
         return c.json({ message: "Coach not found." }, 404);
       }
 
-      let cost = 0;
+      let rate = 0;
       switch (coach.type) {
         case CoachType.Junior:
-          cost = 80;
+          rate = 80;
           break;
         case CoachType.Intermediate:
-          cost = 150;
+          rate = 150;
           break;
         case CoachType.Senior:
-          cost = 200;
+          rate = 200;
           break;
         default:
           return c.json({ message: "Invalid coach type." }, 400);
       }
+
+      const durationInMinutes = (appointment.endHour - appointment.startHour) * 60 + (appointment.endMinute - appointment.startMinute);
+      const durationInHours = durationInMinutes / 60;
+      const cost = Math.ceil(durationInHours * rate);
 
       if (student.balance < cost) {
         updateAppointmentStatus(appointmentId, AppointmentStatus.Rejected);

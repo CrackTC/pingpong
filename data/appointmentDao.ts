@@ -172,6 +172,8 @@ export function getAppointmentById(id: number):
     weekday: number;
     startHour: number;
     startMinute: number;
+    endHour: number;
+    endMinute: number;
   })
   | undefined {
   const stmt = db.prepare(`
@@ -179,7 +181,9 @@ export function getAppointmentById(id: number):
       a.*,
       ts.weekday,
       ts.startHour,
-      ts.startMinute
+      ts.startMinute,
+      ts.endHour,
+      ts.endMinute
     FROM
       appointments a
     JOIN
@@ -192,6 +196,8 @@ export function getAppointmentById(id: number):
       weekday: number;
       startHour: number;
       startMinute: number;
+      endHour: number;
+      endMinute: number;
     })
     | undefined;
 }
