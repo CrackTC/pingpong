@@ -193,3 +193,14 @@ CREATE TABLE IF NOT EXISTS recharge_orders (
   FOREIGN KEY (studentId) REFERENCES students(id)
 )
 `);
+
+db.exec(`
+CREATE TABLE IF NOT EXISTS deductions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  studentId INTEGER NOT NULL,
+  type INTEGER NOT NULL,
+  amount REAL NOT NULL,
+  relatedId INTEGER NOT NULL,
+  FOREIGN KEY (studentId) REFERENCES students (id)
+)
+`);

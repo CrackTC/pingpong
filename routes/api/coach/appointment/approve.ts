@@ -1,6 +1,13 @@
 import { Hono } from "hono";
-import { updateAppointmentStatus } from "../../../../data/appointmentDao.ts";
+import { getAppointmentById, updateAppointmentStatus } from "../../../../data/appointmentDao.ts";
 import { AppointmentStatus } from "../../../../models/appointment.ts";
+import { getStudentById, updateStudentBalance } from "../../../../data/studentDao.ts";
+import { getCoachById } from "../../../../data/coachDao.ts";
+import { addDeduction } from "../../../../data/deductionDao.ts";
+import { DeductionType } from "../../../../models/deduction.ts";
+import { CoachType } from "../../../../models/coach.ts";
+import { addNotification } from "../../../../data/notificationDao.ts";
+import { NotificationTarget } from "../../../../models/notification.ts";
 
 export function useApiCoachAppointmentApprove(app: Hono) {
   app.post("/api/coach/appointment/approve", async (c) => {
@@ -11,7 +18,68 @@ export function useApiCoachAppointmentApprove(app: Hono) {
     }
 
     try {
+      const appointment = getAppointmentById(appointmentId);
+      if (!appointment) {
+        return c.json({ message: "Appointment not found." }, 404);
+      }
+
+      const student = getStudentById(appointment.studentId);
+      if (!student) {
+        return c.json({ message: "Student not found." }, 404);
+      }
+
+      const coach = getCoachById(appointment.coachId);
+      if (!coach) {
+        return c.json({ message: "Coach not found." }, 404);
+      }
+
+      let cost = 0;
+      switch (coach.type) {
+        case CoachType.Junior:
+          cost = 80;
+          break;
+        case CoachType.Intermediate:
+          cost = 150;
+          break;
+        case CoachType.Senior:
+          cost = 200;
+          break;
+        default:
+          return c.json({ message: "Invalid coach type." }, 400);
+      }
+
+      if (student.balance < cost) {
+        updateAppointmentStatus(appointmentId, AppointmentStatus.Rejected);
+        addNotification(
+          student.campusId,
+          NotificationTarget.Student,
+          student.id,
+          `Your appointment was rejected due to insufficient balance. Please recharge your account.`,
+          "/student/recharge",
+          Date.now(),
+        );
+        return c.json({ message: "Insufficient balance. Appointment rejected." }, 400);
+      }
+
+      updateStudentBalance(student.id, -cost);
+      addDeduction({
+        studentId: student.id,
+        type: DeductionType.Appointment,
+        amount: cost,
+        relatedId: appointmentId,
+      });
+
       updateAppointmentStatus(appointmentId, AppointmentStatus.Approved);
+
+      addNotification(
+        student.campusId,
+        NotificationTarget.Student,
+        student.id,
+        `Your appointment has been approved by the coach.`,
+        "/student/appointment/all",
+        Date.now(),
+      );
+
       return c.json({ message: "Appointment approved successfully." });
     } catch (error) {
       console.error("Error approving appointment:", error);
