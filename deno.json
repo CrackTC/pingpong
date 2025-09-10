@@ -1,7 +1,8 @@
 {
   "imports": {
     "@db/sqlite": "jsr:@db/sqlite@^0.12.0",
-    "hono": "jsr:@hono/hono@^4.9.5"
+    "hono": "jsr:@hono/hono@^4.9.5",
+    "cron": "npm:cron@^4.3.3"
   },
   "tasks": {
     "start": "deno run --allow-net --allow-ffi --allow-env --allow-read --allow-write main.ts"

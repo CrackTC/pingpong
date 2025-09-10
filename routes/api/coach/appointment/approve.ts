@@ -1,13 +1,20 @@
 import { Hono } from "hono";
-import { getAppointmentById, updateAppointmentStatus } from "../../../../data/appointmentDao.ts";
+import {
+  getAppointmentById,
+  updateAppointmentStatus,
+} from "../../../../data/appointmentDao.ts";
 import { AppointmentStatus } from "../../../../models/appointment.ts";
-import { getStudentById, updateStudentBalance } from "../../../../data/studentDao.ts";
+import {
+  getStudentById,
+  updateStudentBalance,
+} from "../../../../data/studentDao.ts";
 import { getCoachById } from "../../../../data/coachDao.ts";
 import { addDeduction } from "../../../../data/deductionDao.ts";
 import { DeductionType } from "../../../../models/deduction.ts";
 import { CoachType } from "../../../../models/coach.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
+import { calcDate, scheduleTask } from "../../../../utils.ts";
 
 export function useApiCoachAppointmentApprove(app: Hono) {
   app.post("/api/coach/appointment/approve", async (c) => {
@@ -48,7 +55,9 @@ export function useApiCoachAppointmentApprove(app: Hono) {
           return c.json({ message: "Invalid coach type." }, 400);
       }
 
-      const durationInMinutes = (appointment.endHour - appointment.startHour) * 60 + (appointment.endMinute - appointment.startMinute);
+      const durationInMinutes =
+        (appointment.endHour - appointment.startHour) * 60 +
+        (appointment.endMinute - appointment.startMinute);
       const durationInHours = durationInMinutes / 60;
       const cost = Math.ceil(durationInHours * rate);
 
@@ -62,7 +71,9 @@ export function useApiCoachAppointmentApprove(app: Hono) {
           "/student/recharge",
           Date.now(),
         );
-        return c.json({ message: "Insufficient balance. Appointment rejected." }, 400);
+        return c.json({
+          message: "Insufficient balance. Appointment rejected.",
+        }, 400);
       }
 
       updateStudentBalance(student.id, -cost);
@@ -74,6 +85,21 @@ export function useApiCoachAppointmentApprove(app: Hono) {
       });
 
       updateAppointmentStatus(appointmentId, AppointmentStatus.Approved);
+
+      const startTime = calcDate(
+        appointment.weekday,
+        appointment.startHour,
+        appointment.startMinute,
+      );
+      scheduleTask(() => {
+        const appointment = getAppointmentById(appointmentId);
+        if (!appointment) return;
+        if (
+          appointment.status === AppointmentStatus.StudentCancelled ||
+          appointment.status === AppointmentStatus.CoachCancelled
+        ) return;
+        updateAppointmentStatus(appointmentId, AppointmentStatus.Completed);
+      }, startTime);
 
       addNotification(
         student.campusId,

@@ -1,9 +1,13 @@
 import { Hono } from "hono";
-import { getAppointmentById, updateAppointmentStatus } from "../../../../data/appointmentDao.ts";
+import {
+  getAppointmentById,
+  updateAppointmentStatus,
+} from "../../../../data/appointmentDao.ts";
 import { AppointmentStatus } from "../../../../models/appointment.ts";
 import { getCoachById } from "../../../../data/coachDao.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
+import { calcDate } from "../../../../utils.ts";
 
 export function useApiCoachAppointmentCancel(app: Hono) {
   app.post("/api/coach/appointment/cancel", async (c) => {
@@ -19,18 +23,17 @@ export function useApiCoachAppointmentCancel(app: Hono) {
         return c.json({ message: "Appointment not found." }, 404);
       }
 
-      const now = new Date();
-      const appointmentDate = new Date();
-      appointmentDate.setHours(appointment.startHour, appointment.startMinute, 0, 0);
+      const startDate = calcDate(
+        appointment.weekday,
+        appointment.startHour,
+        appointment.startMinute,
+      );
 
-      let diff = appointment.weekday - now.getDay();
-      if (diff < 0 || (diff === 0 && appointmentDate.getTime() < now.getTime())) {
-        diff += 7;
-      }
-      appointmentDate.setDate(now.getDate() + diff);
-
-      if (appointmentDate.getTime() - now.getTime() < 24 * 60 * 60 * 1000) {
-        return c.json({ message: "Cannot cancel appointment within 24 hours." }, 400);
+      if (startDate.getTime() - (new Date().getTime()) < 24 * 60 * 60 * 1000) {
+        return c.json(
+          { message: "Cannot cancel appointment within 24 hours." },
+          400,
+        );
       }
 
       const coach = getCoachById(appointment.coachId);
@@ -46,7 +49,7 @@ export function useApiCoachAppointmentCancel(app: Hono) {
         appointment.studentId,
         `Coach ${coach.realName} has requested to cancel an appointment.`,
         `/student/appointment/cancelling`,
-        Date.now()
+        Date.now(),
       );
 
       return c.json({ message: "Appointment cancellation request sent." });
