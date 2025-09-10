@@ -76,7 +76,33 @@
                     </div>
                     <div class="modal-footer">
                         <a href="#" id="editStudentBtn" class="btn btn-primary">Edit</a>
+                        <button type="button" class="btn btn-success" id="rechargeStudentBtn">Recharge</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recharge Modal -->
+        <div class="modal fade" id="rechargeModal" tabindex="-1" aria-labelledby="rechargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rechargeModalLabel">Recharge Student Account</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="recharge-form">
+                            <input type="hidden" id="rechargeStudentId">
+                            <div class="mb-3">
+                                <label for="rechargeAmount" class="form-label">Amount</label>
+                                <input type="number" class="form-control" id="rechargeAmount" required min="10" max="10000">
+                            </div>
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary">Confirm Recharge</button>
+                            </div>
+                            <div id="recharge-message" class="alert d-none" role="alert"></div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -89,6 +115,7 @@
         <script>
             const messageArea = document.getElementById("message-area");
             const resultsListDiv = document.getElementById("results-list");
+            let students = [];
 
             function displayMessage(message, type) {
                 messageArea.textContent = message;
@@ -116,7 +143,8 @@
                         },
                         body: JSON.stringify({ phone }),
                     });
-                    const students = await response.json();
+                    const fetchedStudents = await response.json();
+                    students = fetchedStudents;
 
                     if (response.ok) {
                         if (students.length > 0) {
@@ -146,6 +174,14 @@
                                         `;
                                         const editStudentBtn = document.getElementById('editStudentBtn');
                                         editStudentBtn.href = `/admin/student/edit?id=${student.id}`;
+
+                                        const rechargeStudentBtn = document.getElementById('rechargeStudentBtn');
+                                        rechargeStudentBtn.onclick = () => {
+                                            document.getElementById('rechargeStudentId').value = student.id;
+                                            const rechargeModal = new bootstrap.Modal(document.getElementById('rechargeModal'));
+                                            rechargeModal.show();
+                                        };
+
                                         const studentDetailsModal = new bootstrap.Modal(document.getElementById('studentDetailsModal'));
                                         studentDetailsModal.show();
                                     }
@@ -165,6 +201,70 @@
                         "An unexpected error occurred while searching students.",
                         "danger",
                     );
+                }
+            });
+
+            document.getElementById('recharge-form').addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const studentId = document.getElementById('rechargeStudentId').value;
+                const amount = parseInt(document.getElementById('rechargeAmount').value);
+                const messageDiv = document.getElementById('recharge-message');
+
+                // Validation
+                if (!amount || !Number.isInteger(amount) || amount < 10 || amount > 10000) {
+                    messageDiv.textContent = "Invalid amount. Amount must be an integer between 10 and 10000.";
+                    messageDiv.className = 'alert alert-danger';
+                    messageDiv.classList.remove('d-none');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/admin/student/recharge', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ studentId, amount })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        messageDiv.textContent = "Recharge successful!";
+                        messageDiv.className = 'alert alert-success';
+                        messageDiv.classList.remove('d-none');
+
+                        // Update the balance in the modal
+                        const student = students.find(s => s.id == studentId);
+                        if (student) {
+                            student.balance = data.newBalance;
+                            const modalBody = document.getElementById('studentDetailsModalBody');
+                            modalBody.innerHTML = `
+                                <p><strong>Username:</strong> ${student.username}</p>
+                                <p><strong>Real Name:</strong> ${student.realName}</p>
+                                <p><strong>Sex:</strong> ${getSexString(student.sex)}</p>
+                                <p><strong>Birth Year:</strong> ${student.birthYear || "Not specified"}</p>
+                                <p><strong>Campus:</strong> ${student.campusName}</p>
+                                <p><strong>Phone:</strong> ${student.phone}</p>
+                                <p><strong>Email:</strong> ${student.email || "Not specified"}</p>
+                                <p><strong>Balance:</strong> ${student.balance}</p>
+                            `;
+                        }
+
+                        setTimeout(() => {
+                            const rechargeModal = bootstrap.Modal.getInstance(document.getElementById('rechargeModal'));
+                            rechargeModal.hide();
+                            messageDiv.classList.add('d-none');
+                        }, 2000);
+                    } else {
+                        messageDiv.textContent = data.message || "Recharge failed.";
+                        messageDiv.className = 'alert alert-danger';
+                        messageDiv.classList.remove('d-none');
+                    }
+                } catch (error) {
+                    messageDiv.textContent = "An unexpected error occurred.";
+                    messageDiv.className = 'alert alert-danger';
+                    messageDiv.classList.remove('d-none');
                 }
             });
         </script>
