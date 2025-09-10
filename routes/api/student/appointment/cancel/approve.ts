@@ -3,7 +3,9 @@ import { getAppointmentById, updateAppointmentStatus } from "../../../../../data
 import { AppointmentStatus } from "../../../../../models/appointment.ts";
 import { addNotification } from "../../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../../models/notification.ts";
-import { getStudentById } from "../../../../../data/studentDao.ts";
+import { getStudentById, updateStudentBalance } from "../../../../../data/studentDao.ts";
+import { getDeductionByRelatedId, deleteDeductionById } from "../../../../../data/deductionDao.ts";
+import { DeductionType } from "../../../../../models/deduction.ts";
 
 export function useApiStudentApproveCancellation(app: Hono) {
   app.post("/api/student/appointment/cancel/approve", async (c) => {
@@ -26,6 +28,13 @@ export function useApiStudentApproveCancellation(app: Hono) {
       const student = getStudentById(appointment.studentId);
       if (!student) {
         return c.json({ message: "Student not found" }, 404);
+      }
+
+      // Refund the student
+      const deduction = getDeductionByRelatedId(appointmentId, DeductionType.Appointment);
+      if (deduction) {
+        updateStudentBalance(appointment.studentId, deduction.amount);
+        deleteDeductionById(deduction.id);
       }
 
       updateAppointmentStatus(appointmentId, AppointmentStatus.CoachCancelled);

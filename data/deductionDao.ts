@@ -1,5 +1,5 @@
 import { db } from "./db.ts";
-import { Deduction } from "../models/deduction.ts";
+import { Deduction, DeductionType } from "../models/deduction.ts";
 
 export function addDeduction(deduction: Omit<Deduction, "id">) {
   const stmt = db.prepare(
@@ -16,4 +16,14 @@ export function addDeduction(deduction: Omit<Deduction, "id">) {
 export function getDeductionsByStudentId(studentId: number): Deduction[] {
   const stmt = db.prepare("SELECT * FROM deductions WHERE studentId = ?");
   return stmt.all(studentId) as Deduction[];
+}
+
+export function getDeductionByRelatedId(relatedId: number, type: DeductionType): Deduction | undefined {
+  const stmt = db.prepare("SELECT * FROM deductions WHERE relatedId = ? AND type = ?");
+  return stmt.get(relatedId, type) as Deduction | undefined;
+}
+
+export function deleteDeductionById(id: number) {
+  const stmt = db.prepare("DELETE FROM deductions WHERE id = ?");
+  stmt.run(id);
 }
