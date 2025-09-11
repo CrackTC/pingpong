@@ -209,3 +209,8 @@ export function searchCoachesByIdCardOrPhone(
   const stmt = db.prepare(sql);
   return stmt.all(...params) as (Coach & { campusName: string })[];
 }
+
+export function deleteCoachById(id: number) {
+  const stmt = db.prepare("DELETE FROM coaches WHERE id = ?");
+  stmt.run(id);
+}

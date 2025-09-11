@@ -131,3 +131,8 @@ export function getApprovedCoachesForStudent(studentId: number): any[] {
   `);
   return stmt.all(studentId, SelectionStatus.Approved);
 }
+
+export function deleteSelectionsByCoachId(coachId: number) {
+  const stmt = db.prepare("DELETE FROM selections WHERE coachId = ?");
+  stmt.run(coachId);
+}

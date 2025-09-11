@@ -76,3 +76,8 @@ export function getTimeslotById(id: number): Timeslot | undefined {
   }
   return undefined;
 }
+
+export function deleteTimeslotsByCoachId(coachId: number) {
+  const stmt = db.prepare("DELETE FROM timeslots WHERE coachId = ?");
+  stmt.run(coachId);
+}
