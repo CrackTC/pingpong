@@ -124,6 +124,7 @@ import { useApiStudentAppointmentGet } from "./routes/api/student/appointment/ge
 import { useApiAdminStudentAppointments } from "./routes/api/admin/student/appointments.ts";
 import { useApiAdminCoachAppointments } from "./routes/api/admin/coach/appointments.ts";
 import { useAdminAppointments } from "./routes/admin/appointments.ts";
+import { useApiAdminAppointmentCancel } from "./routes/api/admin/appointment/cancel.ts";
 
 const app = new Hono();
 
@@ -259,6 +260,7 @@ useApiStudentAppointmentGet(app);
 useApiAdminStudentAppointments(app);
 useApiAdminCoachAppointments(app);
 useAdminAppointments(app);
+useApiAdminAppointmentCancel(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);
