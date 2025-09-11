@@ -83,16 +83,50 @@ export function getAppointmentsByCoachId(coachId: number): (Appointment & {
   })[];
 }
 
-export function getActiveAppointmentsByCoachId(coachId: number): Appointment[] {
-  const stmt = db.prepare(
-    "SELECT * FROM appointments WHERE coachId = ? AND status NOT IN (?, ?, ?)",
-  );
+export function getActiveAppointmentsByCoachId(coachId: number): (Appointment & { studentName: string, tableName: string })[] {
+  const stmt = db.prepare(`
+    SELECT
+      a.*,
+      s.realName AS studentName,
+      t.name AS tableName
+    FROM
+      appointments a
+    JOIN
+      students s ON a.studentId = s.id
+    JOIN
+      tables t ON a.tableId = t.id
+    WHERE
+      a.coachId = ? AND a.status NOT IN (?, ?, ?)
+  `);
   return stmt.all(
     coachId,
     AppointmentStatus.StudentCancelled,
     AppointmentStatus.CoachCancelled,
     AppointmentStatus.Completed,
-  ) as Appointment[];
+  ) as (Appointment & { studentName: string, tableName: string })[];
+}
+
+export function getActiveAppointmentsByStudentId(studentId: number): (Appointment & { coachName: string, tableName: string })[] {
+  const stmt = db.prepare(`
+    SELECT
+      a.*,
+      co.realName AS coachName,
+      t.name AS tableName
+    FROM
+      appointments a
+    JOIN
+      coaches co ON a.coachId = co.id
+    JOIN
+      tables t ON a.tableId = t.id
+    WHERE
+      a.studentId = ? AND a.status NOT IN (?, ?, ?)
+  `);
+  return stmt.all(
+    studentId,
+    AppointmentStatus.StudentCancelled,
+    AppointmentStatus.CoachCancelled,
+    AppointmentStatus.Completed,
+  ) as (Appointment & { coachName: string, tableName: string })[];
 }
 
 export function getAllActiveAppointments(): Appointment[] {

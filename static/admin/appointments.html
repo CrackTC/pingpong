@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Active Appointments</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body class="bg-light">
+        <div class="container">
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-10">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4" id="page-title">
+                                Active Appointments
+                            </h3>
+                            <div id="appointments-list">
+                                <!-- Appointments will be loaded here -->
+                            </div>
+                            <div class="d-grid gap-2 mt-3">
+                                <a
+                                    href="#"
+                                    id="back-btn"
+                                    class="btn btn-secondary"
+                                    >Back</a
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"
+        ></script>
+        <script>
+            const appointmentsListDiv = document.getElementById("appointments-list");
+            const pageTitle = document.getElementById("page-title");
+            const backBtn = document.getElementById("back-btn");
+
+            function getStatusString(status) {
+                switch (status) {
+                    case 0: return "Pending";
+                    case 1: return "Approved";
+                    case 2: return "Rejected";
+                    case 3: return "StudentCancelling";
+                    case 4: return "CoachCancelling";
+                    case 5: return "StudentCancelled";
+                    case 6: return "CoachCancelled";
+                    case 7: return "Completed";
+                    default: return "Unknown";
+                }
+            }
+
+            async function fetchAppointments() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const studentId = urlParams.get('studentId');
+                const coachId = urlParams.get('coachId');
+
+                let url = '';
+                if (studentId) {
+                    url = `/api/admin/student/appointments/${studentId}`;
+                    pageTitle.textContent = `Active Appointments for Student ${studentId}`;
+                    backBtn.href = '/admin/student/search';
+                } else if (coachId) {
+                    url = `/api/admin/coach/appointments/${coachId}`;
+                    pageTitle.textContent = `Active Appointments for Coach ${coachId}`;
+                    backBtn.href = '/admin/coach/search';
+                } else {
+                    appointmentsListDiv.innerHTML = '<p class="text-center text-danger">No student or coach ID provided.</p>';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(url);
+                    const appointments = await response.json();
+
+                    if (response.ok) {
+                        if (appointments.length > 0) {
+                            let appointmentsHtml = '<table class="table table-striped"><thead><tr><th>ID</th><th>Student/Coach</th><th>Table</th><th>Status</th></tr></thead><tbody>';
+                            appointments.forEach((a) => {
+                                const otherParty = studentId ? `Coach: ${a.coachName}` : `Student: ${a.studentName}`;
+                                appointmentsHtml += `<tr><td>${a.id}</td><td>${otherParty}</td><td>${a.tableName}</td><td>${getStatusString(a.status)}</td></tr>`;
+                            });
+                            appointmentsHtml += "</tbody></table>";
+                            appointmentsListDiv.innerHTML = appointmentsHtml;
+                        } else {
+                            appointmentsListDiv.innerHTML = '<p class="text-center">No active appointments found.</p>';
+                        }
+                    } else {
+                        appointmentsListDiv.innerHTML = `<p class="text-center text-danger">${appointments.message || "Failed to fetch appointments."}</p>`;
+                    }
+                } catch (error) {
+                    appointmentsListDiv.innerHTML = '<p class="text-center text-danger">An unexpected error occurred while fetching appointments.</p>';
+                }
+            }
+
+            fetchAppointments();
+        </script>
+    </body>
+</html>

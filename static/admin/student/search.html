@@ -76,6 +76,7 @@
                     </div>
                     <div class="modal-footer">
                         <a href="#" id="editStudentBtn" class="btn btn-primary">Edit</a>
+                        <a href="#" id="viewAppointmentsBtn" class="btn btn-info">View Active Appointments</a>
                         <button type="button" class="btn btn-success" id="rechargeStudentBtn">Recharge</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
@@ -181,6 +182,9 @@
                                             const rechargeModal = new bootstrap.Modal(document.getElementById('rechargeModal'));
                                             rechargeModal.show();
                                         };
+
+                                        const viewAppointmentsBtn = document.getElementById('viewAppointmentsBtn');
+                                        viewAppointmentsBtn.href = `/admin/appointments?studentId=${student.id}`;
 
                                         const studentDetailsModal = new bootstrap.Modal(document.getElementById('studentDetailsModal'));
                                         studentDetailsModal.show();

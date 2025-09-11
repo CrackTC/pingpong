@@ -121,6 +121,9 @@ import { useApiAdminStudentRecharge } from "./routes/api/admin/student/recharge.
 import { useApiStudentDeductionAll } from "./routes/api/student/deduction/all.ts";
 import { useStudentDeductionAll } from "./routes/student/deduction/all.ts";
 import { useApiStudentAppointmentGet } from "./routes/api/student/appointment/get.ts";
+import { useApiAdminStudentAppointments } from "./routes/api/admin/student/appointments.ts";
+import { useApiAdminCoachAppointments } from "./routes/api/admin/coach/appointments.ts";
+import { useAdminAppointments } from "./routes/admin/appointments.ts";
 
 const app = new Hono();
 
@@ -253,6 +256,9 @@ useApiAdminStudentRecharge(app);
 useApiStudentDeductionAll(app);
 useStudentDeductionAll(app);
 useApiStudentAppointmentGet(app);
+useApiAdminStudentAppointments(app);
+useApiAdminCoachAppointments(app);
+useAdminAppointments(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);
