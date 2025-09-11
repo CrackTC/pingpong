@@ -97,6 +97,29 @@
             </div>
         </div>
     </div>
+
+    <!-- Change Coach Modal -->
+    <div class="modal fade" id="changeCoachModal" tabindex="-1" aria-labelledby="changeCoachModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeCoachModalLabel">Change Coach</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="change-coach-form">
+                        <input type="hidden" id="newCoachId">
+                        <div class="mb-3">
+                            <label for="oldCoachId" class="form-label">Select coach to replace:</label>
+                            <select class="form-select" id="oldCoachId" required></select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Request Change</button>
+                    </form>
+                    <div id="change-coach-message" class="alert d-none mt-3" role="alert"></div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         function getSexString(sex) {
             switch (sex) {
@@ -161,6 +184,7 @@
                         </td>
                         <td class="align-middle">
                             <button type="button" class="btn btn-success btn-sm select-coach-btn" data-coach-id="${coach.id}">Select</button>
+                            <button type="button" class="btn btn-warning btn-sm change-coach-btn" data-coach-id="${coach.id}">Change</button>
                         </td>
                     `;
                     });
@@ -236,8 +260,63 @@
                         messageDiv.className = "alert alert-danger";
                         messageDiv.classList.remove("d-none");
                     }
+                } else if (event.target.classList.contains("change-coach-btn")) {
+                    const newCoachId = event.target.dataset.coachId;
+                    document.getElementById('newCoachId').value = newCoachId;
+
+                    // Fetch student's current coaches
+                    const response = await fetch('/api/student/me/coaches');
+                    const coaches = await response.json();
+                    const oldCoachSelect = document.getElementById('oldCoachId');
+                    oldCoachSelect.innerHTML = '';
+                    coaches.forEach(coach => {
+                        const option = document.createElement('option');
+                        option.value = coach.coachId;
+                        option.textContent = coach.coachRealName;
+                        oldCoachSelect.appendChild(option);
+                    });
+
+                    const changeCoachModal = new bootstrap.Modal(document.getElementById('changeCoachModal'));
+                    changeCoachModal.show();
                 }
             });
+
+        document.getElementById('change-coach-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const newCoachId = document.getElementById('newCoachId').value;
+            const oldCoachId = document.getElementById('oldCoachId').value;
+            const messageDiv = document.getElementById('change-coach-message');
+
+            try {
+                const response = await fetch('/api/student/coach/change', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ oldCoachId: parseInt(oldCoachId), newCoachId: parseInt(newCoachId) })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    messageDiv.textContent = "Change request sent successfully!";
+                    messageDiv.className = 'alert alert-success';
+                    messageDiv.classList.remove('d-none');
+                    setTimeout(() => {
+                        const changeCoachModal = bootstrap.Modal.getInstance(document.getElementById('changeCoachModal'));
+                        changeCoachModal.hide();
+                    }, 2000);
+                } else {
+                    messageDiv.textContent = data.message || "Failed to send change request.";
+                    messageDiv.className = 'alert alert-danger';
+                    messageDiv.classList.remove('d-none');
+                }
+            } catch (error) {
+                messageDiv.textContent = "An unexpected error occurred.";
+                messageDiv.className = 'alert alert-danger';
+                messageDiv.classList.remove('d-none');
+            }
+        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"

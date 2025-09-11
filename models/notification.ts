@@ -1,6 +1,7 @@
 export enum NotificationTarget {
   Student = 1,
   Coach,
+  Admin,
 }
 
 export type Notification = {
