@@ -96,7 +96,8 @@ export function useApiCoachAppointmentApprove(app: Hono) {
         if (!appointment) return;
         if (
           appointment.status === AppointmentStatus.StudentCancelled ||
-          appointment.status === AppointmentStatus.CoachCancelled
+          appointment.status === AppointmentStatus.CoachCancelled ||
+          appointment.status === AppointmentStatus.AdminCancelled
         ) return;
         updateAppointmentStatus(appointmentId, AppointmentStatus.Completed);
       }, startTime);
@@ -107,7 +108,8 @@ export function useApiCoachAppointmentApprove(app: Hono) {
         if (!appointment) return;
         if (
           appointment.status === AppointmentStatus.StudentCancelled ||
-          appointment.status === AppointmentStatus.CoachCancelled
+          appointment.status === AppointmentStatus.CoachCancelled ||
+          appointment.status === AppointmentStatus.AdminCancelled
         ) return;
 
         addNotification(

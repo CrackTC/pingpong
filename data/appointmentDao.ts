@@ -83,7 +83,9 @@ export function getAppointmentsByCoachId(coachId: number): (Appointment & {
   })[];
 }
 
-export function getActiveAppointmentsByCoachId(coachId: number): (Appointment & { studentName: string, tableName: string })[] {
+export function getActiveAppointmentsByCoachId(
+  coachId: number,
+): (Appointment & { studentName: string; tableName: string })[] {
   const stmt = db.prepare(`
     SELECT
       a.*,
@@ -96,17 +98,20 @@ export function getActiveAppointmentsByCoachId(coachId: number): (Appointment & 
     JOIN
       tables t ON a.tableId = t.id
     WHERE
-      a.coachId = ? AND a.status NOT IN (?, ?, ?)
+      a.coachId = ? AND a.status NOT IN (?, ?, ?, ?)
   `);
   return stmt.all(
     coachId,
     AppointmentStatus.StudentCancelled,
     AppointmentStatus.CoachCancelled,
     AppointmentStatus.Completed,
-  ) as (Appointment & { studentName: string, tableName: string })[];
+    AppointmentStatus.AdminCancelled,
+  ) as (Appointment & { studentName: string; tableName: string })[];
 }
 
-export function getActiveAppointmentsByStudentId(studentId: number): (Appointment & { coachName: string, tableName: string })[] {
+export function getActiveAppointmentsByStudentId(
+  studentId: number,
+): (Appointment & { coachName: string; tableName: string })[] {
   const stmt = db.prepare(`
     SELECT
       a.*,
@@ -119,23 +124,26 @@ export function getActiveAppointmentsByStudentId(studentId: number): (Appointmen
     JOIN
       tables t ON a.tableId = t.id
     WHERE
-      a.studentId = ? AND a.status NOT IN (?, ?, ?)
+      a.studentId = ? AND a.status NOT IN (?, ?, ?, ?)
   `);
   return stmt.all(
     studentId,
     AppointmentStatus.StudentCancelled,
     AppointmentStatus.CoachCancelled,
     AppointmentStatus.Completed,
-  ) as (Appointment & { coachName: string, tableName: string })[];
+    AppointmentStatus.AdminCancelled,
+  ) as (Appointment & { coachName: string; tableName: string })[];
 }
 
 export function getAllActiveAppointments(): Appointment[] {
   const stmt = db.prepare(
-    "SELECT * FROM appointments WHERE status NOT IN (?, ?)",
+    "SELECT * FROM appointments WHERE status NOT IN (?, ?, ?, ?)",
   );
   return stmt.all(
     AppointmentStatus.StudentCancelled,
     AppointmentStatus.CoachCancelled,
+    AppointmentStatus.Completed,
+    AppointmentStatus.AdminCancelled,
   ) as Appointment[];
 }
 
