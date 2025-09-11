@@ -350,3 +350,8 @@ export function deleteAppointmentsByCoachId(coachId: number) {
   const stmt = db.prepare("DELETE FROM appointments WHERE coachId = ?");
   stmt.run(coachId);
 }
+
+export function deleteAppointmentsByStudentId(studentId: number) {
+  const stmt = db.prepare("DELETE FROM appointments WHERE studentId = ?");
+  stmt.run(studentId);
+}

@@ -136,3 +136,8 @@ export function deleteSelectionsByCoachId(coachId: number) {
   const stmt = db.prepare("DELETE FROM selections WHERE coachId = ?");
   stmt.run(coachId);
 }
+
+export function deleteSelectionsByStudentId(studentId: number) {
+  const stmt = db.prepare("DELETE FROM selections WHERE studentId = ?");
+  stmt.run(studentId);
+}

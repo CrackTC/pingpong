@@ -27,3 +27,8 @@ export function deleteDeductionById(id: number) {
   const stmt = db.prepare("DELETE FROM deductions WHERE id = ?");
   stmt.run(id);
 }
+
+export function deleteDeductionsByStudentId(studentId: number) {
+  const stmt = db.prepare("DELETE FROM deductions WHERE studentId = ?");
+  stmt.run(studentId);
+}

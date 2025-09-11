@@ -22,3 +22,8 @@ export function getRechargeOrdersByStudentId(studentId: number): RechargeOrder[]
     const stmt = db.prepare("SELECT * FROM recharge_orders WHERE studentId = ? ORDER BY id DESC");
     return stmt.all(studentId) as RechargeOrder[];
 }
+
+export function deleteRechargeOrdersByStudentId(studentId: number) {
+  const stmt = db.prepare("DELETE FROM recharge_orders WHERE studentId = ?");
+  stmt.run(studentId);
+}

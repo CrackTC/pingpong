@@ -78,6 +78,7 @@
                         <a href="#" id="editStudentBtn" class="btn btn-primary">Edit</a>
                         <a href="#" id="viewAppointmentsBtn" class="btn btn-info">View Active Appointments</a>
                         <button type="button" class="btn btn-success" id="rechargeStudentBtn">Recharge</button>
+                        <button type="button" class="btn btn-danger" id="deleteStudentBtn">Delete</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -185,6 +186,35 @@
 
                                         const viewAppointmentsBtn = document.getElementById('viewAppointmentsBtn');
                                         viewAppointmentsBtn.href = `/admin/appointments?studentId=${student.id}`;
+
+                                        const deleteStudentBtn = document.getElementById('deleteStudentBtn');
+                                        deleteStudentBtn.onclick = async () => {
+                                            if (confirm('Are you sure you want to delete this student?')) {
+                                                try {
+                                                    const response = await fetch('/api/admin/student/delete', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json'
+                                                        },
+                                                        body: JSON.stringify({ studentId: student.id })
+                                                    });
+
+                                                    const data = await response.json();
+
+                                                    if (response.ok) {
+                                                        alert(data.message);
+                                                        const studentDetailsModal = bootstrap.Modal.getInstance(document.getElementById('studentDetailsModal'));
+                                                        studentDetailsModal.hide();
+                                                        // Refresh the search results
+                                                        document.getElementById('search-form').dispatchEvent(new Event('submit'));
+                                                    } else {
+                                                        alert(data.message || 'Failed to delete student.');
+                                                    }
+                                                } catch (error) {
+                                                    alert('An unexpected error occurred.');
+                                                }
+                                            }
+                                        };
 
                                         const studentDetailsModal = new bootstrap.Modal(document.getElementById('studentDetailsModal'));
                                         studentDetailsModal.show();

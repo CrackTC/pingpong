@@ -147,3 +147,8 @@ export function updateStudentBalance(id: number, amount: number): void {
   const stmt = db.prepare("UPDATE students SET balance = balance + ? WHERE id = ?");
   stmt.run(amount, id);
 }
+
+export function deleteStudentById(id: number) {
+  const stmt = db.prepare("DELETE FROM students WHERE id = ?");
+  stmt.run(id);
+}
