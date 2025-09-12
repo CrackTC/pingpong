@@ -4,6 +4,7 @@ export enum MigrationStatus {
   DestCoachApproved = 4,
   CampusAdminApproved = 8,
   Completed = 15,
+  Rejected = -1,
 }
 
 export type Migration = {

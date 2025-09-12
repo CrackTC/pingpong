@@ -21,3 +21,34 @@ export function getMigrationsByStudentId(studentId: number): Migration[] {
   );
   return stmt.all(studentId, MigrationStatus.Completed) as Migration[];
 }
+
+export function getPendingMigrations(
+  status: MigrationStatus,
+  campusId?: number,
+) {
+  let query = `
+    SELECT
+      oco.id AS originCoachId,
+      oco.realName AS originCoachName,
+      dco.id AS destCoachId,
+      dco.realName AS destCoachName,
+      stu.id AS studentId,
+      stu.realName AS studentName,
+      m.status
+    FROM migrations m
+    JOIN selections sel ON m.selectionId = sel.id
+    JOIN coaches oco ON sel.coachId = oco.id
+    JOIN coaches dco ON m.destCoachId = dco.id
+    JOIN students stu ON sel.studentId = stu.id
+    WHERE (m.status & ?) = 0 AND m.status != ?
+  `;
+
+  const params = [status, MigrationStatus.Rejected];
+  if (campusId !== undefined) {
+    query += " AND campusId = ?";
+    params.push(campusId);
+  }
+
+  const stmt = db.prepare(query);
+  return stmt.all(...params);
+}
