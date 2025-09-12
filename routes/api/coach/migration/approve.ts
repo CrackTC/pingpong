@@ -11,14 +11,14 @@ import {
 } from "../../../../data/selectionDao.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
+import { getClaim } from "../../../../auth/claim.ts";
 import { SelectionStatus } from "../../../../models/selection.ts";
 import { getCoachById } from "../../../../data/coachDao.ts";
-import { getClaim } from "../../../../auth/claim.ts";
-import { getAdminById } from "../../../../data/adminDao.ts";
 
-export function useApiAdminMigrationsApprove(app: Hono) {
-  app.post("/api/admin/migrations/approve", async (c) => {
+export function useApiCoachMigrationApprove(app: Hono) {
+  app.post("/api/coach/migration/approve", async (c) => {
     const { migrationId } = await c.req.json();
+    const claim = await getClaim(c);
 
     if (isNaN(migrationId)) {
       return c.json({ message: "Invalid migration ID." }, 400);
@@ -30,20 +30,6 @@ export function useApiAdminMigrationsApprove(app: Hono) {
         return c.json({ message: "Migration not found." }, 404);
       }
 
-      const claim = await getClaim(c);
-      if (claim.type === "admin") {
-        const admin = getAdminById(claim.id);
-        if (!admin) {
-          return c.json({ message: "Admin not found." }, 404);
-        }
-        if (admin.campus !== migration.campusId) {
-          return c.json(
-            { message: "Admin not authorized for this campus." },
-            403,
-          );
-        }
-      }
-
       if (migration.status === MigrationStatus.Rejected) {
         return c.json({ message: "Cannot approve a rejected migration." }, 400);
       }
@@ -53,12 +39,27 @@ export function useApiAdminMigrationsApprove(app: Hono) {
         return c.json({ message: "Original selection not found." }, 404);
       }
 
+      if (
+        migration.destCoachId !== claim.id && oldSelection.coachId !== claim.id
+      ) {
+        return c.json({ message: "Unauthorized." }, 401);
+      }
+
       const newCoach = getCoachById(migration.destCoachId);
       if (!newCoach) {
         return c.json({ message: "Destination coach not found." }, 404);
       }
 
-      const newStatus = migration.status | MigrationStatus.CampusAdminApproved;
+      let newStatus = migration.status;
+      let coachDesc;
+      if (migration.destCoachId === claim.id) {
+        newStatus |= MigrationStatus.DestCoachApproved;
+        coachDesc = "destination coach";
+      } else {
+        newStatus |= MigrationStatus.OriginCoachApproved;
+        coachDesc = "original coach";
+      }
+
       updateMigrationStatus(migrationId, newStatus);
 
       if (newStatus !== MigrationStatus.Completed) {
@@ -66,20 +67,18 @@ export function useApiAdminMigrationsApprove(app: Hono) {
           migration.campusId,
           NotificationTarget.Student,
           oldSelection.studentId,
-          `Your coach change request has been approved by the campus admin.`,
+          `Your coach change request has been approved by ${coachDesc}.`,
           `/student/migration/all`,
           Date.now(),
         );
         return c.json({
           message:
-            "Migration approved by campus admin. Awaiting further approvals.",
+            `Migration approved by ${coachDesc}. Awaiting further approvals.`,
         });
       }
 
-      // Update old selection status to Outdated
       updateSelectionStatus(oldSelection.id, SelectionStatus.Outdated);
 
-      // Add new selection for the new coach
       addSelection(
         oldSelection.studentId,
         migration.destCoachId,
@@ -87,7 +86,6 @@ export function useApiAdminMigrationsApprove(app: Hono) {
         SelectionStatus.Approved,
       );
 
-      // Notify student
       addNotification(
         migration.campusId,
         NotificationTarget.Student,

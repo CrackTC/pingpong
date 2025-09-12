@@ -24,10 +24,11 @@ export function useApiAdminMigrationsReject(app: Hono) {
         return c.json({ message: "Migration not found." }, 404);
       }
 
-      if (
-        migration.status !== MigrationStatus.Rejected &&
-        (migration.status & MigrationStatus.CampusAdminApproved) !== 0
-      ) {
+      if (migration.status === MigrationStatus.Rejected) {
+        return c.json({ message: "Migration already rejected." }, 400);
+      }
+
+      if ((migration.status & MigrationStatus.CampusAdminApproved) !== 0) {
         return c.json({
           message:
             "Cannot reject a migration that has been approved by campus admin.",
@@ -61,8 +62,8 @@ export function useApiAdminMigrationsReject(app: Hono) {
         migration.campusId,
         NotificationTarget.Student,
         oldSelection.studentId, // Assuming oldSelection is available
-        `Your coach change request has been rejected.`,
-        `/student/selection/all`,
+        `Your coach change request has been rejected by admin.`,
+        `/student/migration/all`,
         Date.now(),
       );
 
