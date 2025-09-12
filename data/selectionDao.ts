@@ -2,24 +2,41 @@ import { db } from "./db.ts";
 import { SelectionStatus } from "../models/selection.ts";
 import { Student } from "../models/student.ts";
 
-export function addSelection(studentId: number, coachId: number, campusId: number, status: SelectionStatus) {
-  const stmt = db.prepare("INSERT INTO selections (studentId, coachId, campusId, status) VALUES (?, ?, ?, ?)");
+export function addSelection(
+  studentId: number,
+  coachId: number,
+  campusId: number,
+  status: SelectionStatus,
+) {
+  const stmt = db.prepare(
+    "INSERT INTO selections (studentId, coachId, campusId, status) VALUES (?, ?, ?, ?)",
+  );
   stmt.run(studentId, coachId, campusId, status);
 }
 
 export function getSelectionCountForCoach(coachId: number): number {
-  const stmt = db.prepare("SELECT COUNT(*) FROM selections WHERE coachId = ? AND status = ?");
-  const count = stmt.get(coachId, SelectionStatus.Approved) as { 'COUNT(*)': number };
-  return count['COUNT(*)'];
+  const stmt = db.prepare(
+    "SELECT COUNT(*) FROM selections WHERE coachId = ? AND status = ?",
+  );
+  const count = stmt.get(coachId, SelectionStatus.Approved) as {
+    "COUNT(*)": number;
+  };
+  return count["COUNT(*)"];
 }
 
 export function getActiveSelectionCountForStudent(studentId: number): number {
-  const stmt = db.prepare("SELECT COUNT(*) as count FROM selections WHERE studentId = ? AND (status = ? OR status = ?)");
-  const row = stmt.get(studentId, SelectionStatus.Pending, SelectionStatus.Approved);
+  const stmt = db.prepare(
+    "SELECT COUNT(*) as count FROM selections WHERE studentId = ? AND (status = ? OR status = ?)",
+  );
+  const row = stmt.get(
+    studentId,
+    SelectionStatus.Pending,
+    SelectionStatus.Approved,
+  );
   return (row as { count: number }).count;
 }
 
-export function getPendingSelectionsForCoach(coachId: number): any[] {
+export function getPendingSelectionsForCoach(coachId: number) {
   const stmt = db.prepare(`
     SELECT
       s.id,
@@ -41,7 +58,10 @@ export function getPendingSelectionsForCoach(coachId: number): any[] {
   return stmt.all(coachId, SelectionStatus.Pending);
 }
 
-export function updateSelectionStatus(selectionId: number, status: SelectionStatus) {
+export function updateSelectionStatus(
+  selectionId: number,
+  status: SelectionStatus,
+) {
   const stmt = db.prepare("UPDATE selections SET status = ? WHERE id = ?");
   stmt.run(status, selectionId);
 }
@@ -57,7 +77,7 @@ export function getSelectionById(selectionId: number): Selection | undefined {
   return undefined;
 }
 
-export function getAllSelectionsForStudent(studentId: number): any[] {
+export function getAllSelectionsForStudent(studentId: number) {
   const stmt = db.prepare(`
     SELECT
       s.id AS selectionId,
@@ -96,16 +116,26 @@ export function getStudentsByCoachId(coachId: number): Student[] {
   return stmt.all(coachId, SelectionStatus.Approved) as Student[];
 }
 
-export function getSelectionByStudentAndCoachId(studentId: number, coachId: number): Selection | undefined {
-  const stmt = db.prepare("SELECT * FROM selections WHERE studentId = ? AND coachId = ? AND (status = ? OR status = ?)");
-  const row = stmt.get(studentId, coachId, SelectionStatus.Pending, SelectionStatus.Approved);
+export function getSelectionByStudentAndCoachId(
+  studentId: number,
+  coachId: number,
+): Selection | undefined {
+  const stmt = db.prepare(
+    "SELECT * FROM selections WHERE studentId = ? AND coachId = ? AND (status = ? OR status = ?)",
+  );
+  const row = stmt.get(
+    studentId,
+    coachId,
+    SelectionStatus.Pending,
+    SelectionStatus.Approved,
+  );
   if (row) {
     return row as Selection;
   }
   return undefined;
 }
 
-export function getApprovedCoachesForStudent(studentId: number): any[] {
+export function getApprovedCoachesForStudent(studentId: number) {
   const stmt = db.prepare(`
     SELECT
       co.id AS coachId,

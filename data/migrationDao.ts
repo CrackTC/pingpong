@@ -34,7 +34,8 @@ export function getPendingMigrations(
       dco.realName AS destCoachName,
       stu.id AS studentId,
       stu.realName AS studentName,
-      m.status
+      m.status,
+      m.id AS migrationId
     FROM migrations m
     JOIN selections sel ON m.selectionId = sel.id
     JOIN coaches oco ON sel.coachId = oco.id
@@ -51,4 +52,18 @@ export function getPendingMigrations(
 
   const stmt = db.prepare(query);
   return stmt.all(...params);
+}
+
+export function updateMigrationStatus(migrationId: number, status: MigrationStatus) {
+  const stmt = db.prepare("UPDATE migrations SET status = ? WHERE id = ?");
+  stmt.run(status, migrationId);
+}
+
+export function getMigrationById(id: number): Migration | undefined {
+  const stmt = db.prepare("SELECT * FROM migrations WHERE id = ?");
+  const row = stmt.get(id);
+  if (row) {
+    return row as Migration;
+  }
+  return undefined;
 }

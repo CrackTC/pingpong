@@ -63,12 +63,63 @@
                     if (response.ok) {
                         if (migrations.length > 0) {
                             let migrationsHtml =
-                                '<table class="table table-striped"><thead><tr><th>Student Name</th><th>Origin Coach Name</th><th>Destination Coach Name</th><th>Status</th></tr></thead><tbody>';
+                                '<table class="table table-striped"><thead><tr><th>Student Name</th><th>Origin Coach Name</th><th>Destination Coach Name</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
                             migrations.forEach((m) => {
-                                migrationsHtml += `<tr><td>${m.studentName}</td><td>${m.originCoachName}</td><td>${m.destCoachName}</td><td>${getStatusString(m.status)}</td></tr>`;
+                                migrationsHtml += `<tr><td>${m.studentName}</td><td>${m.originCoachName}</td><td>${m.destCoachName}</td><td>${getStatusString(m.status)}</td><td>
+                                    <button class="btn btn-success btn-sm approve-btn" data-migration-id="${m.migrationId}">Approve</button>
+                                    <button class="btn btn-danger btn-sm reject-btn" data-migration-id="${m.migrationId}">Reject</button>
+                                </td></tr>`;
                             });
                             migrationsHtml += "</tbody></table>";
                             migrationsListDiv.innerHTML = migrationsHtml;
+
+                            document.querySelectorAll('.approve-btn').forEach(button => {
+                                button.addEventListener('click', async (event) => {
+                                    const migrationId = event.currentTarget.dataset.migrationId;
+                                    if (confirm('Are you sure you want to approve this migration?')) {
+                                        try {
+                                            const response = await fetch('/api/admin/migrations/approve', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ migrationId: parseInt(migrationId) })
+                                            });
+                                            const data = await response.json();
+                                            if (response.ok) {
+                                                alert(data.message);
+                                                fetchMigrations(); // Refresh the list
+                                            } else {
+                                                alert(data.message || 'Failed to approve migration.');
+                                            }
+                                        } catch (error) {
+                                            alert('An unexpected error occurred.');
+                                        }
+                                    }
+                                });
+                            });
+
+                            document.querySelectorAll('.reject-btn').forEach(button => {
+                                button.addEventListener('click', async (event) => {
+                                    const migrationId = event.currentTarget.dataset.migrationId;
+                                    if (confirm('Are you sure you want to reject this migration?')) {
+                                        try {
+                                            const response = await fetch('/api/admin/migrations/reject', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ migrationId: parseInt(migrationId) })
+                                            });
+                                            const data = await response.json();
+                                            if (response.ok) {
+                                                alert(data.message);
+                                                fetchMigrations(); // Refresh the list
+                                            } else {
+                                                alert(data.message || 'Failed to reject migration.');
+                                            }
+                                        } catch (error) {
+                                            alert('An unexpected error occurred.');
+                                        }
+                                    }
+                                });
+                            });
                         } else {
                             migrationsListDiv.innerHTML =
                                 '<p class="text-center">No pending migrations found.</p>';

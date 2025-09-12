@@ -134,6 +134,8 @@ import { useApiAdminNotificationsMarkRead } from "./routes/api/admin/notificatio
 import { useApiAdminHome } from "./routes/api/admin/home.ts";
 import { useApiAdminMigrations } from "./routes/api/admin/migrations.ts";
 import { useAdminMigrations } from "./routes/admin/migrations.ts";
+import { useApiAdminMigrationsApprove } from "./routes/api/admin/migrations/approve.ts";
+import { useApiAdminMigrationsReject } from "./routes/api/admin/migrations/reject.ts";
 
 const app = new Hono();
 
@@ -279,6 +281,8 @@ useApiAdminNotificationsMarkRead(app);
 useApiAdminHome(app);
 useAdminMigrations(app);
 useApiAdminMigrations(app);
+useApiAdminMigrationsApprove(app);
+useApiAdminMigrationsReject(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);
