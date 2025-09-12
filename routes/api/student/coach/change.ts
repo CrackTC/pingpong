@@ -81,7 +81,7 @@ export function useApiStudentCoachChange(app: Hono) {
         NotificationTarget.Coach,
         oldCoachId,
         `Student ${student.realName} has requested to change from you to another coach.`,
-        `/coach/migrations`, // Assuming a new page for migrations
+        `/coach/migration/pending`, // Assuming a new page for migrations
         Date.now(),
       );
 
@@ -91,7 +91,7 @@ export function useApiStudentCoachChange(app: Hono) {
         NotificationTarget.Coach,
         newCoachId,
         `Student ${student.realName} has requested to change to you from another coach.`,
-        `/coach/migrations`,
+        `/coach/migration/pending`,
         Date.now(),
       );
 

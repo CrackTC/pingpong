@@ -138,6 +138,8 @@ import { useApiAdminMigrationsApprove } from "./routes/api/admin/migrations/appr
 import { useApiAdminMigrationsReject } from "./routes/api/admin/migrations/reject.ts";
 import { useStudentMigrationAll } from "./routes/student/migration/all.ts";
 import { useApiStudentMigrationAll } from "./routes/api/student/migration/all.ts";
+import { useApiCoachMigrationPending } from "./routes/api/coach/migration/pending.ts";
+import { useCoachMigrationPending } from "./routes/coach/migration/pending.ts";
 
 const app = new Hono();
 
@@ -287,6 +289,8 @@ useApiAdminMigrationsApprove(app);
 useApiAdminMigrationsReject(app);
 useStudentMigrationAll(app);
 useApiStudentMigrationAll(app);
+useCoachMigrationPending(app);
+useApiCoachMigrationPending(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

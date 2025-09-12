@@ -13,7 +13,9 @@ export function addMigration(migration: Omit<Migration, "id">) {
   );
 }
 
-export function getMigrationsByStudentId(studentId: number): (Migration & { originCoachName: string, destCoachName: string })[] {
+export function getMigrationsByStudentId(
+  studentId: number,
+): (Migration & { originCoachName: string; destCoachName: string })[] {
   const stmt = db.prepare(
     `SELECT m.*, oco.realName AS originCoachName, dco.realName AS destCoachName FROM migrations m
      JOIN selections s ON m.selectionId = s.id
@@ -21,7 +23,10 @@ export function getMigrationsByStudentId(studentId: number): (Migration & { orig
      JOIN coaches dco ON m.destCoachId = dco.id
      WHERE s.studentId = ? AND m.status != ?`, // Exclude completed migrations
   );
-  return stmt.all(studentId, MigrationStatus.Completed) as (Migration & { originCoachName: string, destCoachName: string })[];
+  return stmt.all(
+    studentId,
+    MigrationStatus.Completed,
+  ) as (Migration & { originCoachName: string; destCoachName: string })[];
 }
 
 export function getPendingMigrations(
@@ -56,7 +61,10 @@ export function getPendingMigrations(
   return stmt.all(...params);
 }
 
-export function updateMigrationStatus(migrationId: number, status: MigrationStatus) {
+export function updateMigrationStatus(
+  migrationId: number,
+  status: MigrationStatus,
+) {
   const stmt = db.prepare("UPDATE migrations SET status = ? WHERE id = ?");
   stmt.run(status, migrationId);
 }
@@ -68,4 +76,35 @@ export function getMigrationById(id: number): Migration | undefined {
     return row as Migration;
   }
   return undefined;
+}
+
+export function getPendingMigrationsForCoach(
+  coachId: number,
+): (Migration & { studentName: string; originCoachName: string })[] {
+  const stmt = db.prepare(`
+    SELECT
+      m.*,
+      s.realName AS studentName,
+      oco.realName AS originCoachName,
+      dco.realName AS destCoachName
+    FROM
+      migrations m
+    JOIN
+      selections sel ON m.selectionId = sel.id
+    JOIN
+      students s ON sel.studentId = s.id
+    JOIN
+      coaches oco ON sel.coachId = oco.id
+    JOIN
+      coaches dco ON m.destCoachId = dco.id
+    WHERE
+      m.status != ? AND ((m.destCoachId = ? AND (m.status & ?) = 0) OR (oco.id = ? AND (m.status & ?) = 0))
+  `);
+  return stmt.all(
+    MigrationStatus.Rejected,
+    coachId,
+    MigrationStatus.DestCoachApproved,
+    coachId,
+    MigrationStatus.OriginCoachApproved,
+  ) as (Migration & { studentName: string; originCoachName: string })[];
 }
