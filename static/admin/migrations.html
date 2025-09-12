@@ -43,16 +43,28 @@
                 document.getElementById("migrations-list");
 
             function getStatusString(status) {
-                switch (status) {
-                    case 1:
-                        return "Pending";
-                    case 2:
-                        return "Origin Coach Approved";
-                    case 4:
-                        return "Destination Coach Approved";
-                    default:
-                        return "Unknown";
+                if (status === -1) {
+                    return "Rejected";
                 }
+                if (status === 15) {
+                    return "Completed";
+                }
+                if (status === 1) {
+                    return "Pending";
+                }
+
+                let result = "";
+                if (status & 2) {
+                    result += "Origin Coach Approved ";
+                }
+                if (status & 4) {
+                    result += "Destination Coach Approved ";
+                }
+                if (status & 8) {
+                    result += "Campus Admin Approved ";
+                }
+
+                return result.trim();
             }
 
             async function fetchMigrations() {
@@ -73,53 +85,115 @@
                             migrationsHtml += "</tbody></table>";
                             migrationsListDiv.innerHTML = migrationsHtml;
 
-                            document.querySelectorAll('.approve-btn').forEach(button => {
-                                button.addEventListener('click', async (event) => {
-                                    const migrationId = event.currentTarget.dataset.migrationId;
-                                    if (confirm('Are you sure you want to approve this migration?')) {
-                                        try {
-                                            const response = await fetch('/api/admin/migrations/approve', {
-                                                method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' },
-                                                body: JSON.stringify({ migrationId: parseInt(migrationId) })
-                                            });
-                                            const data = await response.json();
-                                            if (response.ok) {
-                                                alert(data.message);
-                                                fetchMigrations(); // Refresh the list
-                                            } else {
-                                                alert(data.message || 'Failed to approve migration.');
+                            document
+                                .querySelectorAll(".approve-btn")
+                                .forEach((button) => {
+                                    button.addEventListener(
+                                        "click",
+                                        async (event) => {
+                                            const migrationId =
+                                                event.currentTarget.dataset
+                                                    .migrationId;
+                                            if (
+                                                confirm(
+                                                    "Are you sure you want to approve this migration?",
+                                                )
+                                            ) {
+                                                try {
+                                                    const response =
+                                                        await fetch(
+                                                            "/api/admin/migrations/approve",
+                                                            {
+                                                                method: "POST",
+                                                                headers: {
+                                                                    "Content-Type":
+                                                                        "application/json",
+                                                                },
+                                                                body: JSON.stringify(
+                                                                    {
+                                                                        migrationId:
+                                                                            parseInt(
+                                                                                migrationId,
+                                                                            ),
+                                                                    },
+                                                                ),
+                                                            },
+                                                        );
+                                                    const data =
+                                                        await response.json();
+                                                    if (response.ok) {
+                                                        alert(data.message);
+                                                        fetchMigrations(); // Refresh the list
+                                                    } else {
+                                                        alert(
+                                                            data.message ||
+                                                                "Failed to approve migration.",
+                                                        );
+                                                    }
+                                                } catch (error) {
+                                                    alert(
+                                                        "An unexpected error occurred.",
+                                                    );
+                                                }
                                             }
-                                        } catch (error) {
-                                            alert('An unexpected error occurred.');
-                                        }
-                                    }
+                                        },
+                                    );
                                 });
-                            });
 
-                            document.querySelectorAll('.reject-btn').forEach(button => {
-                                button.addEventListener('click', async (event) => {
-                                    const migrationId = event.currentTarget.dataset.migrationId;
-                                    if (confirm('Are you sure you want to reject this migration?')) {
-                                        try {
-                                            const response = await fetch('/api/admin/migrations/reject', {
-                                                method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' },
-                                                body: JSON.stringify({ migrationId: parseInt(migrationId) })
-                                            });
-                                            const data = await response.json();
-                                            if (response.ok) {
-                                                alert(data.message);
-                                                fetchMigrations(); // Refresh the list
-                                            } else {
-                                                alert(data.message || 'Failed to reject migration.');
+                            document
+                                .querySelectorAll(".reject-btn")
+                                .forEach((button) => {
+                                    button.addEventListener(
+                                        "click",
+                                        async (event) => {
+                                            const migrationId =
+                                                event.currentTarget.dataset
+                                                    .migrationId;
+                                            if (
+                                                confirm(
+                                                    "Are you sure you want to reject this migration?",
+                                                )
+                                            ) {
+                                                try {
+                                                    const response =
+                                                        await fetch(
+                                                            "/api/admin/migrations/reject",
+                                                            {
+                                                                method: "POST",
+                                                                headers: {
+                                                                    "Content-Type":
+                                                                        "application/json",
+                                                                },
+                                                                body: JSON.stringify(
+                                                                    {
+                                                                        migrationId:
+                                                                            parseInt(
+                                                                                migrationId,
+                                                                            ),
+                                                                    },
+                                                                ),
+                                                            },
+                                                        );
+                                                    const data =
+                                                        await response.json();
+                                                    if (response.ok) {
+                                                        alert(data.message);
+                                                        fetchMigrations(); // Refresh the list
+                                                    } else {
+                                                        alert(
+                                                            data.message ||
+                                                                "Failed to reject migration.",
+                                                        );
+                                                    }
+                                                } catch (error) {
+                                                    alert(
+                                                        "An unexpected error occurred.",
+                                                    );
+                                                }
                                             }
-                                        } catch (error) {
-                                            alert('An unexpected error occurred.');
-                                        }
-                                    }
+                                        },
+                                    );
                                 });
-                            });
                         } else {
                             migrationsListDiv.innerHTML =
                                 '<p class="text-center">No pending migrations found.</p>';

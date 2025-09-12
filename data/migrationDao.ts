@@ -13,13 +13,15 @@ export function addMigration(migration: Omit<Migration, "id">) {
   );
 }
 
-export function getMigrationsByStudentId(studentId: number): Migration[] {
+export function getMigrationsByStudentId(studentId: number): (Migration & { originCoachName: string, destCoachName: string })[] {
   const stmt = db.prepare(
-    `SELECT m.* FROM migrations m
+    `SELECT m.*, oco.realName AS originCoachName, dco.realName AS destCoachName FROM migrations m
      JOIN selections s ON m.selectionId = s.id
+     JOIN coaches oco ON s.coachId = oco.id
+     JOIN coaches dco ON m.destCoachId = dco.id
      WHERE s.studentId = ? AND m.status != ?`, // Exclude completed migrations
   );
-  return stmt.all(studentId, MigrationStatus.Completed) as Migration[];
+  return stmt.all(studentId, MigrationStatus.Completed) as (Migration & { originCoachName: string, destCoachName: string })[];
 }
 
 export function getPendingMigrations(

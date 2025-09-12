@@ -136,6 +136,8 @@ import { useApiAdminMigrations } from "./routes/api/admin/migrations.ts";
 import { useAdminMigrations } from "./routes/admin/migrations.ts";
 import { useApiAdminMigrationsApprove } from "./routes/api/admin/migrations/approve.ts";
 import { useApiAdminMigrationsReject } from "./routes/api/admin/migrations/reject.ts";
+import { useStudentMigrationAll } from "./routes/student/migration/all.ts";
+import { useApiStudentMigrationAll } from "./routes/api/student/migration/all.ts";
 
 const app = new Hono();
 
@@ -283,6 +285,8 @@ useAdminMigrations(app);
 useApiAdminMigrations(app);
 useApiAdminMigrationsApprove(app);
 useApiAdminMigrationsReject(app);
+useStudentMigrationAll(app);
+useApiStudentMigrationAll(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

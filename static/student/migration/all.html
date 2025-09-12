@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>My Migrations</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body class="bg-light">
+        <div class="container">
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-10">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">
+                                My Migrations
+                            </h3>
+                            <div id="migrations-list">
+                                <!-- Migrations will be loaded here -->
+                            </div>
+                            <div class="d-grid gap-2 mt-3">
+                                <a
+                                    href="/student/home"
+                                    class="btn btn-secondary"
+                                    >Back to Home</a
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"
+        ></script>
+        <script>
+            const migrationsListDiv =
+                document.getElementById("migrations-list");
+
+            function getStatusString(status) {
+                if (status === -1) {
+                    return "Rejected";
+                }
+                if (status === 15) {
+                    return "Completed";
+                }
+                if (status === 1) {
+                    return "Pending";
+                }
+
+                let result = "";
+                if (status & 2) {
+                    result += "Origin Coach Approved ";
+                }
+                if (status & 4) {
+                    result += "Destination Coach Approved ";
+                }
+                if (status & 8) {
+                    result += "Campus Admin Approved ";
+                }
+
+                return result.trim();
+            }
+
+            async function fetchMigrations() {
+                try {
+                    const response = await fetch("/api/student/migration/all");
+                    const migrations = await response.json();
+
+                    if (response.ok) {
+                        if (migrations.length > 0) {
+                            let migrationsHtml =
+                                '<table class="table table-striped"><thead><tr><th>ID</th><th>Original Coach</th><th>Destination Coach</th><th>Status</th></tr></thead><tbody>';
+                            migrations.forEach((m) => {
+                                migrationsHtml += `<tr><td>${m.id}</td><td>${m.originCoachName}</td><td>${m.destCoachName}</td><td>${getStatusString(m.status)}</td></tr>`;
+                            });
+                            migrationsHtml += "</tbody></table>";
+                            migrationsListDiv.innerHTML = migrationsHtml;
+                        } else {
+                            migrationsListDiv.innerHTML =
+                                '<p class="text-center">No migration records found.</p>';
+                        }
+                    } else {
+                        migrationsListDiv.innerHTML = `<p class="text-center text-danger">${migrations.message || "Failed to fetch migrations."}</p>`;
+                    }
+                } catch (error) {
+                    migrationsListDiv.innerHTML =
+                        '<p class="text-center text-danger">An unexpected error occurred while fetching migrations.</p>';
+                }
+            }
+
+            fetchMigrations();
+        </script>
+    </body>
+</html>
