@@ -52,12 +52,13 @@
                                 >
                                     Add Student
                                 </a>
-                                <a
+                                                                <a
                                     href="/admin/table/all"
                                     class="btn btn-primary"
                                 >
                                     All Tables
                                 </a>
+                                <a href="/admin/notifications" id="notifications-btn" class="btn btn-secondary">Notifications</a>
                                 <a href="/admin/logout" class="btn btn-danger"
                                     >Logout</a
                                 >
@@ -72,5 +73,20 @@
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"
         ></script>
+    <script>
+        fetch('/api/admin/home')
+            .then(response => response.json())
+            .then(data => {
+                const notificationsBtn = document.getElementById('notifications-btn');
+                if (data.unreadNotificationCount > 0) {
+                    notificationsBtn.classList.remove('btn-secondary');
+                    notificationsBtn.classList.add('btn-warning');
+                    notificationsBtn.textContent = `Notifications (${data.unreadNotificationCount})`;
+                } else {
+                    notificationsBtn.textContent = `Notifications`;
+                }
+            })
+            .catch(error => console.error('Error fetching admin home data:', error));
+    </script>
     </body>
 </html>

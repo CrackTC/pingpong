@@ -128,6 +128,10 @@ import { useApiAdminAppointmentCancel } from "./routes/api/admin/appointment/can
 import { useApiAdminCoachDelete } from "./routes/api/admin/coach/delete.ts";
 import { useApiAdminStudentDelete } from "./routes/api/admin/student/delete.ts";
 import { useApiStudentCoachChange } from "./routes/api/student/coach/change.ts";
+import { useAdminNotifications } from "./routes/admin/notifications.ts";
+import { useApiAdminNotifications } from "./routes/api/admin/notifications.ts";
+import { useApiAdminNotificationsMarkRead } from "./routes/api/admin/notifications/mark-read.ts";
+import { useApiAdminHome } from "./routes/api/admin/home.ts";
 
 const app = new Hono();
 
@@ -267,6 +271,10 @@ useApiAdminAppointmentCancel(app);
 useApiAdminCoachDelete(app);
 useApiAdminStudentDelete(app);
 useApiStudentCoachChange(app);
+useAdminNotifications(app);
+useApiAdminNotifications(app);
+useApiAdminNotificationsMarkRead(app);
+useApiAdminHome(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);
