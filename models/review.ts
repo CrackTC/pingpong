@@ -1,6 +1,6 @@
 export enum ReviewType {
-  Student = 1,
-  Coach = 2,
+  StudentToCoach = 1,
+  CoachToStudent = 2,
 }
 
 export enum ReviewStatus {

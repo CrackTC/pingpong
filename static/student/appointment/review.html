@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Review Appointment</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+        <style>
+            .star-rating {
+                font-size: 2rem;
+                cursor: pointer;
+            }
+            .star-rating .star:hover {
+                color: orange;
+            }
+            .star-rating .star.selected {
+                color: orange;
+            }
+        </style>
+    </head>
+    <body class="bg-light">
+        <div class="container">
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">
+                                Review Your Appointment
+                            </h3>
+                            <div id="message-area" class="alert d-none" role="alert"></div>
+                            <form id="review-form">
+                                <div class="mb-3">
+                                    <label for="rating" class="form-label">Rating</label>
+                                    <div class="star-rating" id="star-rating">
+                                        <span class="star" data-value="1">&#9733;</span>
+                                        <span class="star" data-value="2">&#9733;</span>
+                                        <span class="star" data-value="3">&#9733;</span>
+                                        <span class="star" data-value="4">&#9733;</span>
+                                        <span class="star" data-value="5">&#9733;</span>
+                                    </div>
+                                    <input type="hidden" id="rating" name="rating" value="0">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="comment" class="form-label">Comment</label>
+                                    <textarea class="form-control" id="comment" name="comment" rows="5"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                                <a href="/student/appointment/all" class="btn btn-secondary">Back to Appointments</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"
+        ></script>
+        <script>
+            const stars = document.querySelectorAll('.star');
+            const ratingInput = document.getElementById('rating');
+
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const value = parseInt(star.dataset.value);
+                    ratingInput.value = value;
+                    stars.forEach(s => {
+                        if (parseInt(s.dataset.value) <= value) {
+                            s.classList.add('selected');
+                        } else {
+                            s.classList.remove('selected');
+                        }
+                    });
+                });
+            });
+
+            document.getElementById('review-form').addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const appointmentId = window.location.pathname.split('/').pop();
+                const rating = ratingInput.value;
+                const comment = document.getElementById('comment').value;
+                const messageArea = document.getElementById('message-area');
+
+                if (rating == 0) {
+                    messageArea.textContent = 'Please select a rating.';
+                    messageArea.className = 'alert alert-warning';
+                    messageArea.classList.remove('d-none');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/student/appointment/review', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ appointmentId: parseInt(appointmentId), rating: parseInt(rating), comment })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        messageArea.textContent = 'Review submitted successfully!';
+                        messageArea.className = 'alert alert-success';
+                        messageArea.classList.remove('d-none');
+                        setTimeout(() => {
+                            window.location.href = '/student/appointment/all';
+                        }, 2000);
+                    } else {
+                        messageArea.textContent = data.message || 'Failed to submit review.';
+                        messageArea.className = 'alert alert-danger';
+                        messageArea.classList.remove('d-none');
+                    }
+                } catch (error) {
+                    messageArea.textContent = 'An unexpected error occurred.';
+                    messageArea.className = 'alert alert-danger';
+                    messageArea.classList.remove('d-none');
+                }
+            });
+        </script>
+    </body>
+</html>

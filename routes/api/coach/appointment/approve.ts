@@ -148,6 +148,36 @@ export function useApiCoachAppointmentApprove(app: Hono) {
         remind();
       }
 
+      const endTime = calcDate(
+        appointment.createdAt,
+        appointment.weekday,
+        appointment.endHour,
+        appointment.endMinute,
+      );
+
+      scheduleTask(() => {
+        const appointment = getAppointmentById(appointmentId);
+        if (!appointment) return;
+        if (appointment.status === AppointmentStatus.Completed) {
+          addNotification(
+            student.campusId,
+            NotificationTarget.Student,
+            student.id,
+            `Your appointment has been completed. Please remember to rate your coach.`,
+            `/student/appointment/review/${appointment.id}`,
+            Date.now(),
+          );
+          addNotification(
+            coach.campusId,
+            NotificationTarget.Coach,
+            coach.id,
+            `Your appointment has been completed. Please remember to rate your student.`,
+            `/coach/appointment/review/${appointment.id}`,
+            Date.now(),
+          );
+        }
+      }, endTime);
+
       addNotification(
         student.campusId,
         NotificationTarget.Student,

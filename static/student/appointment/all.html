@@ -141,18 +141,22 @@
                                 const appointmentDateStr =
                                     appointmentDate.toLocaleDateString();
 
-                                let cancelButton = "";
+                                let actionButtons = "";
                                 if (
                                     (a.status === 1 || a.status === 2) &&
                                     appointmentDate.getTime() - now.getTime() >
                                         24 * 60 * 60 * 1000
                                 ) {
-                                    cancelButton = `<button class="btn btn-danger btn-sm cancel-btn" data-appointment-id="${a.id}">Cancel</button>`;
+                                    actionButtons += `<button class="btn btn-danger btn-sm cancel-btn" data-appointment-id="${a.id}">Cancel</button>`;
+                                }
+
+                                if (a.status === 8 && !a.hasReview) {
+                                    actionButtons += ` <a href="/student/appointment/review/${a.id}" class="btn btn-primary btn-sm">Review</a>`;
                                 }
 
                                 const timeStr = `${appointmentDateStr} ${startTime} - ${endTime}`;
 
-                                appointmentsHtml += `<tr><td>${timeStr}</td><td>${a.coachName}</td><td>${a.tableName}</td><td>${getWeekdayString(a.weekday)}</td><td>${getStatusString(a.status)}</td><td>${cancelButton}</td></tr>`;
+                                appointmentsHtml += `<tr><td>${timeStr}</td><td>${a.coachName}</td><td>${a.tableName}</td><td>${getWeekdayString(a.weekday)}</td><td>${getStatusString(a.status)}</td><td>${actionButtons}</td></tr>`;
                             });
                             appointmentsHtml += "</tbody></table>";
                             appointmentsListDiv.innerHTML = appointmentsHtml;
