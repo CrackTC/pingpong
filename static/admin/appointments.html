@@ -17,7 +17,10 @@
                 <div class="col-md-10">
                     <div class="card">
                         <div class="card-body">
-                            <h3 class="card-title text-center mb-4" id="page-title">
+                            <h3
+                                class="card-title text-center mb-4"
+                                id="page-title"
+                            >
                                 Active Appointments
                             </h3>
                             <div id="appointments-list">
@@ -42,41 +45,55 @@
             crossorigin="anonymous"
         ></script>
         <script>
-            const appointmentsListDiv = document.getElementById("appointments-list");
+            const appointmentsListDiv =
+                document.getElementById("appointments-list");
             const pageTitle = document.getElementById("page-title");
             const backBtn = document.getElementById("back-btn");
 
             function getStatusString(status) {
                 switch (status) {
-                    case 0: return "Pending";
-                    case 1: return "Approved";
-                    case 2: return "Rejected";
-                    case 3: return "Student Cancelling";
-                    case 4: return "Coach Cancelling";
-                    case 5: return "Student Cancelled";
-                    case 6: return "Coach Cancelled";
-                    case 7: return "Completed";
-                    case 8: return "Admin Cancelled";
-                    default: return "Unknown";
+                    case 1:
+                        return "Pending";
+                    case 2:
+                        return "Approved";
+                    case 3:
+                        return "Rejected";
+                    case 4:
+                        return "Student Cancelling";
+                    case 5:
+                        return "Coach Cancelling";
+                    case 6:
+                        return "Student Cancelled";
+                    case 7:
+                        return "Coach Cancelled";
+                    case 8:
+                        return "Completed";
+                    case 9:
+                        return "Admin Cancelled";
+                    case 10:
+                        return "Outdated";
+                    default:
+                        return "Unknown";
                 }
             }
 
             async function fetchAppointments() {
                 const urlParams = new URLSearchParams(window.location.search);
-                const studentId = urlParams.get('studentId');
-                const coachId = urlParams.get('coachId');
+                const studentId = urlParams.get("studentId");
+                const coachId = urlParams.get("coachId");
 
-                let url = '';
+                let url = "";
                 if (studentId) {
                     url = `/api/admin/student/appointments/${studentId}`;
                     pageTitle.textContent = `Active Appointments for Student ${studentId}`;
-                    backBtn.href = '/admin/student/search';
+                    backBtn.href = "/admin/student/search";
                 } else if (coachId) {
                     url = `/api/admin/coach/appointments/${coachId}`;
                     pageTitle.textContent = `Active Appointments for Coach ${coachId}`;
-                    backBtn.href = '/admin/coach/search';
+                    backBtn.href = "/admin/coach/search";
                 } else {
-                    appointmentsListDiv.innerHTML = '<p class="text-center text-danger">No student or coach ID provided.</p>';
+                    appointmentsListDiv.innerHTML =
+                        '<p class="text-center text-danger">No student or coach ID provided.</p>';
                     return;
                 }
 
@@ -86,49 +103,83 @@
 
                     if (response.ok) {
                         if (appointments.length > 0) {
-                            let appointmentsHtml = '<table class="table table-striped"><thead><tr><th>ID</th><th>Student/Coach</th><th>Table</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+                            let appointmentsHtml =
+                                '<table class="table table-striped"><thead><tr><th>ID</th><th>Student/Coach</th><th>Table</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
                             appointments.forEach((a) => {
-                                const otherParty = studentId ? `Coach: ${a.coachName}` : `Student: ${a.studentName}`;
+                                const otherParty = studentId
+                                    ? `Coach: ${a.coachName}`
+                                    : `Student: ${a.studentName}`;
                                 appointmentsHtml += `<tr><td>${a.id}</td><td>${otherParty}</td><td>${a.tableName}</td><td>${getStatusString(a.status)}</td><td><button class="btn btn-danger btn-sm cancel-btn" data-appointment-id="${a.id}">Cancel</button></td></tr>`;
                             });
                             appointmentsHtml += "</tbody></table>";
                             appointmentsListDiv.innerHTML = appointmentsHtml;
 
-                            document.querySelectorAll('.cancel-btn').forEach(button => {
-                                button.addEventListener('click', async (event) => {
-                                    const appointmentId = event.currentTarget.dataset.appointmentId;
-                                    if (confirm('Are you sure you want to cancel this appointment?')) {
-                                        try {
-                                            const response = await fetch('/api/admin/appointment/cancel', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/json'
-                                                },
-                                                body: JSON.stringify({ appointmentId: parseInt(appointmentId) })
-                                            });
+                            document
+                                .querySelectorAll(".cancel-btn")
+                                .forEach((button) => {
+                                    button.addEventListener(
+                                        "click",
+                                        async (event) => {
+                                            const appointmentId =
+                                                event.currentTarget.dataset
+                                                    .appointmentId;
+                                            if (
+                                                confirm(
+                                                    "Are you sure you want to cancel this appointment?",
+                                                )
+                                            ) {
+                                                try {
+                                                    const response =
+                                                        await fetch(
+                                                            "/api/admin/appointment/cancel",
+                                                            {
+                                                                method: "POST",
+                                                                headers: {
+                                                                    "Content-Type":
+                                                                        "application/json",
+                                                                },
+                                                                body: JSON.stringify(
+                                                                    {
+                                                                        appointmentId:
+                                                                            parseInt(
+                                                                                appointmentId,
+                                                                            ),
+                                                                    },
+                                                                ),
+                                                            },
+                                                        );
 
-                                            const data = await response.json();
+                                                    const data =
+                                                        await response.json();
 
-                                            if (response.ok) {
-                                                alert(data.message);
-                                                fetchAppointments(); // Refresh the list
-                                            } else {
-                                                alert(data.message || 'Failed to cancel appointment.');
+                                                    if (response.ok) {
+                                                        alert(data.message);
+                                                        fetchAppointments(); // Refresh the list
+                                                    } else {
+                                                        alert(
+                                                            data.message ||
+                                                                "Failed to cancel appointment.",
+                                                        );
+                                                    }
+                                                } catch (error) {
+                                                    alert(
+                                                        "An unexpected error occurred.",
+                                                    );
+                                                }
                                             }
-                                        } catch (error) {
-                                            alert('An unexpected error occurred.');
-                                        }
-                                    }
+                                        },
+                                    );
                                 });
-                            });
                         } else {
-                            appointmentsListDiv.innerHTML = '<p class="text-center">No active appointments found.</p>';
+                            appointmentsListDiv.innerHTML =
+                                '<p class="text-center">No active appointments found.</p>';
                         }
                     } else {
                         appointmentsListDiv.innerHTML = `<p class="text-center text-danger">${appointments.message || "Failed to fetch appointments."}</p>`;
                     }
                 } catch (error) {
-                    appointmentsListDiv.innerHTML = '<p class="text-center text-danger">An unexpected error occurred while fetching appointments.</p>';
+                    appointmentsListDiv.innerHTML =
+                        '<p class="text-center text-danger">An unexpected error occurred while fetching appointments.</p>';
                 }
             }
 

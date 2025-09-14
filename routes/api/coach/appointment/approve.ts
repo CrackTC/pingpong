@@ -86,51 +86,67 @@ export function useApiCoachAppointmentApprove(app: Hono) {
 
       updateAppointmentStatus(appointmentId, AppointmentStatus.Approved);
 
+      const completeAppointment = () => {
+        const appointment = getAppointmentById(appointmentId);
+        if (!appointment) return;
+        if (appointment.status === AppointmentStatus.Pending) {
+          updateAppointmentStatus(appointmentId, AppointmentStatus.Outdated);
+        } else if (
+          appointment.status === AppointmentStatus.Approved ||
+          appointment.status === AppointmentStatus.StudentCancelling ||
+          appointment.status === AppointmentStatus.CoachCancelling
+        ) {
+          updateAppointmentStatus(appointmentId, AppointmentStatus.Completed);
+        }
+      };
+
       const startTime = calcDate(
         appointment.createdAt,
         appointment.weekday,
         appointment.startHour,
         appointment.startMinute,
       );
-      scheduleTask(() => {
+
+      if (startTime > new Date()) {
+        scheduleTask(completeAppointment, startTime);
+      } else {
+        completeAppointment();
+      }
+
+      const remind = () => {
         const appointment = getAppointmentById(appointmentId);
         if (!appointment) return;
         if (
-          appointment.status === AppointmentStatus.StudentCancelled ||
-          appointment.status === AppointmentStatus.CoachCancelled ||
-          appointment.status === AppointmentStatus.AdminCancelled
-        ) return;
-        updateAppointmentStatus(appointmentId, AppointmentStatus.Completed);
-      }, startTime);
+          appointment.status === AppointmentStatus.Approved ||
+          appointment.status === AppointmentStatus.StudentCancelling ||
+          appointment.status === AppointmentStatus.CoachCancelling
+        ) {
+          addNotification(
+            student.campusId,
+            NotificationTarget.Student,
+            student.id,
+            `You have an upcoming appointment in 24 hours.`,
+            "/student/appointment/all",
+            Date.now(),
+          );
+          addNotification(
+            coach.campusId,
+            NotificationTarget.Coach,
+            coach.id,
+            `You have an upcoming appointment in 24 hours.`,
+            "/coach/appointment/all",
+            Date.now(),
+          );
+        }
+      };
 
       const reminderTime = new Date(startTime.getTime() - 24 * 60 * 60 * 1000);
-      scheduleTask(() => {
-        const appointment = getAppointmentById(appointmentId);
-        if (!appointment) return;
-        if (
-          appointment.status === AppointmentStatus.StudentCancelled ||
-          appointment.status === AppointmentStatus.CoachCancelled ||
-          appointment.status === AppointmentStatus.AdminCancelled
-        ) return;
 
-        addNotification(
-          student.campusId,
-          NotificationTarget.Student,
-          student.id,
-          `You have an upcoming appointment in 24 hours.`,
-          "/student/appointment/all",
-          Date.now(),
-        );
-
-        addNotification(
-          coach.campusId,
-          NotificationTarget.Coach,
-          coach.id,
-          `You have an upcoming appointment in 24 hours.`,
-          "/coach/appointment/all",
-          Date.now(),
-        );
-      }, reminderTime);
+      if (reminderTime > new Date()) {
+        scheduleTask(remind, reminderTime);
+      } else {
+        remind();
+      }
 
       addNotification(
         student.campusId,

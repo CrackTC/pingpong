@@ -8,6 +8,7 @@ export enum AppointmentStatus {
   CoachCancelled,
   Completed,
   AdminCancelled,
+  Outdated,
 }
 
 export type Appointment = {
