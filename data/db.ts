@@ -5,7 +5,7 @@ export const db = new Database("data.db", { int64: true });
 db.exec(`
 CREATE TABLE IF NOT EXISTS roots (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT NOT NULL,
+  username TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL
 )
 `);
@@ -19,10 +19,10 @@ WHERE NOT EXISTS(SELECT 1 FROM roots)
 db.exec(`
 CREATE TABLE IF NOT EXISTS campuses (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  address TEXT NOT NULL,
-  phone TEXT NOT NULL,
-  email TEXT NOT NULL,
+  name TEXT UNIQUE NOT NULL,
+  address TEXT UNIQUE NOT NULL,
+  phone TEXT UNIQUE NOT NULL,
+  email TEXT UNIQUE NOT NULL,
   type INTEGER NOT NULL
 )
 `);
@@ -37,7 +37,7 @@ db.exec(`
 CREATE TABLE IF NOT EXISTS admins (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   campusId INTEGER NOT NULL,
-  username TEXT NOT NULL,
+  username TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
   FOREIGN KEY (campusId) REFERENCES campuses(id)
 )
@@ -46,14 +46,14 @@ CREATE TABLE IF NOT EXISTS admins (
 db.exec(`
 CREATE TABLE IF NOT EXISTS students (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT NOT NULL,
+  username TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
   realName TEXT NOT NULL,
   sex INTEGER,
   birthYear INTEGER,
   campusId INTEGER NOT NULL,
-  phone TEXT NOT NULL,
-  email TEXT,
+  phone TEXT UNIQUE NOT NULL,
+  email TEXT UNIQUE,
   balance INTEGER NOT NULL,
   FOREIGN KEY (campusId) REFERENCES campuses(id)
 )
@@ -62,15 +62,15 @@ CREATE TABLE IF NOT EXISTS students (
 db.exec(`
 CREATE TABLE IF NOT EXISTS coaches (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT NOT NULL,
+  username TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
   realName TEXT NOT NULL,
   sex INTEGER,
   birthYear INTEGER,
   campusId INTEGER NOT NULL,
-  phone TEXT NOT NULL,
-  email TEXT,
-  idCardNumber TEXT,
+  phone TEXT UNIQUE NOT NULL,
+  email TEXT UNIQUE,
+  idCardNumber TEXT UNIQUE,
   avatarPath TEXT NOT NULL,
   comment TEXT NOT NULL,
   type INTEGER NOT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS coaches (
 db.exec(`
 CREATE TABLE IF NOT EXISTS tables (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
+  name TEXT UNIQUE NOT NULL,
   campusId INTEGER NOT NULL,
   FOREIGN KEY (campusId) REFERENCES campuses(id)
 )
@@ -186,7 +186,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 db.exec(`
 CREATE TABLE IF NOT EXISTS recharge_orders (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  orderNumber TEXT NOT NULL UNIQUE,
+  orderNumber TEXT UNIQUE NOT NULL,
   studentId INTEGER NOT NULL,
   amount INTEGER NOT NULL,
   status INTEGER NOT NULL,
