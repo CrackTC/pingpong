@@ -109,6 +109,7 @@ CREATE TABLE IF NOT EXISTS appointments (
   tableId INTEGER NOT NULL,
   timeslotId INTEGER NOT NULL,
   status INTEGER NOT NULL,
+  createdAt INTEGER NOT NULL,
   FOREIGN KEY (campusId) REFERENCES campuses(id),
   FOREIGN KEY (studentId) REFERENCES students(id),
   FOREIGN KEY (coachId) REFERENCES coaches(id),

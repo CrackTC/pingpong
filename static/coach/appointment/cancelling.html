@@ -32,14 +32,16 @@
                                 role="alert"
                             ></div>
 
-                            <div id="appointments-list" class="mt-4" style="overflow-x: auto;">
+                            <div
+                                id="appointments-list"
+                                class="mt-4"
+                                style="overflow-x: auto"
+                            >
                                 <!-- Appointments will be loaded here -->
                             </div>
 
                             <div class="d-grid gap-2 mt-3">
-                                <a
-                                    href="/coach/home"
-                                    class="btn btn-secondary"
+                                <a href="/coach/home" class="btn btn-secondary"
                                     >Back to Home</a
                                 >
                             </div>
@@ -55,7 +57,8 @@
         ></script>
         <script>
             const messageArea = document.getElementById("message-area");
-            const appointmentsListDiv = document.getElementById("appointments-list");
+            const appointmentsListDiv =
+                document.getElementById("appointments-list");
 
             function displayMessage(message, type) {
                 messageArea.textContent = message;
@@ -78,7 +81,9 @@
 
             async function fetchCancellingAppointments() {
                 try {
-                    const response = await fetch("/api/coach/appointment/cancelling");
+                    const response = await fetch(
+                        "/api/coach/appointment/cancelling",
+                    );
                     const appointments = await response.json();
 
                     if (response.ok) {
@@ -95,17 +100,28 @@
                                     ":" +
                                     String(a.endMinute).padStart(2, "0");
 
-                                const now = new Date();
-                                const appointmentDate = new Date();
-                                appointmentDate.setHours(a.startHour, a.startMinute, 0, 0);
+                                const now = new Date(a.createdAt);
+                                const appointmentDate = new Date(now);
+                                appointmentDate.setHours(
+                                    a.startHour,
+                                    a.startMinute,
+                                    0,
+                                    0,
+                                );
 
                                 let diff = a.weekday - now.getDay();
-                                if (diff < 0 || (diff === 0 && appointmentDate.getTime() < now.getTime())) {
+                                if (
+                                    diff < 0 ||
+                                    (diff === 0 &&
+                                        appointmentDate.getTime() <
+                                            now.getTime())
+                                ) {
                                     diff += 7;
                                 }
                                 appointmentDate.setDate(now.getDate() + diff);
 
-                                const appointmentDateStr = appointmentDate.toLocaleDateString();
+                                const appointmentDateStr =
+                                    appointmentDate.toLocaleDateString();
                                 const timeStr = `${appointmentDateStr} ${startTime} - ${endTime}`;
 
                                 const approveButton = `<button class="btn btn-success btn-sm approve-btn" data-appointment-id="${a.id}">Approve</button>`;
@@ -114,30 +130,58 @@
                             appointmentsHtml += "</tbody></table>";
                             appointmentsListDiv.innerHTML = appointmentsHtml;
 
-                            document.querySelectorAll('.approve-btn').forEach(button => {
-                                button.addEventListener('click', async (event) => {
-                                    const appointmentId = event.target.dataset.appointmentId;
-                                    const response = await fetch('/api/coach/appointment/cancel/approve', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ appointmentId: parseInt(appointmentId) })
-                                    });
+                            document
+                                .querySelectorAll(".approve-btn")
+                                .forEach((button) => {
+                                    button.addEventListener(
+                                        "click",
+                                        async (event) => {
+                                            const appointmentId =
+                                                event.target.dataset
+                                                    .appointmentId;
+                                            const response = await fetch(
+                                                "/api/coach/appointment/cancel/approve",
+                                                {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Content-Type":
+                                                            "application/json",
+                                                    },
+                                                    body: JSON.stringify({
+                                                        appointmentId:
+                                                            parseInt(
+                                                                appointmentId,
+                                                            ),
+                                                    }),
+                                                },
+                                            );
 
-                                    if (response.ok) {
-                                        displayMessage('Cancellation approved.', 'success');
-                                        fetchCancellingAppointments();
-                                    } else {
-                                        const error = await response.json();
-                                        displayMessage(error.message || 'Failed to approve cancellation.', 'danger');
-                                    }
+                                            if (response.ok) {
+                                                displayMessage(
+                                                    "Cancellation approved.",
+                                                    "success",
+                                                );
+                                                fetchCancellingAppointments();
+                                            } else {
+                                                const error =
+                                                    await response.json();
+                                                displayMessage(
+                                                    error.message ||
+                                                        "Failed to approve cancellation.",
+                                                    "danger",
+                                                );
+                                            }
+                                        },
+                                    );
                                 });
-                            });
                         } else {
-                            appointmentsListDiv.innerHTML = '<p class="text-center">No pending cancellations found.</p>';
+                            appointmentsListDiv.innerHTML =
+                                '<p class="text-center">No pending cancellations found.</p>';
                         }
                     } else {
                         displayMessage(
-                            appointments.message || "Failed to fetch pending cancellations.",
+                            appointments.message ||
+                                "Failed to fetch pending cancellations.",
                             "danger",
                         );
                     }

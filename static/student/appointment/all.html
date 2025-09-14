@@ -32,7 +32,11 @@
                                 role="alert"
                             ></div>
 
-                            <div id="appointments-list" class="mt-4" style="overflow-x: auto;">
+                            <div
+                                id="appointments-list"
+                                class="mt-4"
+                                style="overflow-x: auto"
+                            >
                                 <!-- Appointments will be loaded here -->
                             </div>
 
@@ -87,7 +91,7 @@
                     6: "Student Cancelled",
                     7: "Coach Cancelled",
                     8: "Completed",
-                    9: "Admin Cancelled"
+                    9: "Admin Cancelled",
                 };
                 return statuses[status] || "Unknown";
             }
@@ -113,20 +117,35 @@
                                     ":" +
                                     String(a.endMinute).padStart(2, "0");
 
-                                const now = new Date();
-                                const appointmentDate = new Date();
-                                appointmentDate.setHours(a.startHour, a.startMinute, 0, 0);
+                                const now = new Date(a.createdAt);
+                                const appointmentDate = new Date(now);
+                                appointmentDate.setHours(
+                                    a.startHour,
+                                    a.startMinute,
+                                    0,
+                                    0,
+                                );
 
                                 let diff = a.weekday - now.getDay();
-                                if (diff < 0 || (diff === 0 && appointmentDate.getTime() < now.getTime())) {
+                                if (
+                                    diff < 0 ||
+                                    (diff === 0 &&
+                                        appointmentDate.getTime() <
+                                            now.getTime())
+                                ) {
                                     diff += 7;
                                 }
                                 appointmentDate.setDate(now.getDate() + diff);
 
-                                const appointmentDateStr = appointmentDate.toLocaleDateString();
+                                const appointmentDateStr =
+                                    appointmentDate.toLocaleDateString();
 
-                                let cancelButton = '';
-                                if ((a.status === 1 || a.status === 2) && appointmentDate.getTime() - now.getTime() > 24 * 60 * 60 * 1000) {
+                                let cancelButton = "";
+                                if (
+                                    (a.status === 1 || a.status === 2) &&
+                                    appointmentDate.getTime() - now.getTime() >
+                                        24 * 60 * 60 * 1000
+                                ) {
                                     cancelButton = `<button class="btn btn-danger btn-sm cancel-btn" data-appointment-id="${a.id}">Cancel</button>`;
                                 }
 
@@ -137,24 +156,50 @@
                             appointmentsHtml += "</tbody></table>";
                             appointmentsListDiv.innerHTML = appointmentsHtml;
 
-                            document.querySelectorAll('.cancel-btn').forEach(button => {
-                                button.addEventListener('click', async (event) => {
-                                    const appointmentId = event.target.dataset.appointmentId;
-                                    const response = await fetch('/api/student/appointment/cancel', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ appointmentId: parseInt(appointmentId) })
-                                    });
+                            document
+                                .querySelectorAll(".cancel-btn")
+                                .forEach((button) => {
+                                    button.addEventListener(
+                                        "click",
+                                        async (event) => {
+                                            const appointmentId =
+                                                event.target.dataset
+                                                    .appointmentId;
+                                            const response = await fetch(
+                                                "/api/student/appointment/cancel",
+                                                {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Content-Type":
+                                                            "application/json",
+                                                    },
+                                                    body: JSON.stringify({
+                                                        appointmentId:
+                                                            parseInt(
+                                                                appointmentId,
+                                                            ),
+                                                    }),
+                                                },
+                                            );
 
-                                    if (response.ok) {
-                                        displayMessage('Appointment cancellation request sent.', 'success');
-                                        fetchAppointments();
-                                    } else {
-                                        const error = await response.json();
-                                        displayMessage(error.message || 'Failed to cancel appointment.', 'danger');
-                                    }
+                                            if (response.ok) {
+                                                displayMessage(
+                                                    "Appointment cancellation request sent.",
+                                                    "success",
+                                                );
+                                                fetchAppointments();
+                                            } else {
+                                                const error =
+                                                    await response.json();
+                                                displayMessage(
+                                                    error.message ||
+                                                        "Failed to cancel appointment.",
+                                                    "danger",
+                                                );
+                                            }
+                                        },
+                                    );
                                 });
-                            });
                         } else {
                             appointmentsListDiv.innerHTML =
                                 '<p class="text-center">No appointments found.</p>';

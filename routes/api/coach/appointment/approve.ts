@@ -87,6 +87,7 @@ export function useApiCoachAppointmentApprove(app: Hono) {
       updateAppointmentStatus(appointmentId, AppointmentStatus.Approved);
 
       const startTime = calcDate(
+        appointment.createdAt,
         appointment.weekday,
         appointment.startHour,
         appointment.startMinute,

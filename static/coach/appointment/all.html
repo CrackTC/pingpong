@@ -89,7 +89,7 @@
                     6: "Student Cancelled",
                     7: "Coach Cancelled",
                     8: "Completed",
-                    9: "Admin Cancelled"
+                    9: "Admin Cancelled",
                 };
                 return statuses[status] || "Unknown";
             }
@@ -113,8 +113,8 @@
                                     ":" +
                                     String(a.endMinute).padStart(2, "0");
 
-                                const now = new Date();
-                                const appointmentDate = new Date();
+                                const now = new Date(a.createdAt);
+                                const appointmentDate = new Date(now);
                                 appointmentDate.setHours(
                                     a.startHour,
                                     a.startMinute,

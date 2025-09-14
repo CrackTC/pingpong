@@ -18,4 +18,5 @@ export type Appointment = {
   tableId: number;
   timeslotId: number;
   status: AppointmentStatus;
+  createdAt: number;
 };

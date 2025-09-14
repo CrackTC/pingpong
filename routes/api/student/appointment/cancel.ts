@@ -24,6 +24,7 @@ export function useApiStudentAppointmentCancel(app: Hono) {
       }
 
       const startDate = calcDate(
+        appointment.createdAt,
         appointment.weekday,
         appointment.startHour,
         appointment.startMinute,

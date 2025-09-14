@@ -149,7 +149,7 @@ export function getAllActiveAppointments(): Appointment[] {
 
 export function addAppointment(appointment: Omit<Appointment, "id">) {
   const stmt = db.prepare(
-    "INSERT INTO appointments (campusId, studentId, coachId, tableId, timeslotId, status) VALUES (?, ?, ?, ?, ?, ?)",
+    "INSERT INTO appointments (campusId, studentId, coachId, tableId, timeslotId, status, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)",
   );
   stmt.run(
     appointment.campusId,
@@ -158,6 +158,7 @@ export function addAppointment(appointment: Omit<Appointment, "id">) {
     appointment.tableId,
     appointment.timeslotId,
     appointment.status,
+    appointment.createdAt,
   );
 }
 

@@ -56,6 +56,7 @@ export function useApiStudentAppointmentBook(app: Hono) {
         tableId: selectedTableId,
         timeslotId,
         status: AppointmentStatus.Pending,
+        createdAt: Date.now(),
       });
 
       addNotification(

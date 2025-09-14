@@ -16,8 +16,13 @@ export function validatePassword(password: string): string | null {
   return null; // Password is valid
 }
 
-export function calcDate(weekday: number, hour: number, minute: number) {
-  const now = new Date();
+export function calcDate(
+  start: number,
+  weekday: number,
+  hour: number,
+  minute: number,
+) {
+  const now = new Date(start);
   const ans = new Date(now);
   ans.setHours(hour, minute, 0, 0);
 
