@@ -29,13 +29,25 @@ export function updateRechargeOrderStatus(
   stmt.run(status, orderNumber);
 }
 
+import { SystemLogType } from "../models/systemLog.ts";
+
 export function getRechargeOrdersByStudentId(
   studentId: number,
-): RechargeOrder[] {
-  const stmt = db.prepare(
-    "SELECT * FROM recharge_orders WHERE studentId = ? ORDER BY id DESC",
-  );
-  return stmt.all(studentId) as RechargeOrder[];
+): (RechargeOrder & { createdAt: number })[] {
+  const stmt = db.prepare(`
+    SELECT
+      ro.*,
+      sl.timestamp as createdAt
+    FROM
+      recharge_orders ro
+    LEFT JOIN
+      systemLogs sl ON ro.id = sl.relatedId AND sl.type = ?
+    WHERE
+      ro.studentId = ?
+    ORDER BY
+      ro.id DESC
+  `);
+  return stmt.all(SystemLogType.StudentRecharge, studentId) as (RechargeOrder & { createdAt: number })[];
 }
 
 export function deleteRechargeOrdersByStudentId(studentId: number) {
