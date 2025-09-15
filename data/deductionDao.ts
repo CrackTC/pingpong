@@ -32,3 +32,21 @@ export function deleteDeductionsByStudentId(studentId: number) {
   const stmt = db.prepare("DELETE FROM deductions WHERE studentId = ?");
   stmt.run(studentId);
 }
+
+export function getEnrichedDeductionsByStudentId(studentId: number): (Deduction & { contestName?: string, appointmentDetails?: any })[] {
+  const stmt = db.prepare(`
+    SELECT
+      d.*,
+      co.name as contestName,
+      a.id as appointmentId, a.coachId, a.tableId, a.timeslotId, a.status as appointmentStatus
+    FROM
+      deductions d
+    LEFT JOIN
+      contests co ON d.relatedId = co.id AND d.type = ?
+    LEFT JOIN
+      appointments a ON d.relatedId = a.id AND d.type = ?
+    WHERE
+      d.studentId = ?
+  `);
+  return stmt.all(DeductionType.ContestRegistration, DeductionType.Appointment, studentId) as (Deduction & { contestName?: string, appointmentDetails?: any })[];
+}

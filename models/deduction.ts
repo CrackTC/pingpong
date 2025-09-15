@@ -1,5 +1,6 @@
 export enum DeductionType {
   Appointment,
+  ContestRegistration,
 }
 
 export type Deduction = {

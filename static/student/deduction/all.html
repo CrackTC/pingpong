@@ -37,18 +37,37 @@
         </div>
 
         <!-- Details Modal -->
-        <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+        <div
+            class="modal fade"
+            id="detailsModal"
+            tabindex="-1"
+            aria-labelledby="detailsModalLabel"
+            aria-hidden="true"
+        >
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="detailsModalLabel">Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="modal-title" id="detailsModalLabel">
+                            Details
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
                     </div>
                     <div class="modal-body" id="detailsModalBody">
                         <!-- Details will be loaded here -->
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Close
+                        </button>
                     </div>
                 </div>
             </div>
@@ -59,12 +78,17 @@
             crossorigin="anonymous"
         ></script>
         <script>
-            const deductionsListDiv = document.getElementById("deductions-list");
+            const deductionsListDiv =
+                document.getElementById("deductions-list");
 
             function getTypeString(type) {
                 switch (type) {
-                    case 0: return "Appointment";
-                    default: return "Unknown";
+                    case 0:
+                        return "Appointment";
+                    case 1:
+                        return "Contest Registration";
+                    default:
+                        return "Unknown";
                 }
             }
 
@@ -75,56 +99,87 @@
 
                     if (response.ok) {
                         if (deductions.length > 0) {
-                            let deductionsHtml = '<table class="table table-striped"><thead><tr><th>Type</th><th>Amount</th><th>Actions</th></tr></thead><tbody>';
+                            let deductionsHtml =
+                                '<table class="table table-striped"><thead><tr><th>Type</th><th>Amount</th><th>Actions</th></tr></thead><tbody>';
                             deductions.forEach((d) => {
-                                deductionsHtml += `<tr><td>${getTypeString(d.type)}</td><td>${d.amount}</td><td><button class="btn btn-primary btn-sm details-btn" data-deduction-id="${d.id}" data-related-id="${d.relatedId}" data-type="${d.type}">Details</button></td></tr>`;
+                                const contestNameData = d.contestName ? `data-contest-name="${d.contestName}"` : "";
+                                deductionsHtml += `<tr><td>${getTypeString(d.type)}</td><td>${d.amount}</td><td><button class="btn btn-primary btn-sm details-btn" data-deduction-id="${d.id}" data-related-id="${d.relatedId}" data-type="${d.type}" ${contestNameData}>Details</button></td></tr>`;
                             });
                             deductionsHtml += "</tbody></table>";
                             deductionsListDiv.innerHTML = deductionsHtml;
 
-                            document.querySelectorAll('.details-btn').forEach(button => {
-                                button.addEventListener('click', async (event) => {
-                                    const relatedId = event.currentTarget.dataset.relatedId;
-                                    const type = parseInt(event.currentTarget.dataset.type);
+                            document
+                                .querySelectorAll(".details-btn")
+                                .forEach((button) => {
+                                    button.addEventListener(
+                                        "click",
+                                        async (event) => {
+                                            const relatedId =
+                                                event.currentTarget.dataset
+                                                    .relatedId;
+                                            const type = parseInt(
+                                                event.currentTarget.dataset
+                                                    .type,
+                                            );
+                                            const modalBody =
+                                                document.getElementById(
+                                                    "detailsModalBody",
+                                                );
+                                            const detailsModal = new bootstrap.Modal(document.getElementById("detailsModal"));
 
-                                    if (type === 0) { // Appointment
-                                        const response = await fetch(`/api/student/appointment/${relatedId}`);
-                                        const appointment = await response.json();
-                                        const modalBody = document.getElementById('detailsModalBody');
+                                            if (type === 0) { // Appointment
+                                                const response = await fetch(
+                                                    `/api/student/appointment/${relatedId}`,
+                                                );
+                                                const appointment =
+                                                    await response.json();
 
-                                        if (response.ok) {
-                                            modalBody.innerHTML = `
+                                                if (response.ok) {
+                                                    modalBody.innerHTML = `
                                                 <p><strong>Appointment ID:</strong> ${appointment.id}</p>
                                                 <p><strong>Coach:</strong> ${appointment.coachName}</p>
                                                 <p><strong>Table:</strong> ${appointment.tableName}</p>
                                                 <p><strong>Time:</strong> ${formatWeekday(appointment.weekday)}, ${formatTime(appointment.startHour, appointment.startMinute)} - ${formatTime(appointment.endHour, appointment.endMinute)}</p>
                                             `;
-                                        } else {
-                                            modalBody.innerHTML = `<p class="text-danger">${appointment.message || "Failed to fetch appointment details."}</p>`;
-                                        }
-                                        const detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
-                                        detailsModal.show();
-                                    }
+                                                } else {
+                                                    modalBody.innerHTML = `<p class="text-danger">${appointment.message || "Failed to fetch appointment details."}</p>`;
+                                                }
+                                            } else if (type === 1) { // Contest Registration
+                                                const contestName = event.currentTarget.dataset.contestName;
+                                                modalBody.innerHTML = `<p><strong>Contest:</strong> ${contestName}</p>`;
+                                            }
+                                            detailsModal.show();
+                                        },
+                                    );
                                 });
-                            });
                         } else {
-                            deductionsListDiv.innerHTML = '<p class="text-center">No deduction records found.</p>';
+                            deductionsListDiv.innerHTML =
+                                '<p class="text-center">No deduction records found.</p>';
                         }
                     } else {
                         deductionsListDiv.innerHTML = `<p class="text-center text-danger">${deductions.message || "Failed to fetch records."}</p>`;
                     }
                 } catch (error) {
-                    deductionsListDiv.innerHTML = '<p class="text-center text-danger">An unexpected error occurred while fetching records.</p>';
+                    deductionsListDiv.innerHTML =
+                        '<p class="text-center text-danger">An unexpected error occurred while fetching records.</p>';
                 }
             }
 
             function formatWeekday(weekday) {
-                const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                const days = [
+                    "Sunday",
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                ];
                 return days[weekday];
             }
 
             function formatTime(hour, minute) {
-                return `${hour}:${minute.toString().padStart(2, '0')}`;
+                return `${hour}:${minute.toString().padStart(2, "0")}`;
             }
 
             fetchDeductions();

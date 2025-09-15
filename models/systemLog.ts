@@ -20,6 +20,7 @@ export enum SystemLogType {
   StudentApproveCancel,
   StudentReviewCoach,
   StudentRequestMigration,
+  StudentRegisterContest,
   CoachAdd,
   CoachRegister,
   CoachApprove,
