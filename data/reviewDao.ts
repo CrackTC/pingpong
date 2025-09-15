@@ -15,7 +15,7 @@ export function addReview(review: Omit<Review, "id">) {
   );
 }
 
-export function getReviewByAppointmentId(appointmentId: number): Review | undefined {
+export function getReviewsByAppointmentId(appointmentId: number): Review[] {
   const stmt = db.prepare("SELECT * FROM reviews WHERE appointmentId = ?");
-  return stmt.get(appointmentId) as Review | undefined;
+  return stmt.all(appointmentId) as Review[];
 }

@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import { getClaim } from "../../../../auth/claim.ts";
 import { getAppointmentsByCoachId } from "../../../../data/appointmentDao.ts";
+import { getReviewsByAppointmentId } from "../../../../data/reviewDao.ts";
+import { ReviewType } from "../../../../models/review.ts";
 
 export function useApiCoachAppointmentAll(app: Hono) {
   app.get("/api/coach/appointment/all", async (c) => {
@@ -9,7 +11,15 @@ export function useApiCoachAppointmentAll(app: Hono) {
 
     try {
       const appointments = getAppointmentsByCoachId(coachId);
-      return c.json(appointments);
+      const appointmentsWithReviewStatus = appointments.map(appointment => {
+        const reviews = getReviewsByAppointmentId(appointment.id);
+        const hasReview = reviews.some(r => r.type === ReviewType.CoachToStudent);
+        return {
+          ...appointment,
+          hasReview,
+        };
+      });
+      return c.json(appointmentsWithReviewStatus);
     } catch (error) {
       console.error("Error fetching appointments:", error);
       return c.json({ message: "An unexpected error occurred." }, 500);

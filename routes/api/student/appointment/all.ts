@@ -1,7 +1,8 @@
 import { Hono } from "hono";
 import { getClaim } from "../../../../auth/claim.ts";
 import { getAppointmentsByStudentId } from "../../../../data/appointmentDao.ts";
-import { getReviewByAppointmentId } from "../../../../data/reviewDao.ts";
+import { getReviewsByAppointmentId } from "../../../../data/reviewDao.ts";
+import { ReviewType } from "../../../../models/review.ts";
 
 export function useApiStudentAppointmentAll(app: Hono) {
   app.get("/api/student/appointment/all", async (c) => {
@@ -11,10 +12,11 @@ export function useApiStudentAppointmentAll(app: Hono) {
     try {
       const appointments = getAppointmentsByStudentId(studentId);
       const appointmentsWithReviewStatus = appointments.map(appointment => {
-        const review = getReviewByAppointmentId(appointment.id);
+        const reviews = getReviewsByAppointmentId(appointment.id);
+        const hasReview = reviews.some(r => r.type === ReviewType.StudentToCoach);
         return {
           ...appointment,
-          hasReview: !!review,
+          hasReview,
         };
       });
       return c.json(appointmentsWithReviewStatus);

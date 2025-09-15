@@ -148,7 +148,20 @@
 
                                 const timeStr = `${appointmentDateStr} ${startTime} - ${endTime}`;
 
-                                appointmentsHtml += `<tr><td>${timeStr}</td><td>${a.studentName}</td><td>${a.tableName}</td><td>${getWeekdayString(a.weekday)}</td><td>${getStatusString(a.status)}</td><td>${cancelButton}</td></tr>`;
+                                let actionButtons = "";
+
+                                if (a.status === 1) { // Pending
+                                    actionButtons = `
+                                        <button class="btn btn-success btn-sm approve-btn" data-appointment-id="${a.id}">Approve</button>
+                                        <button class="btn btn-danger btn-sm reject-btn" data-appointment-id="${a.id}">Reject</button>
+                                    `;
+                                } else if (a.status === 8 && !a.hasReview) { // Completed and not reviewed
+                                    actionButtons = `<a href="/coach/appointment/review/${a.id}" class="btn btn-primary btn-sm">Review</a>`;
+                                } else if (a.status === 8 && a.hasReview) {
+                                    actionButtons = `<a href="/coach/appointment/review/${a.id}" class="btn btn-info btn-sm">View Review</a>`;
+                                }
+
+                                appointmentsHtml += `<tr><td>${timeStr}</td><td>${a.studentName}</td><td>${a.tableName}</td><td>${getWeekdayString(a.weekday)}</td><td>${getStatusString(a.status)}</td><td>${actionButtons}</td></tr>`;
                             });
                             appointmentsHtml += "</tbody></table>";
                             appointmentsListDiv.innerHTML = appointmentsHtml;

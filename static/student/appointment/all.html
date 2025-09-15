@@ -152,6 +152,8 @@
 
                                 if (a.status === 8 && !a.hasReview) {
                                     actionButtons += ` <a href="/student/appointment/review/${a.id}" class="btn btn-primary btn-sm">Review</a>`;
+                                } else if (a.status === 8 && a.hasReview) {
+                                    actionButtons += ` <a href="/student/appointment/review/${a.id}" class="btn btn-info btn-sm">View Review</a>`;
                                 }
 
                                 const timeStr = `${appointmentDateStr} ${startTime} - ${endTime}`;

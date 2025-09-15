@@ -58,7 +58,7 @@
                                 </form>
                             </div>
                             <div class="mt-3">
-                                <a href="/student/appointment/all" class="btn btn-secondary">Back to Appointments</a>
+                                <a href="/coach/appointment/all" class="btn btn-secondary">Back to Appointments</a>
                             </div>
                         </div>
                     </div>
@@ -98,11 +98,11 @@
                     displayHtml += `<p><strong>Comment:</strong> ${data.myReview.text || '<em>No comment provided.</em>'}</p><hr/>`;
 
                     if (data.theirReview) {
-                        displayHtml += '<h4>Coach\'s Review</h4>';
+                        displayHtml += '<h4>Student\'s Review</h4>';
                         displayHtml += `<div class="mb-3"><strong>Rating:</strong> ${renderStars(data.theirReview.rating)}</div>`;
                         displayHtml += `<p><strong>Comment:</strong> ${data.theirReview.text || '<em>No comment provided.</em>'}</p>`;
                     } else {
-                        displayHtml += '<p class="text-muted">Waiting for the coach to submit their review. You will be notified when it is available.</p>';
+                        displayHtml += '<p class="text-muted">Waiting for the student to submit their review. You will be notified when it is available.</p>';
                     }
                     reviewDisplayArea.innerHTML = displayHtml;
                 } else {
@@ -142,7 +142,7 @@
                 }
 
                 try {
-                    const response = await fetch('/api/student/appointment/review', {
+                    const response = await fetch('/api/coach/appointment/review', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -157,7 +157,7 @@
                         messageArea.className = 'alert alert-success';
                         messageArea.classList.remove('d-none');
                         setTimeout(() => {
-                            window.location.href = '/student/appointment/all';
+                            window.location.href = '/coach/appointment/all';
                         }, 2000);
                     } else {
                         messageArea.textContent = data.message || 'Failed to submit review.';
