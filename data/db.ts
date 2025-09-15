@@ -205,3 +205,36 @@ CREATE TABLE IF NOT EXISTS deductions (
   FOREIGN KEY (studentId) REFERENCES students (id)
 )
 `);
+
+db.exec(`
+CREATE TABLE IF NOT EXISTS contests (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  type INTEGER NOT NULL,
+  time INTEGER NOT NULL
+)
+`);
+
+db.exec(`
+CREATE TABLE IF NOT EXISTS contestants (
+  seq INTEGER NOT NULL,
+  studentId INTEGER NOT NULL,
+  contestId INTEGER NOT NULL,
+  PRIMARY KEY (contestId, studentId),
+  FOREIGN KEY (studentId) REFERENCES students(id),
+  FOREIGN KEY (contestId) REFERENCES contests(id)
+)
+`);
+
+db.exec(`
+CREATE TABLE IF NOT EXISTS matches (
+  contestId INTEGER NOT NULL,
+  round INTEGER NOT NULL,
+  seqA INTEGER NOT NULL,
+  seqB INTEGER NOT NULL,
+  tableId INTEGER NOT NULL,
+  PRIMARY KEY (contestId, round, seqA, seqB),
+  FOREIGN KEY (contestId) REFERENCES contests(id),
+  FOREIGN KEY (tableId) REFERENCES tables(id)
+)
+`);

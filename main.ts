@@ -151,6 +151,9 @@ import { useAdminSystemLogs } from "./routes/admin/system-logs.ts";
 import { useApiAdminSystemLogs } from "./routes/api/admin/system-logs.ts";
 import { useApiStudentAppointmentCancelCount } from "./routes/api/student/appointment/cancel-count.ts";
 import { useApiCoachAppointmentCancelCount } from "./routes/api/coach/appointment/cancel-count.ts";
+import { useStudentContestAll } from "./routes/student/contest/all.ts";
+import { useApiStudentContestAll } from "./routes/api/student/contest/all.ts";
+import { useApiStudentContestRegister } from "./routes/api/student/contest/register.ts";
 
 const app = new Hono();
 
@@ -171,6 +174,9 @@ app.use("/api/campus/*", userAuth);
 
 useApiStudentAppointmentCancelCount(app);
 useApiCoachAppointmentCancelCount(app);
+useStudentContestAll(app);
+useApiStudentContestAll(app);
+useApiStudentContestRegister(app);
 useRootLogin(app);
 useRootLogout(app);
 useCoachLogout(app);

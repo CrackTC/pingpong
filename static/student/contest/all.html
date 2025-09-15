@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>All Contests</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+</head>
+
+<body class="bg-light">
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-center mb-4">
+                            All Contests
+                        </h3>
+                        <div id="message-area" class="alert d-none" role="alert"></div>
+
+                        <div id="contests-list" class="mt-4" style="overflow-x: auto">
+                            <!-- Contests will be loaded here -->
+                        </div>
+
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="/student/home" class="btn btn-secondary">Back to Home</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script>
+        const messageArea = document.getElementById("message-area");
+        const contestsListDiv = document.getElementById("contests-list");
+
+        function displayMessage(message, type) {
+            messageArea.textContent = message;
+            messageArea.className = `alert alert-${type}`;
+            messageArea.classList.remove("d-none");
+        }
+
+        function getContestTypeString(type) {
+            switch (type) {
+                case 1: return "Junior";
+                case 2: return "Mid";
+                case 3: return "Senior";
+                default: return "Unknown";
+            }
+        }
+
+        async function fetchContests() {
+            try {
+                const response = await fetch("/api/student/contest/all");
+                const contests = await response.json();
+
+                if (response.ok) {
+                    if (contests.length > 0) {
+                        let contestsHtml =
+                            '<table class="table table-striped"><thead><tr><th>Name</th><th>Type</th><th>Date</th><th>Actions</th></tr></thead><tbody>';
+                        contests.forEach((contest) => {
+                            const contestDate = new Date(contest.time);
+                            const now = Date.now();
+                            const isPast = contest.time < now;
+                            const buttonText = isPast ? "Registration Closed" : "Register";
+                            const buttonClass = isPast ? "btn-secondary" : "btn-primary register-btn";
+                            const isDisabled = isPast ? "disabled" : "";
+
+                            contestsHtml += `<tr><td>${contest.name}</td><td>${getContestTypeString(contest.type)}</td><td>${contestDate.toLocaleString()}</td><td><button class="btn ${buttonClass} btn-sm" data-contest-id="${contest.id}" ${isDisabled}>${buttonText}</button></td></tr>`;
+                        });
+                        contestsHtml += "</tbody></table>";
+                        contestsListDiv.innerHTML = contestsHtml;
+
+                        document.querySelectorAll('.register-btn').forEach(button => {
+                                                            button.addEventListener('click', async (event) => {
+                                                                const clickedButton = event.currentTarget;
+                                                                if (!clickedButton) {
+                                                                    console.error("Clicked button is null/undefined.");
+                                                                    return;
+                                                                }
+                                                                const contestId = clickedButton.dataset.contestId;
+                                                                clickedButton.disabled = true; // Disable button immediately
+                                                                clickedButton.textContent = "Registering...";
+                            
+                                                                try {
+                                                                    const response = await fetch('/api/student/contest/register', {
+                                                                        method: 'POST',
+                                                                        headers: {
+                                                                            'Content-Type': 'application/json'
+                                                                        },
+                                                                        body: JSON.stringify({ contestId: parseInt(contestId) })
+                                                                    });
+                            
+                                                                    const data = await response.json();
+                            
+                                                                    if (response.ok) {
+                                                                        displayMessage(data.message, "success");
+                                                                        clickedButton.textContent = "Registered";
+                                                                        clickedButton.classList.remove("btn-primary");
+                                                                        clickedButton.classList.add("btn-success");
+                                                                    } else {
+                                                                        displayMessage(data.message || 'Registration failed.', "danger");
+                                                                        clickedButton.disabled = false; // Re-enable on failure
+                                                                        clickedButton.textContent = "Register";
+                                                                    }
+                                                                } catch (error) {
+                                                                    displayMessage('An unexpected error occurred.', "danger");
+                                                                    clickedButton.disabled = false; // Re-enable on failure
+                                                                    clickedButton.textContent = "Register";
+                                                                }
+                                                            });                        });
+                    } else {
+                        contestsListDiv.innerHTML =
+                            '<p class="text-center">No contests found.</p>';
+                    }
+                } else {
+                    displayMessage(
+                        contests.message || "Failed to fetch contests.",
+                        "danger",
+                    );
+                }
+            } catch (error) {
+                displayMessage(
+                    "An unexpected error occurred while fetching contests.",
+                    "danger",
+                );
+            }
+        }
+
+        fetchContests();
+    </script>
+</body>
+
+</html>

@@ -37,3 +37,33 @@ export function calcDate(
 export function scheduleTask(task: () => void, date: Date) {
   new CronJob(date, task).start();
 }
+
+export function getRoundInfo(people: number) {
+  if (people < 2) {
+    return [];
+  }
+
+  const n = people % 2 === 0 ? people : people + 1; // Ensure even number of participants
+  const arr = Array.from({ length: n }, (_, i) => i);
+  const rounds = [];
+
+  for (let round = 0; round < n - 1; round++) {
+    const matches = [];
+    for (let i = 0; i < n / 2; i++) {
+      const home = arr[i];
+      const away = arr[n - 1 - i];
+      if (home < people && away < people) {
+        if (home < away) {
+          matches.push([home, away]);
+        } else {
+          matches.push([away, home]);
+        }
+      }
+    }
+    rounds.push(matches);
+    // Rotate the array for the next round
+    arr.splice(1, 0, arr.pop()!);
+  }
+
+  return rounds;
+}
