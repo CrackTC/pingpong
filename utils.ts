@@ -1,4 +1,9 @@
 import { CronJob } from "cron";
+import { getLastContests } from "./data/contestDao.ts";
+import { getAllTables } from "./data/tableDao.ts";
+import { getContestantsByContestId } from "./data/contestantDao.ts";
+import { Match } from "./models/match.ts";
+import { addMatch } from "./data/matchDao.ts";
 
 export function validatePassword(password: string): string | null {
   if (password.length < 8 || password.length > 16) {
@@ -66,4 +71,41 @@ export function getRoundInfo(people: number) {
   }
 
   return rounds;
+}
+
+export function arrangeMatches() {
+  const lastContests = getLastContests(3);
+  const tables = getAllTables();
+  lastContests.forEach((contest) => {
+    const contestants = getContestantsByContestId(contest.id);
+    const groups = [];
+    if (contestants.length > 6) {
+      const groupNum = Math.ceil(contestants.length / 6);
+      const average = contestants.length / groupNum;
+      for (let i = 0; i < groupNum; i++) {
+        groups.push(contestants.slice(
+          Math.round(i * average),
+          Math.round((i + 1) * average),
+        ));
+      }
+    } else {
+      groups.push(contestants);
+    }
+
+    groups.forEach((group) => {
+      const rounds = getRoundInfo(group.length);
+      rounds.forEach((round, index) => {
+        round.forEach((match) => {
+          const mappedMatch: Match = {
+            contestId: contest.id,
+            round: index,
+            seqA: group[match[0]].seq,
+            seqB: group[match[1]].seq,
+            tableId: tables[Math.floor(Math.random() * tables.length)].id,
+          };
+          addMatch(mappedMatch);
+        });
+      });
+    });
+  });
 }

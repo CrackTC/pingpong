@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { addContest, getLastContests } from "../../../../data/contestDao.ts";
 import { ContestType } from "../../../../models/contest.ts";
+import { arrangeMatches, scheduleTask } from "../../../../utils.ts";
 
 // Helper function to get the timestamp of the 4th Sunday of a given month/year
 function getFourthSundayOfMonth(year: number, month: number): number {
@@ -54,6 +55,8 @@ export function useApiStudentContestAll(app: Hono) {
         addContest("Monthly Contest - Junior", ContestType.Junior, contestTime);
         addContest("Monthly Contest - Mid", ContestType.Mid, contestTime);
         addContest("Monthly Contest - Senior", ContestType.Senior, contestTime);
+
+        scheduleTask(arrangeMatches, new Date(contestTime));
       }
 
       // Always return a reasonable number of recent contests

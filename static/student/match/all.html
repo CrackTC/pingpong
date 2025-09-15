@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>My Matches</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+        <style>
+            .table td,
+            .table th {
+                vertical-align: middle;
+            }
+        </style>
+    </head>
+    <body class="bg-light">
+        <div class="container">
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-10">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">
+                                My Matches
+                            </h3>
+                            <div
+                                id="message-area"
+                                class="alert d-none"
+                                role="alert"
+                            ></div>
+
+                            <div
+                                id="matches-list"
+                                class="mt-4"
+                                style="overflow-x: auto"
+                            >
+                                <!-- Matches will be loaded here -->
+                            </div>
+
+                            <div class="d-grid gap-2 mt-3">
+                                <a
+                                    href="/student/home"
+                                    class="btn btn-secondary"
+                                    >Back to Home</a
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"
+        ></script>
+        <script>
+            const messageArea = document.getElementById("message-area");
+            const matchesListDiv = document.getElementById("matches-list");
+
+            function displayMessage(message, type) {
+                messageArea.textContent = message;
+                messageArea.className = `alert alert-${type}`;
+                messageArea.classList.remove("d-none");
+            }
+
+            async function fetchMatches() {
+                try {
+                    const response = await fetch("/api/student/match/all");
+                    const matches = await response.json();
+
+                    if (response.ok) {
+                        if (matches.length > 0) {
+                            let matchesHtml =
+                                '<table class="table table-striped"><thead><tr><th>Contest</th><th>Round</th><th>Table</th><th>Opponent</th></tr></thead><tbody>';
+                            matches.forEach((match) => {
+                                matchesHtml += `<tr><td>${match.contestName}</td><td>${match.round}</td><td>${match.tableName}</td><td>${match.opponentName}</td></tr>`;
+                            });
+                            matchesHtml += "</tbody></table>";
+                            matchesListDiv.innerHTML = matchesHtml;
+                        } else {
+                            matchesListDiv.innerHTML =
+                                '<p class="text-center">No matches found.</p>';
+                        }
+                    } else {
+                        displayMessage(
+                            matches.message || "Failed to fetch matches.",
+                            "danger",
+                        );
+                    }
+                } catch (error) {
+                    displayMessage(
+                        "An unexpected error occurred while fetching matches.",
+                        "danger",
+                    );
+                }
+            }
+
+            fetchMatches();
+        </script>
+    </body>
+</html>

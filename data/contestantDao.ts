@@ -53,3 +53,15 @@ export function hasStudentRegisteredForMonth(
   ) as { "COUNT(*)": number };
   return result["COUNT(*)"] > 0;
 }
+
+export function getContestantByContestIdAndSeq(
+  contestId: number,
+  seq: number,
+): { studentId: number } | undefined {
+  const stmt = db.prepare(`
+    SELECT studentId
+    FROM contestants
+    WHERE contestId = ? AND seq = ?
+  `);
+  return stmt.get(contestId, seq) as { studentId: number } | undefined;
+}

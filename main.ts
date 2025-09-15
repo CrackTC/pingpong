@@ -154,6 +154,9 @@ import { useApiCoachAppointmentCancelCount } from "./routes/api/coach/appointmen
 import { useStudentContestAll } from "./routes/student/contest/all.ts";
 import { useApiStudentContestAll } from "./routes/api/student/contest/all.ts";
 import { useApiStudentContestRegister } from "./routes/api/student/contest/register.ts";
+import { useStudentMatchAll } from "./routes/student/match/all.ts";
+import { useApiStudentMatchAll } from "./routes/api/student/match/all.ts";
+import { useApiDebugArrangeMatches } from "./routes/api/debug/arrangeMatches.ts";
 
 const app = new Hono();
 
@@ -177,6 +180,8 @@ useApiCoachAppointmentCancelCount(app);
 useStudentContestAll(app);
 useApiStudentContestAll(app);
 useApiStudentContestRegister(app);
+useStudentMatchAll(app);
+useApiStudentMatchAll(app);
 useRootLogin(app);
 useRootLogout(app);
 useCoachLogout(app);
@@ -319,6 +324,7 @@ useApiCoachMigrationReject(app);
 useAdminSystemLogs(app);
 useApiAdminSystemLogs(app);
 useApiCoachMigrationPending(app);
+useApiDebugArrangeMatches(app);
 
 app.get("/", async (c) => {
   const claim = await getClaim(c);

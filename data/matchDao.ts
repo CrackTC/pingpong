@@ -41,3 +41,22 @@ export function getMatchesByStudentId(
     studentId,
   ) as (Match & { tableName: string; opponentSeq: number | null })[];
 }
+
+export function getMatchesByContestId(
+  contestId: number,
+): (Match & { tableName: string })[] {
+  const stmt = db.prepare(`
+    SELECT
+      m.*,
+      t.name AS tableName
+    FROM
+      matches m
+    JOIN
+      tables t ON m.tableId = t.id
+    WHERE
+      m.contestId = ?
+    ORDER BY
+      m.round, m.seqA, m.seqB
+  `);
+  return stmt.all(contestId) as (Match & { tableName: string })[];
+}

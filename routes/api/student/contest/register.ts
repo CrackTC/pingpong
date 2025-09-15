@@ -1,6 +1,9 @@
 import { Hono } from "hono";
 import { getClaim } from "../../../../auth/claim.ts";
-import { addContestant, hasStudentRegisteredForMonth } from "../../../../data/contestantDao.ts";
+import {
+  addContestant,
+  hasStudentRegisteredForMonth,
+} from "../../../../data/contestantDao.ts";
 import { getContestById } from "../../../../data/contestDao.ts";
 
 export function useApiStudentContestRegister(app: Hono) {
@@ -24,7 +27,9 @@ export function useApiStudentContestRegister(app: Hono) {
       const month = contestDate.getMonth();
 
       if (hasStudentRegisteredForMonth(studentId, year, month)) {
-        return c.json({ message: "You have already registered for a contest this month." }, 400);
+        return c.json({
+          message: "You have already registered for a contest this month.",
+        }, 400);
       }
 
       addContestant(studentId, contestId);
