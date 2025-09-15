@@ -7,7 +7,7 @@ export function useApiStudentMigrationAll(app: Hono) {
     const claim = await getClaim(c);
 
     try {
-      const migrations = getMigrationsByStudentId(claim.id);
+      const migrations = getMigrationsByStudentId(claim.id, false);
       return c.json(migrations);
     } catch (error) {
       console.error("Error fetching student migrations:", error);
