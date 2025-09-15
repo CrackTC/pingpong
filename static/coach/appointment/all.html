@@ -33,6 +33,12 @@
                             ></div>
 
                             <div
+                                id="cancel-count-display"
+                                class="alert alert-info text-center d-none"
+                                role="alert"
+                            ></div>
+
+                            <div
                                 id="appointments-list"
                                 class="mt-4"
                                 style="overflow-x: auto"
@@ -59,6 +65,9 @@
             const messageArea = document.getElementById("message-area");
             const appointmentsListDiv =
                 document.getElementById("appointments-list");
+            const cancelCountDisplay = document.getElementById(
+                "cancel-count-display",
+            );
 
             function displayMessage(message, type) {
                 messageArea.textContent = message;
@@ -97,10 +106,27 @@
 
             async function fetchAppointments() {
                 try {
-                    const response = await fetch("/api/coach/appointment/all");
-                    const appointments = await response.json();
+                    const [appointmentsResponse, cancelCountResponse] =
+                        await Promise.all([
+                            fetch("/api/coach/appointment/all"),
+                            fetch("/api/coach/appointment/cancel-count"),
+                        ]);
 
-                    if (response.ok) {
+                    const appointments = await appointmentsResponse.json();
+                    const cancelData = await cancelCountResponse.json();
+
+                    if (cancelCountResponse.ok) {
+                        cancelCountDisplay.textContent = `This month's cancellations: ${cancelData.cancelCount}`;
+                        cancelCountDisplay.classList.remove("d-none");
+                    } else {
+                        console.error(
+                            "Failed to fetch cancel count:",
+                            cancelData.message,
+                        );
+                        cancelCountDisplay.classList.add("d-none");
+                    }
+
+                    if (appointmentsResponse.ok) {
                         if (appointments.length > 0) {
                             let appointmentsHtml =
                                 '<table class="table table-striped"><thead><tr><th>Time</th><th>Student</th><th>Table</th><th>Weekday</th><th>Status</th><th></th></tr></thead><tbody>';
@@ -139,7 +165,7 @@
 
                                 let cancelButton = "";
                                 if (
-                                    (a.status === 1 || a.status === 2) &&
+                                    a.status === 2 &&
                                     appointmentDate.getTime() - now.getTime() >
                                         24 * 60 * 60 * 1000
                                 ) {
@@ -150,12 +176,14 @@
 
                                 let actionButtons = "";
 
-                                if (a.status === 1) { // Pending
+                                if (a.status === 1) {
+                                    // Pending
                                     actionButtons = `
                                         <button class="btn btn-success btn-sm approve-btn" data-appointment-id="${a.id}">Approve</button>
                                         <button class="btn btn-danger btn-sm reject-btn" data-appointment-id="${a.id}">Reject</button>
                                     `;
-                                } else if (a.status === 8 && !a.hasReview) { // Completed and not reviewed
+                                } else if (a.status === 8 && !a.hasReview) {
+                                    // Completed and not reviewed
                                     actionButtons = `<a href="/coach/appointment/review/${a.id}" class="btn btn-primary btn-sm">Review</a>`;
                                 } else if (a.status === 8 && a.hasReview) {
                                     actionButtons = `<a href="/coach/appointment/review/${a.id}" class="btn btn-info btn-sm">View Review</a>`;

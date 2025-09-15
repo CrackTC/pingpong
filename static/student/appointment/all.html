@@ -33,6 +33,12 @@
                             ></div>
 
                             <div
+                                id="cancel-count-display"
+                                class="alert alert-info text-center d-none"
+                                role="alert"
+                            ></div>
+
+                            <div
                                 id="appointments-list"
                                 class="mt-4"
                                 style="overflow-x: auto"
@@ -61,6 +67,9 @@
             const messageArea = document.getElementById("message-area");
             const appointmentsListDiv =
                 document.getElementById("appointments-list");
+            const cancelCountDisplay = document.getElementById(
+                "cancel-count-display",
+            );
 
             function displayMessage(message, type) {
                 messageArea.textContent = message;
@@ -99,12 +108,27 @@
 
             async function fetchAppointments() {
                 try {
-                    const response = await fetch(
-                        "/api/student/appointment/all",
-                    );
-                    const appointments = await response.json();
+                    const [appointmentsResponse, cancelCountResponse] =
+                        await Promise.all([
+                            fetch("/api/student/appointment/all"),
+                            fetch("/api/student/appointment/cancel-count"),
+                        ]);
 
-                    if (response.ok) {
+                    const appointments = await appointmentsResponse.json();
+                    const cancelData = await cancelCountResponse.json();
+
+                    if (cancelCountResponse.ok) {
+                        cancelCountDisplay.textContent = `This month's cancellations: ${cancelData.cancelCount}`;
+                        cancelCountDisplay.classList.remove("d-none");
+                    } else {
+                        console.error(
+                            "Failed to fetch cancel count:",
+                            cancelData.message,
+                        );
+                        cancelCountDisplay.classList.add("d-none");
+                    }
+
+                    if (appointmentsResponse.ok) {
                         if (appointments.length > 0) {
                             let appointmentsHtml =
                                 '<table class="table table-striped"><thead><tr><th>Time</th><th>Coach</th><th>Table</th><th>Weekday</th><th>Status</th><th></th></tr></thead><tbody>';
@@ -143,7 +167,7 @@
 
                                 let actionButtons = "";
                                 if (
-                                    (a.status === 1 || a.status === 2) &&
+                                    a.status === 2 &&
                                     appointmentDate.getTime() - now.getTime() >
                                         24 * 60 * 60 * 1000
                                 ) {

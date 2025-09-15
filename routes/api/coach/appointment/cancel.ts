@@ -32,6 +32,13 @@ export function useApiCoachAppointmentCancel(app: Hono) {
         return c.json({ message: "Unauthorized." }, 403);
       }
 
+      if (appointment.status !== AppointmentStatus.Approved) {
+        return c.json(
+          { message: "Only approved appointments can be cancelled." },
+          400,
+        );
+      }
+
       const count = getCoachCancelCountThisMonth(claim.id);
       if (count == 3) {
         return c.json(

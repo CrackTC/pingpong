@@ -149,6 +149,8 @@ import { useApiCoachMigrationApprove } from "./routes/api/coach/migration/approv
 import { useApiCoachMigrationReject } from "./routes/api/coach/migration/reject.ts";
 import { useAdminSystemLogs } from "./routes/admin/system-logs.ts";
 import { useApiAdminSystemLogs } from "./routes/api/admin/system-logs.ts";
+import { useApiStudentAppointmentCancelCount } from "./routes/api/student/appointment/cancel-count.ts";
+import { useApiCoachAppointmentCancelCount } from "./routes/api/coach/appointment/cancel-count.ts";
 
 const app = new Hono();
 
@@ -167,6 +169,8 @@ app.use("/coach/*", coachAuth);
 app.use("/api/coach/*", coachAuth);
 app.use("/api/campus/*", userAuth);
 
+useApiStudentAppointmentCancelCount(app);
+useApiCoachAppointmentCancelCount(app);
 useRootLogin(app);
 useRootLogout(app);
 useCoachLogout(app);

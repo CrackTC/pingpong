@@ -37,6 +37,13 @@ export function useApiStudentAppointmentCancel(app: Hono) {
         return c.json({ message: "Unauthorized" }, 403);
       }
 
+      if (appointment.status !== AppointmentStatus.Approved) {
+        return c.json(
+          { message: "Only approved appointments can be cancelled." },
+          400,
+        );
+      }
+
       const count = getStudentCancelCountThisMonth(claim.id);
       if (count == 3) {
         return c.json(
