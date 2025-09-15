@@ -1,5 +1,6 @@
 import { db } from "./db.ts";
 import { Appointment, AppointmentStatus } from "../models/appointment.ts";
+import { SystemLogType } from "../models/systemLog.ts";
 
 export function getAppointmentsByStudentId(studentId: number): (Appointment & {
   coachName: string;
@@ -357,4 +358,48 @@ export function deleteAppointmentsByCoachId(coachId: number) {
 export function deleteAppointmentsByStudentId(studentId: number) {
   const stmt = db.prepare("DELETE FROM appointments WHERE studentId = ?");
   stmt.run(studentId);
+}
+
+export function getCoachCancelCountThisMonth(coachId: number): number {
+  const stmt = db.prepare(`
+    SELECT COUNT(*) as count
+    FROM systemLogs sl
+    JOIN appointments a ON sl.relatedId = a.id
+    WHERE sl.timestamp >= ? AND sl.type = ? AND a.coachId = ?
+  `);
+
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const logType = SystemLogType.CoachCancelAppointment;
+
+  const row = stmt.get<{ count: number }>(
+    startOfMonth.getTime(),
+    logType,
+    coachId,
+  );
+  return row?.count ?? 0;
+}
+
+export function getStudentCancelCountThisMonth(studentId: number): number {
+  const stmt = db.prepare(`
+    SELECT COUNT(*) as count
+    FROM systemLogs sl
+    JOIN appointments a ON sl.relatedId = a.id
+    WHERE sl.timestamp >= ? AND sl.type = ? AND a.studentId = ?
+  `);
+
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const logType = SystemLogType.StudentCancelAppointment;
+
+  const row = stmt.get<{ count: number }>(
+    startOfMonth.getTime(),
+    logType,
+    studentId,
+  );
+  return row?.count ?? 0;
 }

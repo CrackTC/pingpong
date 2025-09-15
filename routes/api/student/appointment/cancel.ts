@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import {
   getAppointmentById,
+  getStudentCancelCountThisMonth,
   updateAppointmentStatus,
 } from "../../../../data/appointmentDao.ts";
 import { AppointmentStatus } from "../../../../models/appointment.ts";
@@ -34,6 +35,17 @@ export function useApiStudentAppointmentCancel(app: Hono) {
       const claim = await getClaim(c);
       if (claim.id !== student.id) {
         return c.json({ message: "Unauthorized" }, 403);
+      }
+
+      const count = getStudentCancelCountThisMonth(claim.id);
+      if (count == 3) {
+        return c.json(
+          {
+            message:
+              "You have reached the maximum of 3 cancellations this month. Please contact support for further assistance.",
+          },
+          400,
+        );
       }
 
       const startDate = calcDate(
