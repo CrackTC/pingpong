@@ -1,7 +1,13 @@
 import { Hono } from "hono";
 import { getClaim } from "../../../auth/claim.ts";
-import { getCoachById, updateCoachPassword, verifyCoach } from "../../../data/coachDao.ts";
+import {
+  getCoachById,
+  updateCoachPassword,
+  verifyCoach,
+} from "../../../data/coachDao.ts";
 import { validatePassword } from "../../../utils.ts";
+import { addSystemLog } from "../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../models/systemLog.ts";
 
 export function useApiCoachPassword(app: Hono) {
   app.post("/api/coach/password", async (c) => {
@@ -30,6 +36,13 @@ export function useApiCoachPassword(app: Hono) {
 
     try {
       updateCoachPassword(claim.id, newPassword);
+      addSystemLog({
+        campusId: coach.campusId,
+        type: SystemLogType.CoachChangePassword,
+        text:
+          `Coach ${coach.realName} (ID: ${coach.id}) changed their password.`,
+        relatedId: coach.id,
+      });
       return c.json({ message: "Password changed successfully" });
     } catch (error) {
       console.error("Error changing coach password:", error);

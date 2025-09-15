@@ -2,6 +2,8 @@ import { Hono } from "hono";
 import { addAdmin, getAdminByUsername } from "../../../../data/adminDao.ts";
 import { getCampusById } from "../../../../data/campusDao.ts";
 import { validatePassword } from "../../../../utils.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
 
 export function useApiAddAdmin(app: Hono) {
   app.post("/api/root/admin/add", async (c) => {
@@ -40,7 +42,13 @@ export function useApiAddAdmin(app: Hono) {
     }
 
     try {
-      addAdmin(username, password, campusId);
+      const id = addAdmin(username, password, campusId);
+      addSystemLog({
+        campusId,
+        type: SystemLogType.AdminAdd,
+        text: `Admin ${username} added.`,
+        relatedId: id,
+      });
       return c.json({ success: true });
     } catch (error) {
       console.error("Error adding admin:", error);

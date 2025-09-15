@@ -9,6 +9,8 @@ import { RechargeOrderStatus } from "../../../../models/rechargeOrder.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
 import { getAdminById } from "../../../../data/adminDao.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiAdminStudentRecharge(app: Hono) {
   app.post("/api/admin/student/recharge", async (c) => {
@@ -61,6 +63,14 @@ export function useApiAdminStudentRecharge(app: Hono) {
       );
 
       const updatedStudent = getStudentById(studentId);
+
+      addSystemLog({
+        campusId: student.campusId,
+        type: SystemLogType.StudentRecharge,
+        text:
+          `Admin ${claim.id} recharged ${amount} to student ID ${studentId}. New balance: ${updatedStudent?.balance}`,
+        relatedId: studentId,
+      });
 
       return c.json({
         message: "Recharge successful.",

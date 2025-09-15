@@ -147,6 +147,8 @@ import { useApiCoachMigrationPending } from "./routes/api/coach/migration/pendin
 import { useCoachMigrationPending } from "./routes/coach/migration/pending.ts";
 import { useApiCoachMigrationApprove } from "./routes/api/coach/migration/approve.ts";
 import { useApiCoachMigrationReject } from "./routes/api/coach/migration/reject.ts";
+import { useAdminSystemLogs } from "./routes/admin/system-logs.ts";
+import { useApiAdminSystemLogs } from "./routes/api/admin/system-logs.ts";
 
 const app = new Hono();
 
@@ -304,6 +306,8 @@ useApiStudentMigrationAll(app);
 useCoachMigrationPending(app);
 useApiCoachMigrationApprove(app);
 useApiCoachMigrationReject(app);
+useAdminSystemLogs(app);
+useApiAdminSystemLogs(app);
 useApiCoachMigrationPending(app);
 
 app.get("/", async (c) => {

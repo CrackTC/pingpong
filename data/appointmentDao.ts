@@ -147,7 +147,7 @@ export function getAllActiveAppointments(): Appointment[] {
   ) as Appointment[];
 }
 
-export function addAppointment(appointment: Omit<Appointment, "id">) {
+export function addAppointment(appointment: Omit<Appointment, "id">): number {
   const stmt = db.prepare(
     "INSERT INTO appointments (campusId, studentId, coachId, tableId, timeslotId, status, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)",
   );
@@ -160,6 +160,8 @@ export function addAppointment(appointment: Omit<Appointment, "id">) {
     appointment.status,
     appointment.createdAt,
   );
+  return db.prepare("SELECT last_insert_rowid() as id").get<{ id: number }>()
+    ?.id ?? 0;
 }
 
 export function getPendingAppointmentsByCoachId(

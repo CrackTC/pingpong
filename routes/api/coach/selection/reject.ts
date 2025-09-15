@@ -1,10 +1,15 @@
 import { Hono } from "hono";
 import { getClaim } from "../../../../auth/claim.ts";
-import { updateSelectionStatus, getSelectionById } from "../../../../data/selectionDao.ts";
+import {
+  getSelectionById,
+  updateSelectionStatus,
+} from "../../../../data/selectionDao.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
 import { SelectionStatus } from "../../../../models/selection.ts";
 import { getCoachById } from "../../../../data/coachDao.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiCoachSelectionReject(app: Hono) {
   app.post("/api/coach/selection/reject", async (c) => {
@@ -27,7 +32,7 @@ export function useApiCoachSelectionReject(app: Hono) {
 
     const coach = getCoachById(selection.coachId);
     if (!coach) {
-        return c.json({ message: "Coach not found" }, 404);
+      return c.json({ message: "Coach not found" }, 404);
     }
 
     try {
@@ -38,8 +43,15 @@ export function useApiCoachSelectionReject(app: Hono) {
         selection.studentId,
         `Your coach selection request for ${coach.realName} has been rejected.`, // Use coach.realName
         `/student/selection/all`, // Link to student's profile
-        Date.now()
+        Date.now(),
       );
+      addSystemLog({
+        campusId: selection.campusId,
+        type: SystemLogType.CoachRejectSelection,
+        text:
+          `Coach ${coach.realName} rejected selection request from student ID ${selection.studentId}.`,
+        relatedId: selectionId,
+      });
       return c.json({ message: "Selection rejected successfully" });
     } catch (error) {
       console.error("Error rejecting selection:", error);

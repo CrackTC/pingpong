@@ -8,6 +8,9 @@ import { getCoachById } from "../../../../data/coachDao.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
 import { calcDate } from "../../../../utils.ts";
+import { getClaim } from "../../../../auth/claim.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiCoachAppointmentCancel(app: Hono) {
   app.post("/api/coach/appointment/cancel", async (c) => {
@@ -21,6 +24,11 @@ export function useApiCoachAppointmentCancel(app: Hono) {
       const appointment = getAppointmentById(appointmentId);
       if (!appointment) {
         return c.json({ message: "Appointment not found." }, 404);
+      }
+
+      const claim = await getClaim(c);
+      if (claim.id !== appointment.coachId) {
+        return c.json({ message: "Unauthorized." }, 403);
       }
 
       const startDate = calcDate(
@@ -52,6 +60,14 @@ export function useApiCoachAppointmentCancel(app: Hono) {
         `/student/appointment/cancelling`,
         Date.now(),
       );
+
+      addSystemLog({
+        campusId: appointment.campusId,
+        type: SystemLogType.CoachCancelAppointment,
+        text:
+          `Coach ${coach.realName} requested cancellation for appointment ID ${appointment.id}.`,
+        relatedId: appointment.id,
+      });
 
       return c.json({ message: "Appointment cancellation request sent." });
     } catch (error) {

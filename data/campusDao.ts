@@ -1,7 +1,7 @@
 import { db } from "./db.ts";
 import { Campus } from "../models/campus.ts";
 
-export function addCampus(campus: Omit<Campus, "id">) {
+export function addCampus(campus: Omit<Campus, "id">): number {
   const stmt = db.prepare(
     "INSERT INTO campuses (name, address, phone, email, type) VALUES (?, ?, ?, ?, ?)",
   );
@@ -12,6 +12,8 @@ export function addCampus(campus: Omit<Campus, "id">) {
     campus.email,
     campus.type,
   );
+  return db.prepare("SELECT last_insert_rowid() as id").get<{ id: number }>()
+    ?.id ?? 0;
 }
 
 export function getCampusByName(name: string): Campus | undefined {

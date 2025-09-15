@@ -3,6 +3,8 @@ import { approveCoach, getCoachById } from "../../../../data/coachDao.ts"; // Im
 import { CoachType } from "../../../../models/coach.ts";
 import { getClaim } from "../../../../auth/claim.ts"; // Import getClaim
 import { getAdminById } from "../../../../data/adminDao.ts"; // Import getAdminById
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiApproveCoach(app: Hono) {
   app.post("/api/admin/coach/approve", async (c) => {
@@ -14,16 +16,19 @@ export function useApiApproveCoach(app: Hono) {
     }
 
     // Get coach's campusId
-    const coach = await getCoachById(coachId);
+    const coach = getCoachById(coachId);
     if (!coach) {
       return c.json({ success: false, message: "Coach not found" }, 404);
     }
 
     // Admin-specific campus validation
     if (claim.type === "admin") {
-      const admin = await getAdminById(claim.id);
+      const admin = getAdminById(claim.id);
       if (!admin || admin.campus !== coach.campusId) {
-        return c.json({ success: false, message: "Admin can only approve coaches from their own campus." }, 403);
+        return c.json({
+          success: false,
+          message: "Admin can only approve coaches from their own campus.",
+        }, 403);
       }
     }
 
@@ -47,6 +52,12 @@ export function useApiApproveCoach(app: Hono) {
 
     try {
       approveCoach(coachId, type as CoachType);
+      addSystemLog({
+        campusId: coach.campusId,
+        type: SystemLogType.CoachApprove,
+        text: `Coach ID ${coachId} approved as ${CoachType[type]}`,
+        relatedId: coachId,
+      });
       return c.json({ success: true });
     } catch (error) {
       if (error instanceof Error) {

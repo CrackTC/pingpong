@@ -12,6 +12,8 @@ import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
 import { getCoachById } from "../../../../data/coachDao.ts";
 import { getStudentById } from "../../../../data/studentDao.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 const MAX_STUDENTS_PER_COACH = 20;
 
@@ -67,7 +69,7 @@ export function useApiStudentCoachChange(app: Hono) {
       }
 
       // Create migration record
-      addMigration({
+      const id = addMigration({
         campusId: student.campusId,
         selectionId: selection.id,
         destCoachId: newCoachId,
@@ -104,6 +106,14 @@ export function useApiStudentCoachChange(app: Hono) {
         `/admin/migrations`,
         Date.now(),
       );
+
+      addSystemLog({
+        campusId: student.campusId,
+        type: SystemLogType.StudentRequestMigration,
+        text:
+          `Student ${student.realName} (ID: ${student.id}) requested to change from coach ${oldCoach.realName} (ID: ${oldCoach.id}) to coach ${newCoach.realName} (ID: ${newCoach.id}).`,
+        relatedId: id,
+      });
 
       return c.json({ message: "Change request sent successfully." });
     } catch (error) {

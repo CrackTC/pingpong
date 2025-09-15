@@ -1,7 +1,7 @@
 import { db } from "./db.ts";
 import { Review } from "../models/review.ts";
 
-export function addReview(review: Omit<Review, "id">) {
+export function addReview(review: Omit<Review, "id">): number {
   const stmt = db.prepare(
     "INSERT INTO reviews (campusId, appointmentId, type, text, rating, status) VALUES (?, ?, ?, ?, ?, ?)",
   );
@@ -13,6 +13,8 @@ export function addReview(review: Omit<Review, "id">) {
     review.rating,
     review.status,
   );
+  return db.prepare("SELECT last_insert_rowid() as id").get<{ id: number }>()
+    ?.id ?? 0;
 }
 
 export function getReviewsByAppointmentId(appointmentId: number): Review[] {

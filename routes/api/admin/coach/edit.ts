@@ -2,23 +2,35 @@ import { Hono } from "hono";
 import { getCoachById, updateCoach } from "../../../../data/coachDao.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { getClaim } from "../../../../auth/claim.ts";
+import { getAdminById } from "../../../../data/adminDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiAdminCoachEdit(app: Hono) {
   app.post("/api/admin/coach/edit/:id", async (c) => {
-    const id = parseInt(c.req.param("id"));
+    const coachId = parseInt(c.req.param("id"));
     const formData = await c.req.formData();
 
     const realName = formData.get("realName") as string;
-    const sex = formData.get("sex") != "null" ? parseInt(formData.get("sex") as string) : null;
-    const birthYear = formData.get("birthYear") != "null" ? parseInt(formData.get("birthYear") as string) : null;
+    const sex = formData.get("sex") != "null"
+      ? parseInt(formData.get("sex") as string)
+      : null;
+    const birthYear = formData.get("birthYear") != "null"
+      ? parseInt(formData.get("birthYear") as string)
+      : null;
     const phone = formData.get("phone") as string;
-    const email = formData.get("email") != "null" ? formData.get("email") as string : null;
+    const email = formData.get("email") != "null"
+      ? formData.get("email") as string
+      : null;
     const idCardNumber = formData.get("idCardNumber") as string;
     const comment = formData.get("comment") as string;
-    const type = formData.get("type") != "null" ? parseInt(formData.get("type") as string) : null;
+    const type = formData.get("type") != "null"
+      ? parseInt(formData.get("type") as string)
+      : null;
     const avatarFile = formData.get("avatar") as File;
 
-    if (isNaN(id)) {
+    if (isNaN(coachId)) {
       return c.json({ message: "Invalid coach ID." }, 400);
     }
 
@@ -42,8 +54,11 @@ export function useApiAdminCoachEdit(app: Hono) {
       );
 
       // Delete old avatar if it exists and is not the default
-      const coach = getCoachById(id);
-      if (coach && coach.avatarPath && coach.avatarPath !== "/static/avatars/default.png") {
+      const coach = getCoachById(coachId);
+      if (
+        coach && coach.avatarPath &&
+        coach.avatarPath !== "/static/avatars/default.png"
+      ) {
         try {
           await Deno.remove(`./${coach.avatarPath}`);
         } catch (e) {
@@ -53,7 +68,7 @@ export function useApiAdminCoachEdit(app: Hono) {
     }
 
     try {
-      updateCoach(id, {
+      updateCoach(coachId, {
         realName,
         sex,
         birthYear,
@@ -65,19 +80,44 @@ export function useApiAdminCoachEdit(app: Hono) {
         avatarPath, // Pass the new avatar path
       });
 
-      const coach = getCoachById(id);
-      if (coach) {
-        addNotification(
-          coach.campusId,
-          NotificationTarget.Coach,
-          id,
-          "Your profile has been updated by an administrator.",
-          "/coach/profile",
-          Date.now(),
-        );
+      const coach = getCoachById(coachId);
+      if (!coach) {
+        return c.json({ message: "Coach not found after update." }, 404);
       }
 
-      return c.json({ message: "Coach profile updated successfully", avatarPath: avatarPath || coach?.avatarPath });
+      const claim = await getClaim(c);
+      if (claim.type === "admin") {
+        const admin = getAdminById(claim.id);
+        if (!admin) {
+          return c.json({ message: "Admin not found." }, 404);
+        }
+        if (admin.campus !== coach.campusId) {
+          return c.json({
+            message: "Admin can only edit coaches from their own campus.",
+          }, 403);
+        }
+      }
+
+      addNotification(
+        coach.campusId,
+        NotificationTarget.Coach,
+        coachId,
+        "Your profile has been updated by an administrator.",
+        "/coach/profile",
+        Date.now(),
+      );
+
+      addSystemLog({
+        campusId: coach.campusId,
+        type: SystemLogType.CoachUpdate,
+        text: `Coach ID ${coachId} profile updated by admin ID ${claim.id}`,
+        relatedId: coachId,
+      });
+
+      return c.json({
+        message: "Coach profile updated successfully",
+        avatarPath: avatarPath || coach?.avatarPath,
+      });
     } catch (error) {
       console.error("Error updating coach profile:", error);
       return c.json({ message: "An unexpected error occurred." }, 500);

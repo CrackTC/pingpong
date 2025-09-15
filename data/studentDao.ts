@@ -20,7 +20,7 @@ export function verifyStudent(
 
 export function addStudent(
   student: Omit<Student, "id" | "balance"> & { password: string },
-) {
+): number {
   // ASSUMPTION: The 'students' table has a 'password' column.
   // The 'balance' column will be initialized to 0.
   const stmt = db.prepare(
@@ -37,18 +37,26 @@ export function addStudent(
     student.email,
     0, // Always set balance to 0
   );
+  return db.prepare("SELECT last_insert_rowid() as id").get<{ id: number }>()
+    ?.id ?? 0;
 }
 
 export function getStudentByUsername(username: string): Student | undefined {
-  const stmt = db.prepare("SELECT id, username, realName, sex, birthYear, campusId, phone, email, balance FROM students WHERE username = ?");
+  const stmt = db.prepare(
+    "SELECT id, username, realName, sex, birthYear, campusId, phone, email, balance FROM students WHERE username = ?",
+  );
   const row = stmt.get(username);
   if (row) {
     return row as Student;
   }
 }
 
-export function getStudentById(id: number): (Student & { campusName: string }) | undefined {
-  const stmt = db.prepare("SELECT s.id, s.username, s.realName, s.sex, s.birthYear, s.campusId, s.phone, s.email, s.balance, c.name as campusName FROM students s JOIN campuses c ON s.campusId = c.id WHERE s.id = ?");
+export function getStudentById(
+  id: number,
+): (Student & { campusName: string }) | undefined {
+  const stmt = db.prepare(
+    "SELECT s.id, s.username, s.realName, s.sex, s.birthYear, s.campusId, s.phone, s.email, s.balance, c.name as campusName FROM students s JOIN campuses c ON s.campusId = c.id WHERE s.id = ?",
+  );
   const row = stmt.get(id);
   if (row) {
     return row as (Student & { campusName: string });
@@ -103,8 +111,13 @@ export function updateStudent(id: number, data: {
   stmt.run(...params);
 }
 
-export function getStudentByPhoneAndCampus(phone: string, campusId: number, excludeStudentId?: number): Student | undefined {
-  let query = "SELECT id, username, realName, sex, birthYear, campusId, phone, email, balance FROM students WHERE phone = ? AND campusId = ?";
+export function getStudentByPhoneAndCampus(
+  phone: string,
+  campusId: number,
+  excludeStudentId?: number,
+): Student | undefined {
+  let query =
+    "SELECT id, username, realName, sex, birthYear, campusId, phone, email, balance FROM students WHERE phone = ? AND campusId = ?";
   const params: (string | number | null)[] = [phone, campusId];
 
   if (excludeStudentId !== undefined) {
@@ -120,7 +133,10 @@ export function getStudentByPhoneAndCampus(phone: string, campusId: number, excl
   return undefined;
 }
 
-export function searchStudentsByPhone(phone: string, campusId?: number): (Student & { campusName: string })[] {
+export function searchStudentsByPhone(
+  phone: string,
+  campusId?: number,
+): (Student & { campusName: string })[] {
   let query = `
     SELECT
       s.*,
@@ -144,7 +160,9 @@ export function searchStudentsByPhone(phone: string, campusId?: number): (Studen
 }
 
 export function updateStudentBalance(id: number, amount: number): void {
-  const stmt = db.prepare("UPDATE students SET balance = balance + ? WHERE id = ?");
+  const stmt = db.prepare(
+    "UPDATE students SET balance = balance + ? WHERE id = ?",
+  );
   stmt.run(amount, id);
 }
 

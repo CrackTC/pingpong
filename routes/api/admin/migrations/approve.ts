@@ -15,6 +15,8 @@ import { SelectionStatus } from "../../../../models/selection.ts";
 import { getCoachById } from "../../../../data/coachDao.ts";
 import { getClaim } from "../../../../auth/claim.ts";
 import { getAdminById } from "../../../../data/adminDao.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiAdminMigrationsApprove(app: Hono) {
   app.post("/api/admin/migrations/approve", async (c) => {
@@ -61,6 +63,14 @@ export function useApiAdminMigrationsApprove(app: Hono) {
       const newStatus = migration.status | MigrationStatus.CampusAdminApproved;
       updateMigrationStatus(migrationId, newStatus);
 
+      addSystemLog({
+        campusId: migration.campusId,
+        type: SystemLogType.MigrationApprove,
+        text:
+          `Migration ID ${migration.id} approved by campus admin ${claim.id}.`,
+        relatedId: migration.id,
+      });
+
       if (newStatus !== MigrationStatus.Completed) {
         addNotification(
           migration.campusId,
@@ -96,6 +106,14 @@ export function useApiAdminMigrationsApprove(app: Hono) {
         `/student/selection/all`,
         Date.now(),
       );
+
+      addSystemLog({
+        campusId: migration.campusId,
+        type: SystemLogType.MigrationComplete,
+        text:
+          `Migration ID ${migration.id} completed. Student ${oldSelection.studentId} moved to coach ${newCoach.id}.`,
+        relatedId: migration.id,
+      });
 
       return c.json({ message: "Migration approved successfully." });
     } catch (error) {

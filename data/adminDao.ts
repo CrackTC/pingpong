@@ -1,7 +1,11 @@
 import { db } from "./db.ts";
 import { Admin } from "../models/admin.ts";
 
-export function addAdmin(username: string, password: string, campusId: number) {
+export function addAdmin(
+  username: string,
+  password: string,
+  campusId: number,
+): number {
   const stmt = db.prepare(
     "INSERT INTO admins (campusId, username, password) VALUES (?, ?, ?)",
   );
@@ -10,10 +14,14 @@ export function addAdmin(username: string, password: string, campusId: number) {
     username,
     password,
   );
+  return db.prepare("SELECT last_insert_rowid() as id").get<{ id: number }>()
+    ?.id ?? 0;
 }
 
 export function getAdminByUsername(username: string): Admin | undefined {
-  const stmt = db.prepare("SELECT id, campusId as campus, username FROM admins WHERE username = ?");
+  const stmt = db.prepare(
+    "SELECT id, campusId as campus, username FROM admins WHERE username = ?",
+  );
   const row = stmt.get(username);
   if (row) {
     return row as Admin;
@@ -43,7 +51,9 @@ export function verifyAdmin(
 }
 
 export function getAdminById(id: number): Admin | undefined {
-  const stmt = db.prepare("SELECT id, campusId as campus, username FROM admins WHERE id = ?");
+  const stmt = db.prepare(
+    "SELECT id, campusId as campus, username FROM admins WHERE id = ?",
+  );
   const row = stmt.get(id);
   if (row) {
     return row as Admin;

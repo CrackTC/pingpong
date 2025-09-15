@@ -7,11 +7,13 @@ export function addSelection(
   coachId: number,
   campusId: number,
   status: SelectionStatus,
-) {
+): number {
   const stmt = db.prepare(
     "INSERT INTO selections (studentId, coachId, campusId, status) VALUES (?, ?, ?, ?)",
   );
   stmt.run(studentId, coachId, campusId, status);
+  return db.prepare("SELECT last_insert_rowid() as id").get<{ id: number }>()
+    ?.id ?? 0;
 }
 
 export function getSelectionCountForCoach(coachId: number): number {

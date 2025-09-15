@@ -9,6 +9,8 @@ import { NotificationTarget } from "../../../../models/notification.ts";
 import { getSelectionById } from "../../../../data/selectionDao.ts";
 import { getClaim } from "../../../../auth/claim.ts";
 import { getAdminById } from "../../../../data/adminDao.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiAdminMigrationsReject(app: Hono) {
   app.post("/api/admin/migrations/reject", async (c) => {
@@ -66,6 +68,13 @@ export function useApiAdminMigrationsReject(app: Hono) {
         `/student/migration/all`,
         Date.now(),
       );
+
+      addSystemLog({
+        campusId: migration.campusId,
+        type: SystemLogType.MigrationReject,
+        text: `Migration ID ${migration.id} rejected by admin ${claim.id}.`,
+        relatedId: migration.id,
+      });
 
       return c.json({ message: "Migration rejected successfully." });
     } catch (error) {

@@ -8,6 +8,8 @@ import { getClaim } from "../../../../auth/claim.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
 import { getAdminById } from "../../../../data/adminDao.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiAdminStudentEdit(app: Hono) {
   app.post("/api/admin/student/edit/:id", async (c) => {
@@ -82,6 +84,14 @@ export function useApiAdminStudentEdit(app: Hono) {
         "/student/profile",
         Date.now(),
       );
+
+      addSystemLog({
+        campusId: student.campusId,
+        type: SystemLogType.StudentUpdate,
+        text:
+          `Admin ${claim.id} updated student profile: ${student.realName} (ID: ${student.id})`,
+        relatedId: id,
+      });
 
       return c.json({ message: "Student profile updated successfully" });
     } catch (error) {

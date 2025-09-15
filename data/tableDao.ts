@@ -4,7 +4,7 @@ import { Timeslot } from "../models/timeslot.ts";
 import { getAllActiveAppointments } from "./appointmentDao.ts";
 import { getTimeslotById } from "./timeslotDao.ts";
 
-export function addTable(tableData: Omit<Table, 'id'>) {
+export function addTable(tableData: Omit<Table, "id">): number {
   const stmt = db.prepare(
     "INSERT INTO tables (name, campusId) VALUES (?, ?)",
   );
@@ -12,9 +12,13 @@ export function addTable(tableData: Omit<Table, 'id'>) {
     tableData.name,
     tableData.campusId,
   );
+  return db.prepare("SELECT last_insert_rowid() as id").get<{ id: number }>()
+    ?.id ?? 0;
 }
 
-export function getAllTables(campusId?: number): (Table & { campusName: string })[] {
+export function getAllTables(
+  campusId?: number,
+): (Table & { campusName: string })[] {
   let query = `
     SELECT
       t.id,
@@ -38,8 +42,13 @@ export function getAllTables(campusId?: number): (Table & { campusName: string }
   return result as (Table & { campusName: string })[];
 }
 
-export function getTableByNameAndCampusId(name: string, campusId: number): Table | undefined {
-  const stmt = db.prepare("SELECT id, name, campusId FROM tables WHERE name = ? AND campusId = ?");
+export function getTableByNameAndCampusId(
+  name: string,
+  campusId: number,
+): Table | undefined {
+  const stmt = db.prepare(
+    "SELECT id, name, campusId FROM tables WHERE name = ? AND campusId = ?",
+  );
   const row = stmt.get(name, campusId);
   if (row) {
     return row as Table;
@@ -47,28 +56,36 @@ export function getTableByNameAndCampusId(name: string, campusId: number): Table
   return undefined;
 }
 
-export function getAvailableTables(campusId: number, timeslot: Timeslot): Table[] {
+export function getAvailableTables(
+  campusId: number,
+  timeslot: Timeslot,
+): Table[] {
   const allTables = getAllTables(campusId);
   const activeAppointments = getAllActiveAppointments();
 
-  const conflictingAppointments = activeAppointments.filter(appointment => {
+  const conflictingAppointments = activeAppointments.filter((appointment) => {
     const appointmentTimeslot = getTimeslotById(appointment.timeslotId);
-    if (!appointmentTimeslot || appointment.campusId !== campusId || appointmentTimeslot.weekday !== timeslot.weekday) {
+    if (
+      !appointmentTimeslot || appointment.campusId !== campusId ||
+      appointmentTimeslot.weekday !== timeslot.weekday
+    ) {
       return false;
     }
 
     const start1 = timeslot.startHour * 60 + timeslot.startMinute;
     const end1 = timeslot.endHour * 60 + timeslot.endMinute;
-    const start2 = appointmentTimeslot.startHour * 60 + appointmentTimeslot.startMinute;
-    const end2 = appointmentTimeslot.endHour * 60 + appointmentTimeslot.endMinute;
+    const start2 = appointmentTimeslot.startHour * 60 +
+      appointmentTimeslot.startMinute;
+    const end2 = appointmentTimeslot.endHour * 60 +
+      appointmentTimeslot.endMinute;
 
     // Check for overlap
     return start1 < end2 && start2 < end1;
   });
 
-  const bookedTableIds = new Set(conflictingAppointments.map(a => a.tableId));
+  const bookedTableIds = new Set(conflictingAppointments.map((a) => a.tableId));
 
-  return allTables.filter(table => !bookedTableIds.has(table.id));
+  return allTables.filter((table) => !bookedTableIds.has(table.id));
 }
 
 export function getTableById(id: number): Table | undefined {

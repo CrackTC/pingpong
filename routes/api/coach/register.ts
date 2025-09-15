@@ -7,6 +7,8 @@ import {
 import { getCampusById } from "../../../data/campusDao.ts";
 import { Sex } from "../../../models/sex.ts";
 import { validatePassword } from "../../../utils.ts";
+import { addSystemLog } from "../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../models/systemLog.ts";
 
 export function useApiCoachRegister(app: Hono) {
   app.post("/api/coach/register", async (c) => {
@@ -135,7 +137,7 @@ export function useApiCoachRegister(app: Hono) {
     }
 
     try {
-      addCoach({
+      const id = addCoach({
         username,
         password,
         realName,
@@ -147,6 +149,12 @@ export function useApiCoachRegister(app: Hono) {
         idCardNumber: idCardNumber,
         avatarPath: avatarPath, // Store empty string if no avatar
         comment: comment,
+      });
+      addSystemLog({
+        campusId,
+        type: SystemLogType.CoachRegister,
+        text: `New coach registered: ${username} (${realName})`,
+        relatedId: id,
       });
       return c.json({ success: true });
     } catch (error) {

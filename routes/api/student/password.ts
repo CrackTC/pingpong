@@ -1,7 +1,13 @@
 import { Hono } from "hono";
 import { getClaim } from "../../../auth/claim.ts";
-import { getStudentById, updateStudentPassword, verifyStudent } from "../../../data/studentDao.ts";
+import {
+  getStudentById,
+  updateStudentPassword,
+  verifyStudent,
+} from "../../../data/studentDao.ts";
 import { validatePassword } from "../../../utils.ts";
+import { addSystemLog } from "../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../models/systemLog.ts";
 
 export function useApiStudentPassword(app: Hono) {
   app.post("/api/student/password", async (c) => {
@@ -30,6 +36,12 @@ export function useApiStudentPassword(app: Hono) {
 
     try {
       updateStudentPassword(claim.id, newPassword);
+      addSystemLog({
+        campusId: student.campusId,
+        type: SystemLogType.StudentChangePassword,
+        text: `Student ${student.username} changed their password.`,
+        relatedId: claim.id,
+      });
       return c.json({ message: "Password changed successfully" });
     } catch (error) {
       console.error("Error changing student password:", error);

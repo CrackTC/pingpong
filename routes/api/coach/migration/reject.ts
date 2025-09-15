@@ -8,6 +8,8 @@ import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
 import { getClaim } from "../../../../auth/claim.ts";
 import { getSelectionById } from "../../../../data/selectionDao.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiCoachMigrationReject(app: Hono) {
   app.post("/api/coach/migration/reject", async (c) => {
@@ -49,6 +51,14 @@ export function useApiCoachMigrationReject(app: Hono) {
           `/student/migration/all`,
           Date.now(),
         );
+
+        addSystemLog({
+          campusId: migration.campusId,
+          type: SystemLogType.MigrationReject,
+          text:
+            `Destination coach (ID: ${claim.id}) rejected migration (ID: ${migrationId}) for student (ID: ${oldSelection.studentId}).`,
+          relatedId: migrationId,
+        });
       } else {
         if (oldSelection.coachId !== claim.id) {
           return c.json({ message: "Unauthorized." }, 401);
@@ -68,6 +78,14 @@ export function useApiCoachMigrationReject(app: Hono) {
           `/student/migration/all`,
           Date.now(),
         );
+
+        addSystemLog({
+          campusId: migration.campusId,
+          type: SystemLogType.MigrationReject,
+          text:
+            `Origin coach (ID: ${claim.id}) rejected migration (ID: ${migrationId}) for student (ID: ${oldSelection.studentId}).`,
+          relatedId: migrationId,
+        });
       }
 
       return c.json({ message: "Migration rejected successfully." });

@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import { getClaim } from "../../../auth/claim.ts";
 import { getCoachById, updateCoachAvatarPath } from "../../../data/coachDao.ts";
+import { addSystemLog } from "../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../models/systemLog.ts";
 
 export function useApiCoachAvatar(app: Hono) {
   app.post("/api/coach/avatar", async (c) => {
@@ -29,10 +31,15 @@ export function useApiCoachAvatar(app: Hono) {
 
     try {
       // Save the new avatar
-      await Deno.writeFile(fullPath, new Uint8Array(await avatarFile.arrayBuffer()));
+      await Deno.writeFile(
+        fullPath,
+        new Uint8Array(await avatarFile.arrayBuffer()),
+      );
 
       // Delete the old avatar if it exists and is not the default
-      if (coach.avatarPath && coach.avatarPath !== "/static/avatars/default.png") {
+      if (
+        coach.avatarPath && coach.avatarPath !== "/static/avatars/default.png"
+      ) {
         try {
           await Deno.remove(`./${coach.avatarPath}`);
         } catch (e) {
@@ -42,6 +49,13 @@ export function useApiCoachAvatar(app: Hono) {
 
       // Update the database
       updateCoachAvatarPath(claim.id, avatarPath);
+
+      addSystemLog({
+        campusId: coach.campusId,
+        type: SystemLogType.CoachChangeAvatar,
+        text: `Coach ${coach.realName} changed their avatar.`,
+        relatedId: coach.id,
+      });
 
       return c.json({ message: "Avatar updated successfully", avatarPath });
     } catch (error) {

@@ -1,6 +1,8 @@
 import { Hono } from "hono";
-import { verifyAdmin } from "../../../data/adminDao.ts";
+import { getAdminById, verifyAdmin } from "../../../data/adminDao.ts";
 import { Claim, setClaim } from "../../../auth/claim.ts";
+import { addSystemLog } from "../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../models/systemLog.ts";
 
 export function useApiAdminLogin(app: Hono) {
   app.post("/api/admin/login", async (c) => {
@@ -13,9 +15,21 @@ export function useApiAdminLogin(app: Hono) {
         id: id,
       };
       await setClaim(c, claim);
+
+      const admin = getAdminById(id);
+      addSystemLog({
+        campusId: admin!.campus,
+        type: SystemLogType.AdminLogin,
+        text: `Admin ${admin?.username} (ID: ${admin?.id}) logged in.`,
+        relatedId: admin?.id ?? 0,
+      });
+
       return c.json({ success: true, redirect: "/admin/home" }); // Assuming /admin/home exists
     } else {
-      return c.json({ success: false, message: "Invalid username or password." }, 401);
+      return c.json({
+        success: false,
+        message: "Invalid username or password.",
+      }, 401);
     }
   });
 }

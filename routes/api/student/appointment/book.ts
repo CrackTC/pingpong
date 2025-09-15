@@ -8,6 +8,8 @@ import { AppointmentStatus } from "../../../../models/appointment.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
 import { getStudentById } from "../../../../data/studentDao.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiStudentAppointmentBook(app: Hono) {
   app.post("/api/student/appointment/book", async (c) => {
@@ -49,7 +51,7 @@ export function useApiStudentAppointmentBook(app: Hono) {
         selectedTableId = availableTables[0].id;
       }
 
-      addAppointment({
+      const id = addAppointment({
         campusId: coach.campusId,
         studentId,
         coachId: timeslot.coachId,
@@ -67,6 +69,14 @@ export function useApiStudentAppointmentBook(app: Hono) {
         `/coach/appointment/pending`, // Link for coach to view pending appointments
         Date.now(),
       );
+
+      addSystemLog({
+        campusId: coach.campusId,
+        type: SystemLogType.StudentBookAppointment,
+        text:
+          `Student ${student.realName} (ID: ${student.id}) booked an appointment with Coach ${coach.realName} (ID: ${coach.id}) for timeslot ID ${timeslot.id}.`,
+        relatedId: id,
+      });
 
       return c.json({ message: "Appointment booked successfully." });
     } catch (error) {

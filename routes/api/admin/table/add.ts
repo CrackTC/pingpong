@@ -5,6 +5,8 @@ import {
 } from "../../../../data/tableDao.ts"; // Import getTableByNameAndCampusId
 import { getClaim } from "../../../../auth/claim.ts";
 import { getAdminById } from "../../../../data/adminDao.ts"; // Import getAdminById
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiAdminTableAdd(app: Hono) {
   app.post("/api/admin/table/add", async (c) => {
@@ -37,11 +39,20 @@ export function useApiAdminTableAdd(app: Hono) {
     // Check if table with same name already exists in the same campus
     const existingTable = getTableByNameAndCampusId(name, actualCampusId);
     if (existingTable) {
-        return c.json({ message: "Table with this name already exists in this campus." }, 409); // 409 Conflict
+      return c.json({
+        message: "Table with this name already exists in this campus.",
+      }, 409); // 409 Conflict
     }
 
     try {
-      addTable({ name, campusId: actualCampusId });
+      const id = addTable({ name, campusId: actualCampusId });
+      addSystemLog({
+        campusId: actualCampusId,
+        type: SystemLogType.TableAdd,
+        text:
+          `Admin ${claim.id} added table '${name}' to campus ID ${actualCampusId}.`,
+        relatedId: id, // No specific related ID
+      });
       return c.json({ message: "Table added successfully!" });
     } catch (error) {
       console.error("Error adding table:", error);

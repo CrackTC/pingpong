@@ -24,7 +24,7 @@ export function getAllTimeslots(
   return stmt.all(...params) as (Timeslot & { coachName: string })[];
 }
 
-export function addTimeslot(timeslot: Omit<Timeslot, "id">) {
+export function addTimeslot(timeslot: Omit<Timeslot, "id">): number {
   const stmt = db.prepare(`
     INSERT INTO timeslots (weekday, startHour, startMinute, endHour, endMinute, coachId)
     VALUES (?, ?, ?, ?, ?, ?)
@@ -37,6 +37,8 @@ export function addTimeslot(timeslot: Omit<Timeslot, "id">) {
     timeslot.endMinute,
     timeslot.coachId,
   );
+  return db.prepare("SELECT last_insert_rowid() as id").get<{ id: number }>()
+    ?.id ?? 0;
 }
 
 export function hasTimeslotOverlap(

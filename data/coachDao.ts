@@ -19,12 +19,13 @@ export function verifyCoach(
 
 export function addCoach(
   coach: Omit<Coach, "id" | "type"> & { password: string; type?: CoachType },
-) {
+): number {
   // ASSUMPTION: The 'coaches' table has a 'password' column.
   // The 'type' column will be initialized to CoachType.Pending (1) if not provided.
-  const stmt = db.prepare(
-    "INSERT INTO coaches (username, password, realName, sex, birthYear, campusId, phone, email, idCardNumber, avatarPath, comment, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-  );
+  const stmt = db.prepare(`
+    INSERT INTO coaches (username, password, realName, sex, birthYear, campusId, phone, email, idCardNumber, avatarPath, comment, type)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
   stmt.run(
     coach.username,
     coach.password,
@@ -39,6 +40,9 @@ export function addCoach(
     coach.comment,
     coach.type ?? CoachType.Pending, // Use provided type or default to Pending
   );
+
+  return db.prepare("SELECT last_insert_rowid() as id").get<{ id: number }>()
+    ?.id ?? 0;
 }
 
 export function getCoachByUsername(username: string): Coach | undefined {

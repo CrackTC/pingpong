@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>System Logs</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body class="bg-light">
+        <div class="container">
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-10">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">
+                                System Logs
+                            </h3>
+                            <div
+                                id="message-area"
+                                class="alert d-none"
+                                role="alert"
+                            ></div>
+
+                            <div
+                                id="logs-list"
+                                class="mt-4"
+                                style="overflow-x: auto"
+                            >
+                                <!-- Logs will be loaded here -->
+                            </div>
+
+                            <div class="d-grid gap-2 mt-3">
+                                <a
+                                    href="/admin/home"
+                                    class="btn btn-secondary"
+                                    >Back to Home</a
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"
+        ></script>
+        <script>
+            const messageArea = document.getElementById("message-area");
+            const logsListDiv = document.getElementById("logs-list");
+
+            function displayMessage(message, type) {
+                messageArea.textContent = message;
+                messageArea.className = `alert alert-${type}`;
+                messageArea.classList.remove("d-none");
+            }
+
+            function getSystemLogTypeString(type) {
+                const types = {
+                    0: "Root Login",
+                    1: "Admin Login",
+                    2: "Student Login",
+                    3: "Coach Login",
+                    4: "Campus Add",
+                    5: "Admin Add",
+                    6: "Student Add",
+                    7: "Student Register",
+                    8: "Student Remove",
+                    9: "Student Update",
+                    10: "Student Change Password",
+                    11: "Student Select Coach",
+                    12: "Student Recharge",
+                    13: "Payment Complete",
+                    14: "Payment Cancel",
+                    15: "Student Book Appointment",
+                    16: "Student Cancel Appointment",
+                    17: "Student Approve Cancel",
+                    18: "Student Review Coach",
+                    19: "Student Request Migration",
+                    20: "Coach Add",
+                    21: "Coach Register",
+                    22: "Coach Approve",
+                    23: "Coach Remove",
+                    24: "Coach Update",
+                    25: "Coach Change Avatar",
+                    26: "Coach Change Password",
+                    27: "Coach Approve Selection",
+                    28: "Coach Reject Selection",
+                    29: "Coach Add Timeslot",
+                    30: "Coach Approve Appointment",
+                    31: "Coach Reject Appointment",
+                    32: "Coach Cancel Appointment",
+                    33: "Coach Approve Cancel",
+                    34: "Coach Review Student",
+                    35: "Table Add",
+                    36: "Migration Approve",
+                    37: "Migration Complete",
+                    38: "Migration Reject",
+                };
+                return types[type] || "Unknown";
+            }
+
+            async function fetchSystemLogs() {
+                try {
+                    const response = await fetch("/api/admin/system-logs");
+                    const logs = await response.json();
+
+                    if (response.ok) {
+                        if (logs.length > 0) {
+                            let logsHtml =
+                                '<table class="table table-striped"><thead><tr><th>Timestamp</th><th>Type</th><th>Text</th><th>Related ID</th><th>Campus ID</th></tr></thead><tbody>';
+                            logs.forEach((log) => {
+                                const date = new Date(log.timestamp);
+                                logsHtml += `<tr><td>${date.toLocaleString()}</td><td>${getSystemLogTypeString(log.type)}</td><td>${log.text}</td><td>${log.relatedId || 'N/A'}</td><td>${log.campusId}</td></tr>`;
+                            });
+                            logsHtml += "</tbody></table>";
+                            logsListDiv.innerHTML = logsHtml;
+                        } else {
+                            logsListDiv.innerHTML =
+                                '<p class="text-center">No system logs found.</p>';
+                        }
+                    } else {
+                        displayMessage(
+                            logs.message || "Failed to fetch system logs.",
+                            "danger",
+                        );
+                    }
+                } catch (error) {
+                    displayMessage(
+                        "An unexpected error occurred while fetching system logs.",
+                        "danger",
+                    );
+                }
+            }
+
+            fetchSystemLogs();
+        </script>
+    </body>
+</html>

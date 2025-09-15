@@ -8,6 +8,8 @@ import { getCampusById } from "../../../../data/campusDao.ts";
 import { Sex } from "../../../../models/sex.ts";
 import { CoachType } from "../../../../models/coach.ts"; // Import CoachType
 import { validatePassword } from "../../../../utils.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiAdminCoachAdd(app: Hono) {
   app.post("/api/admin/coach/add", async (c) => {
@@ -31,7 +33,10 @@ export function useApiAdminCoachAdd(app: Hono) {
 
     // Validate coach type
     if (isNaN(type) || !(type in CoachType) || type === CoachType.Pending) {
-      return c.json({ success: false, message: "Invalid coach type provided." }, 400);
+      return c.json(
+        { success: false, message: "Invalid coach type provided." },
+        400,
+      );
     }
 
     // Basic validation
@@ -96,9 +101,15 @@ export function useApiAdminCoachAdd(app: Hono) {
     }
 
     // Check if phone or ID card number already exists
-    let existingCoachByPhoneOrIdCard = searchCoachesByIdCardOrPhone(phone, campusId)
+    let existingCoachByPhoneOrIdCard = searchCoachesByIdCardOrPhone(
+      phone,
+      campusId,
+    );
     if (existingCoachByPhoneOrIdCard.length == 0) {
-      existingCoachByPhoneOrIdCard = searchCoachesByIdCardOrPhone(idCardNumber, campusId)
+      existingCoachByPhoneOrIdCard = searchCoachesByIdCardOrPhone(
+        idCardNumber,
+        campusId,
+      );
     }
     if (existingCoachByPhoneOrIdCard.length > 0) {
       return c.json(
@@ -129,7 +140,7 @@ export function useApiAdminCoachAdd(app: Hono) {
     }
 
     try {
-      addCoach({
+      const coachId = addCoach({
         username,
         password,
         realName,
@@ -142,6 +153,15 @@ export function useApiAdminCoachAdd(app: Hono) {
         avatarPath: avatarPath,
         comment: comment,
         type: type, // Pass the selected type
+      });
+
+      addSystemLog({
+        type: SystemLogType.CoachAdd,
+        campusId: campusId,
+        relatedId: coachId,
+        text: `Coach ${realName} (Username: ${username}) added as ${
+          CoachType[type]
+        }.`,
       });
       return c.json({ success: true });
     } catch (error) {

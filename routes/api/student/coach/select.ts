@@ -3,10 +3,17 @@ import { getClaim } from "../../../../auth/claim.ts";
 import { getStudentById } from "../../../../data/studentDao.ts";
 import { getCoachById } from "../../../../data/coachDao.ts";
 import { CoachType } from "../../../../models/coach.ts";
-import { addSelection, getSelectionCountForCoach, getActiveSelectionCountForStudent, getSelectionByStudentAndCoachId } from "../../../../data/selectionDao.ts";
+import {
+  addSelection,
+  getActiveSelectionCountForStudent,
+  getSelectionByStudentAndCoachId,
+  getSelectionCountForCoach,
+} from "../../../../data/selectionDao.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
 import { SelectionStatus } from "../../../../models/selection.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 const MAX_STUDENTS_PER_COACH = 20;
 
@@ -26,37 +33,65 @@ export function useApiStudentSelectCoach(app: Hono) {
     }
 
     if (coach.type === CoachType.Pending) {
-      return c.json({ message: "This coach is currently pending approval and cannot be selected." }, 400);
+      return c.json({
+        message:
+          "This coach is currently pending approval and cannot be selected.",
+      }, 400);
     }
 
     // Check if student already has an active selection with this specific coach
-    const existingSelection = getSelectionByStudentAndCoachId(student.id, coachId);
+    const existingSelection = getSelectionByStudentAndCoachId(
+      student.id,
+      coachId,
+    );
     if (existingSelection) {
-      return c.json({ message: "You have already made a selection to this coach." }, 400);
+      return c.json({
+        message: "You have already made a selection to this coach.",
+      }, 400);
     }
 
     // Check if student already has 2 active selections
     const activeSelectionCount = getActiveSelectionCountForStudent(student.id);
     if (activeSelectionCount >= 2) {
-      return c.json({ message: "You already have 2 pending or approved coach selections. You cannot select more coaches." }, 400);
+      return c.json({
+        message:
+          "You already have 2 pending or approved coach selections. You cannot select more coaches.",
+      }, 400);
     }
 
     const currentStudentCount = getSelectionCountForCoach(coachId);
     if (currentStudentCount >= MAX_STUDENTS_PER_COACH) {
-      return c.json({ message: `Coach already has ${MAX_STUDENTS_PER_COACH} students.` }, 400);
+      return c.json({
+        message: `Coach already has ${MAX_STUDENTS_PER_COACH} students.`,
+      }, 400);
     }
 
     try {
-      addSelection(student.id, coachId, student.campusId, SelectionStatus.Pending);
+      const id = addSelection(
+        student.id,
+        coachId,
+        student.campusId,
+        SelectionStatus.Pending,
+      );
       addNotification(
         student.campusId,
         NotificationTarget.Coach,
         coachId,
         `New student selection request from ${student.realName}`,
         `/coach/selection/pending`, // Link for coach to view pending selections
-        Date.now()
+        Date.now(),
       );
-      return c.json({ message: "Coach selection request sent successfully. Waiting for coach approval." });
+      addSystemLog({
+        campusId: student.campusId,
+        type: SystemLogType.StudentSelectCoach,
+        text:
+          `Student ${student.realName} (ID: ${student.id}) selected Coach ${coach.realName} (ID: ${coach.id}).`,
+        relatedId: id,
+      });
+      return c.json({
+        message:
+          "Coach selection request sent successfully. Waiting for coach approval.",
+      });
     } catch (error) {
       console.error("Error selecting coach:", error);
       return c.json({ message: "An unexpected error occurred." }, 500);

@@ -5,6 +5,8 @@ import {
   searchCoachesByIdCardOrPhone,
   updateCoach,
 } from "../../../data/coachDao.ts";
+import { addSystemLog } from "../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../models/systemLog.ts";
 
 export function useApiCoachEdit(app: Hono) {
   app.post("/api/coach/edit", async (c) => {
@@ -48,6 +50,13 @@ export function useApiCoachEdit(app: Hono) {
         email,
         idCardNumber,
         comment,
+      });
+      addSystemLog({
+        campusId: coach.campusId,
+        type: SystemLogType.CoachUpdate,
+        text:
+          `Coach ${coach.realName} (ID: ${coach.id}) updated their profile.`,
+        relatedId: coach.id,
       });
       return c.json({ message: "Profile updated successfully" });
     } catch (error) {

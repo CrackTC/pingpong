@@ -1,7 +1,7 @@
 import { db } from "./db.ts";
 import { Migration, MigrationStatus } from "../models/migration.ts";
 
-export function addMigration(migration: Omit<Migration, "id">) {
+export function addMigration(migration: Omit<Migration, "id">): number {
   const stmt = db.prepare(
     "INSERT INTO migrations (campusId, selectionId, destCoachId, status) VALUES (?, ?, ?, ?)",
   );
@@ -11,6 +11,8 @@ export function addMigration(migration: Omit<Migration, "id">) {
     migration.destCoachId,
     migration.status,
   );
+  return db.prepare("SELECT last_insert_rowid() AS id").get<{ id: number }>()
+    ?.id ?? 0;
 }
 
 export function getMigrationsByStudentId(

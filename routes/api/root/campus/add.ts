@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import { addCampus, getCampusByName } from "../../../../data/campusDao.ts";
 import { CampusType } from "../../../../models/campus.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiAddCampus(app: Hono) {
   app.post("/api/root/campus/add", async (c) => {
@@ -31,7 +33,19 @@ export function useApiAddCampus(app: Hono) {
     }
 
     try {
-      addCampus({ name, address, phone, email, type: CampusType.Branch });
+      const id = addCampus({
+        name,
+        address,
+        phone,
+        email,
+        type: CampusType.Branch,
+      });
+      addSystemLog({
+        campusId: id,
+        type: SystemLogType.CampusAdd,
+        text: `Campus ${name} added.`,
+        relatedId: id,
+      });
       return c.json({ success: true });
     } catch (error) {
       console.error("Error adding campus:", error);

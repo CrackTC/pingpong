@@ -1,10 +1,16 @@
 import { Hono } from "hono";
 import { getClaim } from "../../../../auth/claim.ts";
-import { updateSelectionStatus, getSelectionById, getSelectionCountForCoach } from "../../../../data/selectionDao.ts";
+import {
+  getSelectionById,
+  getSelectionCountForCoach,
+  updateSelectionStatus,
+} from "../../../../data/selectionDao.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
 import { SelectionStatus } from "../../../../models/selection.ts";
 import { getCoachById } from "../../../../data/coachDao.ts"; // Import getCoachById
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiCoachSelectionApprove(app: Hono) {
   app.post("/api/coach/selection/approve", async (c) => {
@@ -24,12 +30,15 @@ export function useApiCoachSelectionApprove(app: Hono) {
     const MAX_STUDENTS = 20;
     const approvedStudentCount = getSelectionCountForCoach(claim.id);
     if (approvedStudentCount >= MAX_STUDENTS) {
-        return c.json({ message: `Coach has reached the maximum limit of ${MAX_STUDENTS} approved students.` }, 400);
+      return c.json({
+        message:
+          `Coach has reached the maximum limit of ${MAX_STUDENTS} approved students.`,
+      }, 400);
     }
 
     const coach = getCoachById(selection.coachId); // Get coach details
     if (!coach) {
-        return c.json({ message: "Coach not found" }, 404);
+      return c.json({ message: "Coach not found" }, 404);
     }
 
     try {
@@ -40,8 +49,15 @@ export function useApiCoachSelectionApprove(app: Hono) {
         selection.studentId,
         `Your coach selection request for ${coach.realName} has been approved!`, // Use coach.realName
         `/student/selection/all`, // Link to student's profile
-        Date.now()
+        Date.now(),
       );
+      addSystemLog({
+        campusId: selection.campusId,
+        type: SystemLogType.CoachApproveSelection,
+        text:
+          `Coach ${coach.realName} approved selection request of student ID ${selection.studentId}.`,
+        relatedId: selection.id,
+      });
       return c.json({ message: "Selection approved successfully" });
     } catch (error) {
       console.error("Error approving selection:", error);

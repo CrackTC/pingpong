@@ -8,6 +8,9 @@ import { getStudentById } from "../../../../data/studentDao.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
 import { calcDate } from "../../../../utils.ts";
+import { getClaim } from "../../../../auth/claim.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiStudentAppointmentCancel(app: Hono) {
   app.post("/api/student/appointment/cancel", async (c) => {
@@ -23,6 +26,16 @@ export function useApiStudentAppointmentCancel(app: Hono) {
         return c.json({ message: "Appointment not found." }, 404);
       }
 
+      const student = getStudentById(appointment.studentId);
+      if (!student) {
+        return c.json({ message: "Student not found" }, 404);
+      }
+
+      const claim = await getClaim(c);
+      if (claim.id !== student.id) {
+        return c.json({ message: "Unauthorized" }, 403);
+      }
+
       const startDate = calcDate(
         appointment.createdAt,
         appointment.weekday,
@@ -34,11 +47,6 @@ export function useApiStudentAppointmentCancel(app: Hono) {
           { message: "Cannot cancel appointment within 24 hours." },
           400,
         );
-      }
-
-      const student = getStudentById(appointment.studentId);
-      if (!student) {
-        return c.json({ message: "Student not found" }, 404);
       }
 
       updateAppointmentStatus(
@@ -54,6 +62,14 @@ export function useApiStudentAppointmentCancel(app: Hono) {
         `/coach/appointment/cancelling`,
         Date.now(),
       );
+
+      addSystemLog({
+        campusId: appointment.campusId,
+        type: SystemLogType.StudentCancelAppointment,
+        text:
+          `Student ${student.realName} (ID: ${student.id}) requested to cancel appointment ID ${appointment.id}.`,
+        relatedId: appointment.id,
+      });
 
       return c.json({ message: "Appointment cancellation request sent." });
     } catch (error) {

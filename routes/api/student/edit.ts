@@ -1,6 +1,12 @@
 import { Hono } from "hono";
 import { getClaim } from "../../../auth/claim.ts";
-import { updateStudent, getStudentById, getStudentByPhoneAndCampus } from "../../../data/studentDao.ts";
+import {
+  getStudentById,
+  getStudentByPhoneAndCampus,
+  updateStudent,
+} from "../../../data/studentDao.ts";
+import { addSystemLog } from "../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../models/systemLog.ts";
 
 export function useApiStudentEdit(app: Hono) {
   app.post("/api/student/edit", async (c) => {
@@ -22,14 +28,27 @@ export function useApiStudentEdit(app: Hono) {
 
     // Check for duplicate phone number within the same campus, excluding the current student
     if (phone && phone !== currentStudent.phone) { // Only check if phone is provided and changed
-      const existingStudentWithPhone = getStudentByPhoneAndCampus(phone, currentStudent.campusId, currentStudent.id);
+      const existingStudentWithPhone = getStudentByPhoneAndCampus(
+        phone,
+        currentStudent.campusId,
+        currentStudent.id,
+      );
       if (existingStudentWithPhone) {
-        return c.json({ message: "Phone number already registered in this campus." }, 409);
+        return c.json({
+          message: "Phone number already registered in this campus.",
+        }, 409);
       }
     }
 
     try {
       updateStudent(claim.id, { realName, sex, birthYear, phone, email });
+      addSystemLog({
+        campusId: currentStudent.campusId,
+        type: SystemLogType.StudentUpdate,
+        text:
+          `Student ${currentStudent.realName} (ID: ${currentStudent.id}) updated their profile.`,
+        relatedId: currentStudent.id,
+      });
       return c.json({ message: "Profile updated successfully" });
     } catch (error) {
       console.error("Error updating student profile:", error);

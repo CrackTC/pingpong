@@ -1,8 +1,16 @@
 import { Hono } from "hono";
-import { addStudent, getStudentByUsername, getStudentByPhoneAndCampus } from "../../../../data/studentDao.ts";
+import {
+  addStudent,
+  getStudentByPhoneAndCampus,
+  getStudentByUsername,
+} from "../../../../data/studentDao.ts";
 import { getCampusById } from "../../../../data/campusDao.ts";
 import { Sex } from "../../../../models/sex.ts";
 import { validatePassword } from "../../../../utils.ts";
+import { getClaim } from "../../../../auth/claim.ts";
+import { getAdminById } from "../../../../data/adminDao.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiAdminStudentAdd(app: Hono) {
   app.post("/api/admin/student/add", async (c) => {
@@ -80,10 +88,13 @@ export function useApiAdminStudentAdd(app: Hono) {
     // Check if phone number already exists in the same campus
     const existingStudentByPhone = getStudentByPhoneAndCampus(phone, campusId);
     if (existingStudentByPhone) {
-        return c.json(
-            { success: false, message: "Phone number already registered in this campus." },
-            409,
-        );
+      return c.json(
+        {
+          success: false,
+          message: "Phone number already registered in this campus.",
+        },
+        409,
+      );
     }
 
     // Check if campusId is valid
@@ -92,8 +103,22 @@ export function useApiAdminStudentAdd(app: Hono) {
       return c.json({ success: false, message: "Invalid Campus ID." }, 400);
     }
 
+    const claim = await getClaim(c);
+    if (claim.type === "admin") {
+      const admin = getAdminById(claim.id);
+      if (!admin) {
+        return c.json({ success: false, message: "Admin not found." }, 404);
+      }
+      if (admin.campus !== campusId) {
+        return c.json(
+          { success: false, message: "Admin not authorized for this campus." },
+          403,
+        );
+      }
+    }
+
     try {
-      addStudent({
+      const id = addStudent({
         username,
         password,
         realName,
@@ -102,6 +127,12 @@ export function useApiAdminStudentAdd(app: Hono) {
         campusId,
         phone,
         email: email || null,
+      });
+      addSystemLog({
+        campusId,
+        type: SystemLogType.StudentAdd,
+        text: `Student ${realName} (ID: ${id}) added by admin ${claim.id}.`,
+        relatedId: id,
       });
       return c.json({ success: true });
     } catch (error) {

@@ -1,26 +1,41 @@
 import { db } from "./db.ts";
 import { RechargeOrder, RechargeOrderStatus } from "../models/rechargeOrder.ts";
 
-export function addRechargeOrder(order: Omit<RechargeOrder, "id">): void {
+export function addRechargeOrder(order: Omit<RechargeOrder, "id">): number {
   const stmt = db.prepare(
     "INSERT INTO recharge_orders (orderNumber, studentId, amount, status) VALUES (?, ?, ?, ?)",
   );
   stmt.run(order.orderNumber, order.studentId, order.amount, order.status);
+  return db.prepare("SELECT last_insert_rowid() as id").get<{ id: number }>()
+    ?.id ?? 0;
 }
 
-export function getRechargeOrderByOrderNumber(orderNumber: string): RechargeOrder | undefined {
-  const stmt = db.prepare("SELECT * FROM recharge_orders WHERE orderNumber = ?");
+export function getRechargeOrderByOrderNumber(
+  orderNumber: string,
+): RechargeOrder | undefined {
+  const stmt = db.prepare(
+    "SELECT * FROM recharge_orders WHERE orderNumber = ?",
+  );
   return stmt.get(orderNumber) as RechargeOrder | undefined;
 }
 
-export function updateRechargeOrderStatus(orderNumber: string, status: RechargeOrderStatus): void {
-  const stmt = db.prepare("UPDATE recharge_orders SET status = ? WHERE orderNumber = ?");
+export function updateRechargeOrderStatus(
+  orderNumber: string,
+  status: RechargeOrderStatus,
+): void {
+  const stmt = db.prepare(
+    "UPDATE recharge_orders SET status = ? WHERE orderNumber = ?",
+  );
   stmt.run(status, orderNumber);
 }
 
-export function getRechargeOrdersByStudentId(studentId: number): RechargeOrder[] {
-    const stmt = db.prepare("SELECT * FROM recharge_orders WHERE studentId = ? ORDER BY id DESC");
-    return stmt.all(studentId) as RechargeOrder[];
+export function getRechargeOrdersByStudentId(
+  studentId: number,
+): RechargeOrder[] {
+  const stmt = db.prepare(
+    "SELECT * FROM recharge_orders WHERE studentId = ? ORDER BY id DESC",
+  );
+  return stmt.all(studentId) as RechargeOrder[];
 }
 
 export function deleteRechargeOrdersByStudentId(studentId: number) {

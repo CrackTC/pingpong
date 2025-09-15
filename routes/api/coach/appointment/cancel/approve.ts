@@ -1,12 +1,21 @@
 import { Hono } from "hono";
-import { getAppointmentById, updateAppointmentStatus } from "../../../../../data/appointmentDao.ts";
+import {
+  getAppointmentById,
+  updateAppointmentStatus,
+} from "../../../../../data/appointmentDao.ts";
 import { AppointmentStatus } from "../../../../../models/appointment.ts";
 import { addNotification } from "../../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../../models/notification.ts";
 import { getCoachById } from "../../../../../data/coachDao.ts";
-import { getDeductionByRelatedId, deleteDeductionById } from "../../../../../data/deductionDao.ts";
+import {
+  deleteDeductionById,
+  getDeductionByRelatedId,
+} from "../../../../../data/deductionDao.ts";
 import { updateStudentBalance } from "../../../../../data/studentDao.ts";
 import { DeductionType } from "../../../../../models/deduction.ts";
+import { getClaim } from "../../../../../auth/claim.ts";
+import { addSystemLog } from "../../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../../models/systemLog.ts";
 
 export function useApiCoachApproveCancellation(app: Hono) {
   app.post("/api/coach/appointment/cancel/approve", async (c) => {
@@ -22,8 +31,18 @@ export function useApiCoachApproveCancellation(app: Hono) {
         return c.json({ message: "Appointment not found." }, 404);
       }
 
+      const claim = await getClaim(c);
+      if (claim.id !== appointment.coachId) {
+        return c.json({
+          message: "You are not authorized to approve this cancellation.",
+        }, 403);
+      }
+
       if (appointment.status !== AppointmentStatus.StudentCancelling) {
-        return c.json({ message: "This appointment is not pending cancellation by the student." }, 400);
+        return c.json({
+          message:
+            "This appointment is not pending cancellation by the student.",
+        }, 400);
       }
 
       const coach = getCoachById(appointment.coachId);
@@ -32,13 +51,19 @@ export function useApiCoachApproveCancellation(app: Hono) {
       }
 
       // Refund the student
-      const deduction = getDeductionByRelatedId(appointmentId, DeductionType.Appointment);
+      const deduction = getDeductionByRelatedId(
+        appointmentId,
+        DeductionType.Appointment,
+      );
       if (deduction) {
         updateStudentBalance(appointment.studentId, deduction.amount);
         deleteDeductionById(deduction.id);
       }
 
-      updateAppointmentStatus(appointmentId, AppointmentStatus.StudentCancelled);
+      updateAppointmentStatus(
+        appointmentId,
+        AppointmentStatus.StudentCancelled,
+      );
 
       addNotification(
         appointment.campusId,
@@ -46,8 +71,16 @@ export function useApiCoachApproveCancellation(app: Hono) {
         appointment.studentId,
         `Coach ${coach.realName} has approved your cancellation request.`,
         `/student/appointment/all`,
-        Date.now()
+        Date.now(),
       );
+
+      addSystemLog({
+        campusId: appointment.campusId,
+        type: SystemLogType.CoachApproveCancel,
+        text:
+          `Coach ${coach.realName} approved cancellation for appointment ID ${appointmentId}.`,
+        relatedId: appointment.id,
+      });
 
       return c.json({ message: "Cancellation approved." });
     } catch (error) {

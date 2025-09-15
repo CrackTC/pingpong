@@ -15,6 +15,9 @@ import { CoachType } from "../../../../models/coach.ts";
 import { addNotification } from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
 import { calcDate, scheduleTask } from "../../../../utils.ts";
+import { getClaim } from "../../../../auth/claim.ts";
+import { addSystemLog } from "../../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../../models/systemLog.ts";
 
 export function useApiCoachAppointmentApprove(app: Hono) {
   app.post("/api/coach/appointment/approve", async (c) => {
@@ -28,6 +31,11 @@ export function useApiCoachAppointmentApprove(app: Hono) {
       const appointment = getAppointmentById(appointmentId);
       if (!appointment) {
         return c.json({ message: "Appointment not found." }, 404);
+      }
+
+      const claim = await getClaim(c);
+      if (claim.id !== appointment.coachId) {
+        return c.json({ message: "Unauthorized." }, 403);
       }
 
       const student = getStudentById(appointment.studentId);
@@ -186,6 +194,14 @@ export function useApiCoachAppointmentApprove(app: Hono) {
         "/student/appointment/all",
         Date.now(),
       );
+
+      addSystemLog({
+        campusId: student.campusId,
+        type: SystemLogType.CoachApproveAppointment,
+        text:
+          `Coach ${coach.realName} approved appointment #${appointment.id} for student ${student.realName}.`,
+        relatedId: appointment.id,
+      });
 
       return c.json({ message: "Appointment approved successfully." });
     } catch (error) {

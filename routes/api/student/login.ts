@@ -1,6 +1,8 @@
 import { Hono } from "hono";
-import { verifyStudent } from "../../../data/studentDao.ts";
+import { getStudentById, verifyStudent } from "../../../data/studentDao.ts";
 import { Claim, setClaim } from "../../../auth/claim.ts";
+import { addSystemLog } from "../../../data/systemLogDao.ts";
+import { SystemLogType } from "../../../models/systemLog.ts";
 
 export function useApiStudentLogin(app: Hono) {
   app.post("/api/student/login", async (c) => {
@@ -13,9 +15,19 @@ export function useApiStudentLogin(app: Hono) {
         id: id,
       };
       await setClaim(c, claim);
+      const student = getStudentById(claim.id)!;
+      addSystemLog({
+        campusId: student.campusId,
+        type: SystemLogType.StudentLogin,
+        text: `Student ${student.realName} (ID: ${student.id}) logged in.`,
+        relatedId: student.id,
+      });
       return c.json({ success: true, redirect: "/student/home" }); // Assuming /student/home exists
     } else {
-      return c.json({ success: false, message: "Invalid username or password." }, 401);
+      return c.json({
+        success: false,
+        message: "Invalid username or password.",
+      }, 401);
     }
   });
 }
