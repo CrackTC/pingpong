@@ -23,14 +23,14 @@ export function useApiStudentCoachChange(app: Hono) {
     const claim = await getClaim(c);
 
     if (isNaN(oldCoachId) || isNaN(newCoachId)) {
-      return c.json({ message: "Invalid coach ID." }, 400);
+      return c.json({ message: "无效的教练ID。" }, 400);
     }
 
     try {
       const selection = getSelectionByStudentAndCoachId(claim.id, oldCoachId);
       if (!selection) {
         return c.json({
-          message: "You are not currently selected by this coach.",
+          message: "您目前未被此教练选中。",
         }, 400);
       }
 
@@ -40,7 +40,7 @@ export function useApiStudentCoachChange(app: Hono) {
       );
       if (newCoachSelection) {
         return c.json(
-          { message: "You are already selected by the new coach." },
+          { message: "您已被新教练选中。" },
           400,
         );
       }
@@ -49,14 +49,14 @@ export function useApiStudentCoachChange(app: Hono) {
       if (currentStudentCount >= MAX_STUDENTS_PER_COACH) {
         return c.json({
           message:
-            `The new coach already has ${MAX_STUDENTS_PER_COACH} students.`,
+            `新教练已有 ${MAX_STUDENTS_PER_COACH} 名学生。`,
         }, 400);
       }
 
       const currentMigrations = getMigrationsByStudentId(claim.id);
       if (currentMigrations.length > 0) {
         return c.json({
-          message: "You already have a pending coach change request.",
+          message: "您已有待处理的教练更换请求。",
         }, 400);
       }
 
@@ -65,7 +65,7 @@ export function useApiStudentCoachChange(app: Hono) {
       const student = getStudentById(claim.id);
 
       if (!oldCoach || !newCoach || !student) {
-        return c.json({ message: "Invalid data." }, 400);
+        return c.json({ message: "无效数据。" }, 400);
       }
 
       // Create migration record
@@ -82,7 +82,7 @@ export function useApiStudentCoachChange(app: Hono) {
         student.campusId,
         NotificationTarget.Coach,
         oldCoachId,
-        `Student ${student.realName} has requested to change from you to another coach.`,
+        `学生 ${student.realName} 已请求从您更换到其他教练。`,
         `/coach/migration/pending`, // Assuming a new page for migrations
         Date.now(),
       );
@@ -92,7 +92,7 @@ export function useApiStudentCoachChange(app: Hono) {
         student.campusId,
         NotificationTarget.Coach,
         newCoachId,
-        `Student ${student.realName} has requested to change to you from another coach.`,
+        `学生 ${student.realName} 已请求从其他教练更换到您。`,
         `/coach/migration/pending`,
         Date.now(),
       );
@@ -102,7 +102,7 @@ export function useApiStudentCoachChange(app: Hono) {
         student.campusId,
         NotificationTarget.Admin,
         0, // Or a specific admin? For now, 0 for all admins in campus
-        `Student ${student.realName} has requested to change from coach ${oldCoach.realName} to ${newCoach.realName}.`,
+        `学生 ${student.realName} 已请求从教练 ${oldCoach.realName} 更换到 ${newCoach.realName}。`,
         `/admin/migrations`,
         Date.now(),
       );
@@ -111,14 +111,14 @@ export function useApiStudentCoachChange(app: Hono) {
         campusId: student.campusId,
         type: SystemLogType.StudentRequestMigration,
         text:
-          `Student ${student.realName} (ID: ${student.id}) requested to change from coach ${oldCoach.realName} (ID: ${oldCoach.id}) to coach ${newCoach.realName} (ID: ${newCoach.id}).`,
+          `学生 ${student.realName} (ID: ${student.id}) 请求从教练 ${oldCoach.realName} (ID: ${oldCoach.id}) 更换到教练 ${newCoach.realName} (ID: ${newCoach.id})。`,
         relatedId: id,
       });
 
-      return c.json({ message: "Change request sent successfully." });
+      return c.json({ message: "更换请求已成功发送。" });
     } catch (error) {
-      console.error("Error requesting coach change:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("请求更换教练时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

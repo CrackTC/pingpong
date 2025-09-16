@@ -18,14 +18,14 @@ export function useApiRootLogin(app: Hono) {
       addSystemLog({
         campusId: 1,
         type: SystemLogType.RootLogin,
-        text: `Root user ${username} logged in.`,
+        text: `超级管理员 ${username} 已登录。`,
         relatedId: id,
       });
       return c.json({ success: true, redirect: "/root/home" });
     } else {
       return c.json({
         success: false,
-        message: "Invalid username or password.",
+        message: "用户名或密码无效。",
       }, 401);
     }
   });

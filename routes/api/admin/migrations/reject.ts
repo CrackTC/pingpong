@@ -17,23 +17,23 @@ export function useApiAdminMigrationsReject(app: Hono) {
     const { migrationId } = await c.req.json();
 
     if (isNaN(migrationId)) {
-      return c.json({ message: "Invalid migration ID." }, 400);
+      return c.json({ message: "无效的迁移ID。" }, 400);
     }
 
     try {
       const migration = getMigrationById(migrationId);
       if (!migration) {
-        return c.json({ message: "Migration not found." }, 404);
+        return c.json({ message: "未找到迁移。" }, 404);
       }
 
       if (migration.status === MigrationStatus.Rejected) {
-        return c.json({ message: "Migration already rejected." }, 400);
+        return c.json({ message: "迁移已被拒绝。" }, 400);
       }
 
       if ((migration.status & MigrationStatus.CampusAdminApproved) !== 0) {
         return c.json({
           message:
-            "Cannot reject a migration that has been approved by campus admin.",
+            "无法拒绝已被校区管理员批准的迁移。",
         }, 400);
       }
 
@@ -41,11 +41,11 @@ export function useApiAdminMigrationsReject(app: Hono) {
       if (claim.type === "admin") {
         const admin = getAdminById(claim.id);
         if (!admin) {
-          return c.json({ message: "Admin not found." }, 404);
+          return c.json({ message: "未找到管理员。" }, 404);
         }
         if (admin.campus !== migration.campusId) {
           return c.json(
-            { message: "Admin not authorized for this campus." },
+            { message: "管理员无权管理此校区。" },
             403,
           );
         }
@@ -53,7 +53,7 @@ export function useApiAdminMigrationsReject(app: Hono) {
 
       const oldSelection = getSelectionById(migration.selectionId);
       if (!oldSelection) {
-        return c.json({ message: "Original selection not found." }, 404);
+        return c.json({ message: "未找到原始选择。" }, 404);
       }
 
       // Update migration status to Rejected
@@ -64,7 +64,7 @@ export function useApiAdminMigrationsReject(app: Hono) {
         migration.campusId,
         NotificationTarget.Student,
         oldSelection.studentId, // Assuming oldSelection is available
-        `Your coach change request has been rejected by admin.`,
+        `您的教练更换请求已被管理员拒绝。`,
         `/student/migration/all`,
         Date.now(),
       );
@@ -72,14 +72,14 @@ export function useApiAdminMigrationsReject(app: Hono) {
       addSystemLog({
         campusId: migration.campusId,
         type: SystemLogType.MigrationReject,
-        text: `Migration ID ${migration.id} rejected by admin ${claim.id}.`,
+        text: `迁移ID ${migration.id} 已被管理员 ${claim.id} 拒绝。`,
         relatedId: migration.id,
       });
 
-      return c.json({ message: "Migration rejected successfully." });
+      return c.json({ message: "迁移成功拒绝。" });
     } catch (error) {
-      console.error("Error rejecting migration:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("拒绝迁移时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

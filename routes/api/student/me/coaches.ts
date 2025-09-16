@@ -7,15 +7,15 @@ export function useApiStudentMeCoaches(app: Hono) {
     const claim = await getClaim(c);
 
     if (!claim || claim.type !== "student") {
-      return c.json({ message: "Unauthorized" }, 401);
+      return c.json({ message: "未授权" }, 401);
     }
 
     try {
       const coaches = getApprovedCoachesForStudent(claim.id); // Use the new DAO function
       return c.json(coaches);
     } catch (error) {
-      console.error("Error fetching student's coaches:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取学生教练时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

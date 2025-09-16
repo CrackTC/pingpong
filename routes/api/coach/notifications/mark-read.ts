@@ -11,20 +11,20 @@ export function useApiCoachNotificationsMarkRead(app: Hono) {
     const notification = getNotificationById(notificationId);
 
     if (!notification) {
-      return c.json({ message: "Notification not found" }, 404);
+      return c.json({ message: "未找到通知" }, 404);
     }
 
     // Check if the notification belongs to the authenticated coach
     if (notification.targetId !== claim.id || notification.target !== NotificationTarget.Coach) {
-      return c.json({ message: "Unauthorized to mark this notification as read" }, 403);
+      return c.json({ message: "无权将此通知标记为已读" }, 403);
     }
 
     try {
       markNotificationAsRead(notificationId);
-      return c.json({ message: "Notification marked as read" });
+      return c.json({ message: "通知已标记为已读" });
     } catch (error) {
-      console.error("Error marking notification as read:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("标记通知为已读时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

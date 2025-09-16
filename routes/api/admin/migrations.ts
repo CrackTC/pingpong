@@ -15,7 +15,7 @@ export function useApiAdminMigrations(app: Hono) {
       } else if (claim.type === "admin") {
         const admin = getAdminById(claim.id);
         if (!admin) {
-          return c.json({ message: "Admin not found." }, 404);
+          return c.json({ message: "未找到管理员。" }, 404);
         }
         migrations = getPendingMigrations(
           MigrationStatus.CampusAdminApproved,
@@ -24,8 +24,8 @@ export function useApiAdminMigrations(app: Hono) {
       }
       return c.json(migrations);
     } catch (error) {
-      console.error("Error fetching pending migrations:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取待处理迁移时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

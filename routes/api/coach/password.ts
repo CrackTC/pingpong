@@ -15,17 +15,17 @@ export function useApiCoachPassword(app: Hono) {
     const claim = await getClaim(c);
 
     if (!claim || claim.type !== "coach") {
-      return c.json({ message: "Unauthorized" }, 401);
+      return c.json({ message: "未授权" }, 401);
     }
 
     const coach = getCoachById(claim.id);
     if (!coach) {
-      return c.json({ message: "Coach not found" }, 404);
+      return c.json({ message: "未找到教练" }, 404);
     }
 
     // Verify current password
     if (!verifyCoach(coach.username, currentPassword)) {
-      return c.json({ message: "Invalid current password" }, 400);
+      return c.json({ message: "当前密码无效" }, 400);
     }
 
     // Validate new password
@@ -40,13 +40,13 @@ export function useApiCoachPassword(app: Hono) {
         campusId: coach.campusId,
         type: SystemLogType.CoachChangePassword,
         text:
-          `Coach ${coach.realName} (ID: ${coach.id}) changed their password.`,
+          `教练 ${coach.realName} (ID: ${coach.id}) 更改了密码。`,
         relatedId: coach.id,
       });
-      return c.json({ message: "Password changed successfully" });
+      return c.json({ message: "密码更改成功" });
     } catch (error) {
-      console.error("Error changing coach password:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("更改教练密码时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

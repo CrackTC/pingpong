@@ -24,30 +24,30 @@ export function useApiStudentApproveCancellation(app: Hono) {
     const { appointmentId } = await c.req.json();
 
     if (isNaN(appointmentId)) {
-      return c.json({ message: "Invalid appointment ID." }, 400);
+      return c.json({ message: "无效的预约ID。" }, 400);
     }
 
     try {
       const appointment = getAppointmentById(appointmentId);
       if (!appointment) {
-        return c.json({ message: "Appointment not found." }, 404);
+        return c.json({ message: "未找到预约。" }, 404);
       }
 
       const student = getStudentById(appointment.studentId);
       if (!student) {
-        return c.json({ message: "Student not found" }, 404);
+        return c.json({ message: "未找到学生" }, 404);
       }
 
       const claim = await getClaim(c);
       if (claim.id !== student.id) {
         return c.json({
-          message: "You are not authorized to approve this cancellation.",
+          message: "您无权批准此取消。",
         }, 403);
       }
 
       if (appointment.status !== AppointmentStatus.CoachCancelling) {
         return c.json({
-          message: "This appointment is not pending cancellation by the coach.",
+          message: "此预约未处于教练取消待处理状态。",
         }, 400);
       }
 
@@ -67,7 +67,7 @@ export function useApiStudentApproveCancellation(app: Hono) {
         appointment.campusId,
         NotificationTarget.Coach,
         appointment.coachId,
-        `Student ${student.realName} has approved your cancellation request.`,
+        `学生 ${student.realName} 已批准您的取消请求。`,
         `/coach/appointment/all`,
         Date.now(),
       );
@@ -76,14 +76,14 @@ export function useApiStudentApproveCancellation(app: Hono) {
         campusId: appointment.campusId,
         type: SystemLogType.StudentApproveCancel,
         text:
-          `Student ${student.realName} (ID: ${student.id}) approved cancellation for appointment ID ${appointment.id}.`,
+          `学生 ${student.realName} (ID: ${student.id}) 批准了预约 ID ${appointment.id} 的取消。`,
         relatedId: appointment.id,
       });
 
-      return c.json({ message: "Cancellation approved." });
+      return c.json({ message: "取消已批准。" });
     } catch (error) {
-      console.error("Error approving cancellation:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("批准取消时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

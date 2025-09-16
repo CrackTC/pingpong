@@ -11,8 +11,8 @@ export function useApiStudentAppointmentCancelCount(app: Hono) {
       const cancelCount = getStudentCancelCountThisMonth(studentId);
       return c.json({ cancelCount });
     } catch (error) {
-      console.error("Error fetching student cancel count:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取学生取消次数时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

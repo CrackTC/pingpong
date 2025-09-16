@@ -17,24 +17,24 @@ export function useApiStudentAppointmentBook(app: Hono) {
     const claim = await getClaim(c);
 
     if (isNaN(timeslotId)) {
-      return c.json({ message: "Invalid timeslot ID." }, 400);
+      return c.json({ message: "无效的时间段ID。" }, 400);
     }
 
     try {
       const timeslot = getTimeslotById(timeslotId);
       if (!timeslot) {
-        return c.json({ message: "Timeslot not found." }, 404);
+        return c.json({ message: "未找到时间段。" }, 404);
       }
 
       const coach = getCoachById(timeslot.coachId);
       if (!coach) {
-        return c.json({ message: "Coach not found." }, 404);
+        return c.json({ message: "未找到教练。" }, 404);
       }
 
       const studentId = claim.id;
       const student = getStudentById(studentId);
       if (!student) {
-        return c.json({ message: "Student not found" }, 404);
+        return c.json({ message: "未找到学生" }, 404);
       }
 
       let selectedTableId = tableId;
@@ -44,7 +44,7 @@ export function useApiStudentAppointmentBook(app: Hono) {
         const availableTables = getAvailableTables(coach.campusId, timeslot);
         if (availableTables.length === 0) {
           return c.json(
-            { message: "No available tables for this timeslot." },
+            { message: "此时间段没有可用球台。" },
             400,
           );
         }
@@ -65,7 +65,7 @@ export function useApiStudentAppointmentBook(app: Hono) {
         coach.campusId,
         NotificationTarget.Coach,
         coach.id,
-        `New appointment request from ${student.realName}`,
+        `来自 ${student.realName} 的新预约请求`,
         `/coach/appointment/pending`, // Link for coach to view pending appointments
         Date.now(),
       );
@@ -74,14 +74,14 @@ export function useApiStudentAppointmentBook(app: Hono) {
         campusId: coach.campusId,
         type: SystemLogType.StudentBookAppointment,
         text:
-          `Student ${student.realName} (ID: ${student.id}) booked an appointment with Coach ${coach.realName} (ID: ${coach.id}) for timeslot ID ${timeslot.id}.`,
+          `学生 ${student.realName} (ID: ${student.id}) 预约了教练 ${coach.realName} (ID: ${coach.id}) 的时间段 ID ${timeslot.id}。`,
         relatedId: id,
       });
 
-      return c.json({ message: "Appointment booked successfully." });
+      return c.json({ message: "预约成功。" });
     } catch (error) {
-      console.error("Error booking appointment:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("预约时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

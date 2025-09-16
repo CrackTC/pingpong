@@ -10,10 +10,10 @@ export function useApiAddAdmin(app: Hono) {
     const { username, password, campusId } = await c.req.json();
 
     if (!username || typeof username !== "string" || username.trim() === "") {
-      return c.json({ success: false, message: "Username is required." }, 400);
+      return c.json({ success: false, message: "用户名为必填项。" }, 400);
     }
     if (!password || typeof password !== "string" || password.trim() === "") {
-      return c.json({ success: false, message: "Password is required." }, 400);
+      return c.json({ success: false, message: "密码为必填项。" }, 400);
     }
 
     const passwordError = validatePassword(password);
@@ -24,20 +24,20 @@ export function useApiAddAdmin(app: Hono) {
     if (!campusId || typeof campusId !== "number") {
       return c.json({
         success: false,
-        message: "Campus ID is required and must be a number.",
+        message: "校区ID为必填项，且必须是数字。",
       }, 400);
     }
 
     const campus = getCampusById(campusId);
     if (!campus) {
-      return c.json({ success: false, message: "Campus not found." }, 400);
+      return c.json({ success: false, message: "未找到校区。" }, 400);
     }
 
     const existingAdmin = getAdminByUsername(username);
     if (existingAdmin) {
       return c.json({
         success: false,
-        message: "Admin with this username already exists.",
+        message: "该用户名管理员已存在。",
       }, 409);
     }
 
@@ -46,15 +46,15 @@ export function useApiAddAdmin(app: Hono) {
       addSystemLog({
         campusId,
         type: SystemLogType.AdminAdd,
-        text: `Admin ${username} added.`,
+        text: `管理员 ${username} 已添加。`,
         relatedId: id,
       });
       return c.json({ success: true });
     } catch (error) {
-      console.error("Error adding admin:", error);
+      console.error("添加管理员时出错：", error);
       return c.json({
         success: false,
-        message: "An unexpected error occurred.",
+        message: "发生意外错误。",
       }, 500);
     }
   });

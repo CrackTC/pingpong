@@ -14,16 +14,16 @@ export function useApiStudentEdit(app: Hono) {
     const claim = await getClaim(c);
 
     if (phone && !/^\d{11}$/.test(phone)) {
-      return c.json({ message: "Phone must be 11 digits." }, 400);
+      return c.json({ message: "手机号码必须是11位数字。" }, 400);
     }
 
     if (!claim || !claim.id) {
-      return c.json({ message: "Unauthorized" }, 401);
+      return c.json({ message: "未授权" }, 401);
     }
 
     const currentStudent = getStudentById(claim.id);
     if (!currentStudent) {
-      return c.json({ message: "Student not found" }, 404);
+      return c.json({ message: "未找到学生" }, 404);
     }
 
     // Check for duplicate phone number within the same campus, excluding the current student
@@ -35,7 +35,7 @@ export function useApiStudentEdit(app: Hono) {
       );
       if (existingStudentWithPhone) {
         return c.json({
-          message: "Phone number already registered in this campus.",
+          message: "该校区已注册该手机号码。",
         }, 409);
       }
     }
@@ -46,13 +46,13 @@ export function useApiStudentEdit(app: Hono) {
         campusId: currentStudent.campusId,
         type: SystemLogType.StudentUpdate,
         text:
-          `Student ${currentStudent.realName} (ID: ${currentStudent.id}) updated their profile.`,
+          `学生 ${currentStudent.realName} (ID: ${currentStudent.id}) 更新了他们的个人资料。`,
         relatedId: currentStudent.id,
       });
-      return c.json({ message: "Profile updated successfully" });
+      return c.json({ message: "个人资料更新成功" });
     } catch (error) {
-      console.error("Error updating student profile:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("更新学生个人资料时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

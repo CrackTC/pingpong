@@ -10,8 +10,8 @@ export function useApiStudentSelectionAll(app: Hono) {
       const activeSelections = getAllSelectionsForStudent(claim.id);
       return c.json({ selections: activeSelections });
     } catch (error) {
-      console.error("Error fetching student's active selections:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取学生活跃选择时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

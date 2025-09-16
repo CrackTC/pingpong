@@ -11,8 +11,8 @@ export function useApiCoachAppointmentCancelling(app: Hono) {
       const appointments = getStudentCancellingAppointmentsByCoachId(coachId);
       return c.json(appointments);
     } catch (error) {
-      console.error("Error fetching cancelling appointments:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取取消中的预约时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

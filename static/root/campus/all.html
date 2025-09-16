@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Campuses</title>
+        <title>校区</title>
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -19,17 +19,17 @@
                     <div class="card">
                         <div class="card-body">
                             <h3 class="card-title text-center mb-4">
-                                Campuses
+                                校区
                             </h3>
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th scope="col">ID</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Address</th>
-                                        <th scope="col">Phone</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Type</th>
+                                        <th scope="col">编号</th>
+                                        <th scope="col">名称</th>
+                                        <th scope="col">地址</th>
+                                        <th scope="col">电话</th>
+                                        <th scope="col">电子邮件</th>
+                                        <th scope="col">类型</th>
                                     </tr>
                                 </thead>
                                 <tbody id="campus-table-body"></tbody>
@@ -40,10 +40,10 @@
                                 <a
                                     href="/root/campus/add"
                                     class="btn btn-success me-md-2"
-                                    >Add Campus</a
+                                    >添加校区</a
                                 >
                                 <a href="/root/home" class="btn btn-primary"
-                                    >Home</a
+                                    >主页</a
                                 >
                             </div>
                         </div>
@@ -65,7 +65,7 @@
                         <td>${campus.address}</td>
                         <td>${campus.phone}</td>
                         <td>${campus.email}</td>
-                        <td>${campus.type === 1 ? "Center" : "Branch"}</td>
+                        <td>${campus.type === 1 ? "中心" : "分部"}</td>
                     `;
                     tableBody.appendChild(row);
                 }

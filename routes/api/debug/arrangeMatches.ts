@@ -5,10 +5,10 @@ export function useApiDebugArrangeMatches(app: Hono) {
   app.get("/api/debug/arrangeMatches", (c) => {
     try {
       arrangeMatches();
-      return c.json({ message: "Match arrangement triggered." });
+      return c.json({ message: "比赛安排已触发。" });
     } catch (error) {
-      console.error("Error arranging matches:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("安排比赛时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

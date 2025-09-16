@@ -8,25 +8,25 @@ export function useApiStudentTableAvailable(app: Hono) {
     const { timeslotId } = await c.req.json();
 
     if (isNaN(timeslotId)) {
-      return c.json({ message: "Invalid timeslot ID." }, 400);
+      return c.json({ message: "无效的时间段ID。" }, 400);
     }
 
     try {
       const timeslot = getTimeslotById(timeslotId);
       if (!timeslot) {
-        return c.json({ message: "Timeslot not found." }, 404);
+        return c.json({ message: "未找到时间段。" }, 404);
       }
 
       const coach = getCoachById(timeslot.coachId);
       if (!coach) {
-        return c.json({ message: "Coach not found." }, 404);
+        return c.json({ message: "未找到教练。" }, 404);
       }
 
       const availableTables = getAvailableTables(coach.campusId, timeslot);
       return c.json(availableTables);
     } catch (error) {
-      console.error("Error fetching available tables:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取可用球台时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

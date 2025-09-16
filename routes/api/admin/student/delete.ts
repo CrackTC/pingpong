@@ -20,31 +20,31 @@ export function useApiAdminStudentDelete(app: Hono) {
     const { studentId } = await c.req.json();
 
     if (isNaN(studentId)) {
-      return c.json({ message: "Invalid student ID." }, 400);
+      return c.json({ message: "无效的学生ID。" }, 400);
     }
 
     try {
       const student = getStudentById(studentId);
       if (!student) {
-        return c.json({ message: "Student not found." }, 404);
+        return c.json({ message: "未找到学生。" }, 404);
       }
 
       const claim = await getClaim(c);
       if (claim.type === "admin") {
         const admin = getAdminById(claim.id);
         if (!admin) {
-          return c.json({ message: "Admin not found." }, 404);
+          return c.json({ message: "未找到管理员。" }, 404);
         }
         if (admin.campus !== student.campusId) {
           return c.json({
-            message: "Admin does not have permission to delete this student.",
+            message: "管理员无权删除此学生。",
           }, 403);
         }
       }
       const activeAppointments = getActiveAppointmentsByStudentId(studentId);
       if (activeAppointments.length > 0) {
         return c.json({
-          message: "Cannot delete student with active appointments.",
+          message: "无法删除有活跃预约的学生。",
         }, 400);
       }
 
@@ -61,14 +61,14 @@ export function useApiAdminStudentDelete(app: Hono) {
         campusId: student.campusId,
         type: SystemLogType.StudentRemove,
         text:
-          `Student ${student.realName} (ID: ${student.id}) was deleted by admin ${claim.id}.`,
+          `学生 ${student.realName} (ID: ${student.id}) 已被管理员 ${claim.id} 删除。`,
         relatedId: student.id,
       });
 
-      return c.json({ message: "Student deleted successfully." });
+      return c.json({ message: "学生删除成功。" });
     } catch (error) {
-      console.error("Error deleting student:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("删除学生时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

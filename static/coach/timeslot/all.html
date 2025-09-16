@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>All Timeslots</title>
+        <title>所有时间段</title>
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -19,7 +19,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h3 class="card-title text-center mb-4">
-                                All Timeslots
+                                所有时间段
                             </h3>
                             <div
                                 id="message"
@@ -31,15 +31,15 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Weekday</th>
-                                            <th>Start Time</th>
-                                            <th>End Time</th>
+                                            <th>星期</th>
+                                            <th>开始时间</th>
+                                            <th>结束时间</th>
                                         </tr>
                                     </thead>
                                     <tbody id="timeslots-table-body">
                                         <tr>
                                             <td colspan="6" class="text-center">
-                                                Loading timeslots...
+                                                正在加载时间段...
                                             </td>
                                         </tr>
                                     </tbody>
@@ -51,10 +51,10 @@
                                 <a
                                     href="/coach/timeslot/add"
                                     class="btn btn-primary"
-                                    >Add Timeslot</a
+                                    >添加时间段</a
                                 >
                                 <a href="/coach/home" class="btn btn-secondary"
-                                    >Back to Home</a
+                                    >返回主页</a
                                 >
                             </div>
                         </div>
@@ -70,15 +70,15 @@
         <script>
             function getWeekdayString(weekday) {
                 const weekdays = [
-                    "Sunday",
-                    "Monday",
-                    "Tuesday",
-                    "Wednesday",
-                    "Thursday",
-                    "Friday",
-                    "Saturday",
+                    "星期日",
+                    "星期一",
+                    "星期二",
+                    "星期三",
+                    "星期四",
+                    "星期五",
+                    "星期六",
                 ];
-                return weekdays[weekday] || "Unknown";
+                return weekdays[weekday] || "未知";
             }
 
             function formatTime(hour, minute) {
@@ -132,13 +132,13 @@
                     response.ok &&
                     (!data.timeslots || data.timeslots.length === 0)
                 ) {
-                    timeslotsTableBody.innerHTML = `<tr><td colspan="5" class="text-center">No timeslots found.</td></tr>`;
+                    timeslotsTableBody.innerHTML = `<tr><td colspan="5" class="text-center">未找到时间段。</td></tr>`;
                 } else {
                     messageDiv.textContent =
-                        data.message || "An error occurred loading timeslots.";
+                        data.message || "加载时间段时发生错误。";
                     messageDiv.className = "alert alert-danger";
                     messageDiv.classList.remove("d-none");
-                    timeslotsTableBody.innerHTML = `<tr><td colspan="6" class="text-center">Error loading timeslots.</td></tr>`;
+                    timeslotsTableBody.innerHTML = `<tr><td colspan="6" class="text-center">加载时间段时出错。</td></tr>`;
                 }
             }
 

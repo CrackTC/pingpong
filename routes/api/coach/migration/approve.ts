@@ -23,33 +23,33 @@ export function useApiCoachMigrationApprove(app: Hono) {
     const claim = await getClaim(c);
 
     if (isNaN(migrationId)) {
-      return c.json({ message: "Invalid migration ID." }, 400);
+      return c.json({ message: "无效的迁移ID。" }, 400);
     }
 
     try {
       const migration = getMigrationById(migrationId);
       if (!migration) {
-        return c.json({ message: "Migration not found." }, 404);
+        return c.json({ message: "未找到迁移。" }, 404);
       }
 
       if (migration.status === MigrationStatus.Rejected) {
-        return c.json({ message: "Cannot approve a rejected migration." }, 400);
+        return c.json({ message: "无法批准已拒绝的迁移。" }, 400);
       }
 
       const oldSelection = getSelectionById(migration.selectionId);
       if (!oldSelection) {
-        return c.json({ message: "Original selection not found." }, 404);
+        return c.json({ message: "未找到原始选择。" }, 404);
       }
 
       if (
         migration.destCoachId !== claim.id && oldSelection.coachId !== claim.id
       ) {
-        return c.json({ message: "Unauthorized." }, 401);
+        return c.json({ message: "未授权。" }, 401);
       }
 
       const newCoach = getCoachById(migration.destCoachId);
       if (!newCoach) {
-        return c.json({ message: "Destination coach not found." }, 404);
+        return c.json({ message: "未找到目标教练。" }, 404);
       }
 
       let newStatus = migration.status;
@@ -68,7 +68,7 @@ export function useApiCoachMigrationApprove(app: Hono) {
         campusId: migration.campusId,
         type: SystemLogType.MigrationApprove,
         text:
-          `Migration ID ${migration.id} approved by ${coachDesc} (Coach ID ${claim.id}).`,
+          `迁移ID ${migration.id} 已被 ${coachDesc} (教练ID ${claim.id}) 批准。`,
         relatedId: migration.id,
       });
 
@@ -77,13 +77,13 @@ export function useApiCoachMigrationApprove(app: Hono) {
           migration.campusId,
           NotificationTarget.Student,
           oldSelection.studentId,
-          `Your coach change request has been approved by ${coachDesc}.`,
+          `您的教练更换请求已被 ${coachDesc} 批准。`,
           `/student/migration/all`,
           Date.now(),
         );
         return c.json({
           message:
-            `Migration approved by ${coachDesc}. Awaiting further approvals.`,
+            `迁移已被 ${coachDesc} 批准。等待进一步批准。`,
         });
       }
 
@@ -100,7 +100,7 @@ export function useApiCoachMigrationApprove(app: Hono) {
         migration.campusId,
         NotificationTarget.Student,
         oldSelection.studentId,
-        `Your coach change request has been approved. Your new coach is ${newCoach.realName}.`,
+        `您的教练更换请求已获批准。您的新教练是 ${newCoach.realName}。`,
         `/student/selection/all`,
         Date.now(),
       );
@@ -109,14 +109,14 @@ export function useApiCoachMigrationApprove(app: Hono) {
         campusId: migration.campusId,
         type: SystemLogType.MigrationComplete,
         text:
-          `Migration ID ${migration.id} completed. Student ID ${oldSelection.studentId} moved from Coach ID ${oldSelection.coachId} to Coach ID ${migration.destCoachId}.`,
+          `迁移ID ${migration.id} 已完成。学生ID ${oldSelection.studentId} 已从教练ID ${oldSelection.coachId} 迁移到教练ID ${migration.destCoachId}。`,
         relatedId: migration.id,
       });
 
-      return c.json({ message: "Migration approved successfully." });
+      return c.json({ message: "迁移成功批准。" });
     } catch (error) {
-      console.error("Error approving migration:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("批准迁移时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

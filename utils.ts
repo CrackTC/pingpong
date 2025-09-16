@@ -7,16 +7,16 @@ import { addMatch } from "./data/matchDao.ts";
 
 export function validatePassword(password: string): string | null {
   if (password.length < 8 || password.length > 16) {
-    return "Password must be between 8 and 16 characters long.";
+    return "密码长度必须在8到16个字符之间。";
   }
   if (!/[a-zA-Z]/.test(password)) {
-    return "Password must contain at least one alphabet character.";
+    return "密码必须包含至少一个字母字符。";
   }
   if (!/\d/.test(password)) {
-    return "Password must contain at least one number.";
+    return "密码必须包含至少一个数字。";
   }
   if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-    return "Password must contain at least one special symbol.";
+    return "密码必须包含至少一个特殊符号。";
   }
   return null; // Password is valid
 }

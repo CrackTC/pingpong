@@ -13,35 +13,35 @@ export function useApiAdminNotificationsMarkRead(app: Hono) {
     const claim = await getClaim(c);
 
     if (isNaN(notificationId)) {
-      return c.json({ message: "Invalid notification ID." }, 400);
+      return c.json({ message: "无效的通知ID。" }, 400);
     }
 
     try {
       const notification = getNotificationById(notificationId);
       if (!notification) {
-        return c.json({ message: "Notification not found." }, 404);
+        return c.json({ message: "未找到通知。" }, 404);
       }
 
       if (notification.target !== NotificationTarget.Admin) {
-        return c.json({ message: "Unauthorized." }, 401);
+        return c.json({ message: "未授权。" }, 401);
       }
 
       if (claim.type === "admin") {
         const admin = getAdminById(claim.id);
         if (!admin) {
-          return c.json({ message: "Admin not found." }, 404);
+          return c.json({ message: "未找到管理员。" }, 404);
         }
 
         if (notification.campusId !== admin.campus) {
-          return c.json({ message: "Unauthorized." }, 401);
+          return c.json({ message: "未授权。" }, 401);
         }
       }
 
       markNotificationAsRead(notificationId);
-      return c.json({ message: "Notification marked as read." });
+      return c.json({ message: "通知已标记为已读。" });
     } catch (error) {
-      console.error("Error marking notification as read:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("标记通知为已读时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

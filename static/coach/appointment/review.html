@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Review Appointment</title>
+        <title>预约评价</title>
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -33,14 +33,14 @@
                     <div class="card">
                         <div class="card-body">
                             <h3 class="card-title text-center mb-4">
-                                Review Your Appointment
+                                对本次预约进行评价
                             </h3>
                             <div id="message-area" class="alert d-none" role="alert"></div>
                             <div id="review-display-area" class="d-none"></div>
                             <div id="review-form-area">
                                 <form id="review-form">
                                     <div class="mb-3">
-                                        <label for="rating" class="form-label">Rating</label>
+                                        <label for="rating" class="form-label">评分</label>
                                         <div class="star-rating" id="star-rating">
                                             <span class="star" data-value="1">&#9733;</span>
                                             <span class="star" data-value="2">&#9733;</span>
@@ -51,14 +51,14 @@
                                         <input type="hidden" id="rating" name="rating" value="0">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="comment" class="form-label">Comment</label>
+                                        <label for="comment" class="form-label">评论</label>
                                         <textarea class="form-control" id="comment" name="comment" rows="5"></textarea>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                                    <button type="submit" class="btn btn-primary">提交评价</button>
                                 </form>
                             </div>
                             <div class="mt-3">
-                                <a href="/coach/appointment/all" class="btn btn-secondary">Back to Appointments</a>
+                                <a href="/coach/appointment/all" class="btn btn-secondary">返回预约列表</a>
                             </div>
                         </div>
                     </div>
@@ -93,16 +93,16 @@
                     reviewFormArea.classList.add('d-none');
                     reviewDisplayArea.classList.remove('d-none');
 
-                    let displayHtml = '<h4>Your Review</h4>';
-                    displayHtml += `<div class="mb-3"><strong>Rating:</strong> ${renderStars(data.myReview.rating)}</div>`;
-                    displayHtml += `<p><strong>Comment:</strong> ${data.myReview.text || '<em>No comment provided.</em>'}</p><hr/>`;
+                    let displayHtml = '<h4>您的评价</h4>';
+                    displayHtml += `<div class="mb-3"><strong>评分：</strong> ${renderStars(data.myReview.rating)}</div>`;
+                    displayHtml += `<p><strong>评论：</strong> ${data.myReview.text || '<em>暂无评论。</em>'}</p><hr/>`;
 
                     if (data.theirReview) {
-                        displayHtml += '<h4>Student\'s Review</h4>';
-                        displayHtml += `<div class="mb-3"><strong>Rating:</strong> ${renderStars(data.theirReview.rating)}</div>`;
-                        displayHtml += `<p><strong>Comment:</strong> ${data.theirReview.text || '<em>No comment provided.</em>'}</p>`;
+                        displayHtml += '<h4>学生的评价</h4>';
+                        displayHtml += `<div class="mb-3"><strong>评分：</strong> ${renderStars(data.theirReview.rating)}</div>`;
+                        displayHtml += `<p><strong>评论：</strong> ${data.theirReview.text || '<em>暂无评论。</em>'}</p>`;
                     } else {
-                        displayHtml += '<p class="text-muted">Waiting for the student to submit their review. You will be notified when it is available.</p>';
+                        displayHtml += '<p class="text-muted">正在等待学生提交评价，完成后您会收到通知。</p>';
                     }
                     reviewDisplayArea.innerHTML = displayHtml;
                 } else {
@@ -135,7 +135,7 @@
                 const messageArea = document.getElementById('message-area');
 
                 if (rating == 0) {
-                    messageArea.textContent = 'Please select a rating.';
+                    messageArea.textContent = '请选择评分。';
                     messageArea.className = 'alert alert-warning';
                     messageArea.classList.remove('d-none');
                     return;
@@ -153,19 +153,19 @@
                     const data = await response.json();
 
                     if (response.ok) {
-                        messageArea.textContent = 'Review submitted successfully!';
+                        messageArea.textContent = '评价提交成功！';
                         messageArea.className = 'alert alert-success';
                         messageArea.classList.remove('d-none');
                         setTimeout(() => {
                             window.location.href = '/coach/appointment/all';
                         }, 2000);
                     } else {
-                        messageArea.textContent = data.message || 'Failed to submit review.';
+                        messageArea.textContent = data.message || '提交评价失败。';
                         messageArea.className = 'alert alert-danger';
                         messageArea.classList.remove('d-none');
                     }
                 } catch (error) {
-                    messageArea.textContent = 'An unexpected error occurred.';
+                    messageArea.textContent = '发生未知错误。';
                     messageArea.className = 'alert alert-danger';
                     messageArea.classList.remove('d-none');
                 }

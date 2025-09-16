@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Pending Appointments</title>
+        <title>待处理预约</title>
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -18,7 +18,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h3 class="card-title text-center mb-4">
-                                Pending Appointments
+                                待处理预约
                             </h3>
                             <div
                                 id="message-area"
@@ -34,7 +34,7 @@
                                 <a
                                     href="/coach/home"
                                     class="btn btn-secondary"
-                                    >Back to Home</a
+                                    >返回主页</a
                                 >
                             </div>
                         </div>
@@ -59,13 +59,13 @@
 
             function getWeekdayString(weekday) {
                 const weekdays = [
-                    "Sunday",
-                    "Monday",
-                    "Tuesday",
-                    "Wednesday",
-                    "Thursday",
-                    "Friday",
-                    "Saturday",
+                    "星期日",
+                    "星期一",
+                    "星期二",
+                    "星期三",
+                    "星期四",
+                    "星期五",
+                    "星期六",
                 ];
                 return weekdays[weekday];
             }
@@ -78,7 +78,7 @@
                     if (response.ok) {
                         if (appointments.length > 0) {
                             let appointmentsHtml =
-                                '<table class="table table-striped"><thead><tr><th>Student</th><th>Table</th><th>Weekday</th><th>Start Time</th><th>End Time</th><th>Actions</th></tr></thead><tbody>';
+                                '<table class="table table-striped"><thead><tr><th>学生</th><th>球台</th><th>星期</th><th>开始时间</th><th>结束时间</th><th>操作</th></tr></thead><tbody>';
                             appointments.forEach((a) => {
                                 const startTime =
                                     String(a.startHour).padStart(2, "0") +
@@ -88,7 +88,7 @@
                                     String(a.endHour).padStart(2, "0") +
                                     ":" +
                                     String(a.endMinute).padStart(2, "0");
-                                appointmentsHtml += `<tr><td>${a.studentName}</td><td>${a.tableName}</td><td>${getWeekdayString(a.weekday)}</td><td>${startTime}</td><td>${endTime}</td><td><button class="btn btn-success btn-sm approve-btn" data-appointment-id="${a.id}">Approve</button> <button class="btn btn-danger btn-sm reject-btn" data-appointment-id="${a.id}">Reject</button></td></tr>`;
+                                appointmentsHtml += `<tr><td>${a.studentName}</td><td>${a.tableName}</td><td>${getWeekdayString(a.weekday)}</td><td>${startTime}</td><td>${endTime}</td><td><button class="btn btn-success btn-sm approve-btn" data-appointment-id="${a.id}">批准</button> <button class="btn btn-danger btn-sm reject-btn" data-appointment-id="${a.id}">拒绝</button></td></tr>`;
                             });
                             appointmentsHtml += "</tbody></table>";
                             appointmentsListDiv.innerHTML = appointmentsHtml;
@@ -103,11 +103,11 @@
                                     });
 
                                     if (response.ok) {
-                                        displayMessage('Appointment approved successfully!', 'success');
+                                        displayMessage('预约批准成功！', 'success');
                                         fetchPendingAppointments(); // Refresh the list
                                     } else {
                                         const error = await response.json();
-                                        displayMessage(error.message || 'Failed to approve appointment.', 'danger');
+                                        displayMessage(error.message || '批准预约失败。', 'danger');
                                     }
                                 });
                             });
@@ -122,26 +122,26 @@
                                     });
 
                                     if (response.ok) {
-                                        displayMessage('Appointment rejected successfully!', 'success');
+                                        displayMessage('预约拒绝成功！', 'success');
                                         fetchPendingAppointments(); // Refresh the list
                                     } else {
                                         const error = await response.json();
-                                        displayMessage(error.message || 'Failed to reject appointment.', 'danger');
+                                        displayMessage(error.message || '拒绝预约失败。', 'danger');
                                     }
                                 });
                             });
                         } else {
-                            appointmentsListDiv.innerHTML = '<p class="text-center">No pending appointments found.</p>';
+                            appointmentsListDiv.innerHTML = '<p class="text-center">未找到待处理预约。</p>';
                         }
                     } else {
                         displayMessage(
-                            appointments.message || "Failed to fetch pending appointments.",
+                            appointments.message || "获取待处理预约失败。",
                             "danger",
                         );
                     }
                 } catch (error) {
                     displayMessage(
-                        "An unexpected error occurred while fetching pending appointments.",
+                        "获取待处理预约时发生意外错误。",
                         "danger",
                     );
                 }

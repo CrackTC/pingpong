@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>All Tables</title>
+        <title>所有球台</title>
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -16,25 +16,25 @@
                 <div class="col-md-10"> <!-- Using col-md-10 as in pending.html -->
                     <div class="card">
                         <div class="card-body">
-                            <h3 class="card-title text-center mb-4">All Tables</h3>
+                            <h3 class="card-title text-center mb-4">所有球台</h3>
                             <div id="message-area" class="alert d-none" role="alert"></div>
                             <div id="tables-container">
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Campus</th>
+                                            <th>名称</th>
+                                            <th>校区</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tables-list-body">
-                                        <tr><td colspan="3" class="text-center">Loading tables...</td></tr>
+                                        <tr><td colspan="3" class="text-center">正在加载球台...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                                <a href="/admin/table/add" class="btn btn-primary">Add Table</a>
-                                <a href="/admin/home" class="btn btn-secondary">Back to Admin Home</a>
+                                <a href="/admin/table/add" class="btn btn-primary">添加球台</a>
+                                <a href="/admin/home" class="btn btn-secondary">返回管理员主页</a>
                             </div>
                         </div>
                     </div>
@@ -72,17 +72,17 @@
                             });
                             tablesListBody.innerHTML = tableHtml;
                         } else {
-                            tablesListBody.innerHTML = '<tr><td colspan="3" class="text-center">No tables found.</td></tr>';
+                            tablesListBody.innerHTML = '<tr><td colspan="3" class="text-center">未找到球台。</td></tr>';
                         }
                     } else {
-                        displayMessage(tables.message || 'Failed to fetch tables.', 'danger');
-                        tablesListBody.innerHTML = '<tr><td colspan="3" class="text-center">Failed to load tables.</td></tr>'; // Show error in table
+                        displayMessage(tables.message || '获取球台失败。', 'danger');
+                        tablesListBody.innerHTML = '<tr><td colspan="3" class="text-center">加载球台失败。</td></tr>'; // Show error in table
                     }
                 } catch (error) {
-                    console.error('Error fetching tables:', error);
-                    displayMessage('An unexpected error occurred while fetching tables.', 'danger');
+                    console.error('获取球台时出错：', error);
+                    displayMessage('获取球台时发生意外错误。', 'danger');
                     const tablesListBody = document.getElementById('tables-list-body');
-                    tablesListBody.innerHTML = '<tr><td colspan="3" class="text-center">An error occurred.</td></tr>'; // Show error in table
+                    tablesListBody.innerHTML = '<tr><td colspan="3" class="text-center">发生错误。</td></tr>'; // Show error in table
                 }
             }
             fetchTables();

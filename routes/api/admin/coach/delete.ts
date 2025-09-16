@@ -16,24 +16,24 @@ export function useApiAdminCoachDelete(app: Hono) {
     const { coachId } = await c.req.json();
 
     if (isNaN(coachId)) {
-      return c.json({ message: "Invalid coach ID." }, 400);
+      return c.json({ message: "无效的教练ID。" }, 400);
     }
 
     try {
       const coach = getCoachById(coachId);
       if (!coach) {
-        return c.json({ message: "Coach not found." }, 404);
+        return c.json({ message: "未找到教练。" }, 404);
       }
 
       const claim = await getClaim(c);
       if (claim.type === "admin") {
         const admin = getAdminById(claim.id);
         if (!admin) {
-          return c.json({ message: "Admin not found." }, 404);
+          return c.json({ message: "未找到管理员。" }, 404);
         }
         if (admin.campus !== coach.campusId) {
           return c.json({
-            message: "Admin can only delete coaches from their own campus.",
+            message: "管理员只能删除自己校区的教练。",
           }, 403);
         }
       }
@@ -41,7 +41,7 @@ export function useApiAdminCoachDelete(app: Hono) {
       const activeAppointments = getActiveAppointmentsByCoachId(coachId);
       if (activeAppointments.length > 0) {
         return c.json({
-          message: "Cannot delete coach with active appointments.",
+          message: "无法删除有活跃预约的教练。",
         }, 400);
       }
 
@@ -56,14 +56,14 @@ export function useApiAdminCoachDelete(app: Hono) {
       addSystemLog({
         campusId: coach.campusId,
         type: SystemLogType.CoachRemove,
-        text: `Coach ID ${coachId} deleted by admin ${claim.id}`,
+        text: `教练ID ${coachId} 已被管理员 ${claim.id} 删除`,
         relatedId: claim.id,
       });
 
-      return c.json({ message: "Coach deleted successfully." });
+      return c.json({ message: "教练删除成功。" });
     } catch (error) {
-      console.error("Error deleting coach:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("删除教练时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

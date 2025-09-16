@@ -8,12 +8,12 @@ export function useApiStudentCoachSearch(app: Hono) {
     const claim = await getClaim(c);
 
     if (!claim || claim.type !== "student") {
-      return c.json({ message: "Unauthorized" }, 401);
+      return c.json({ message: "未授权" }, 401);
     }
 
     const student = getStudentById(claim.id);
     if (!student) {
-      return c.json({ message: "Student not found" }, 404);
+      return c.json({ message: "未找到学生" }, 404);
     }
 
     const realName = c.req.query("realName");
@@ -35,8 +35,8 @@ export function useApiStudentCoachSearch(app: Hono) {
       );
       return c.json(coaches);
     } catch (error) {
-      console.error("Error searching coaches:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("搜索教练时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

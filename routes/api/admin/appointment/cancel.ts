@@ -22,25 +22,24 @@ export function useApiAdminAppointmentCancel(app: Hono) {
     const { appointmentId } = await c.req.json();
 
     if (isNaN(appointmentId)) {
-      return c.json({ message: "Invalid appointment ID." }, 400);
+      return c.json({ message: "无效的预约ID。" }, 400);
     }
 
     try {
       const appointment = getAppointmentById(appointmentId);
       if (!appointment) {
-        return c.json({ message: "Appointment not found." }, 404);
+        return c.json({ message: "未找到预约。" }, 404);
       }
 
       const claim = await getClaim(c);
       if (claim.type === "admin") {
         const admin = getAdminById(claim.id);
         if (!admin) {
-          return c.json({ message: "Admin not found." }, 404);
+          return c.json({ message: "未找到管理员。" }, 404);
         }
         if (admin.campus !== appointment.campusId) {
           return c.json({
-            message:
-              "Admin can only cancel appointments from their own campus.",
+            message: "您无权取消此预约，因为它不属于您的校区。",
           }, 403);
         }
       }
@@ -62,7 +61,7 @@ export function useApiAdminAppointmentCancel(app: Hono) {
         appointment.campusId,
         NotificationTarget.Student,
         appointment.studentId,
-        `Your appointment has been cancelled by an administrator.`,
+        `您的预约已被管理员取消。`,
         `/student/appointment/all`,
         Date.now(),
       );
@@ -72,7 +71,7 @@ export function useApiAdminAppointmentCancel(app: Hono) {
         appointment.campusId,
         NotificationTarget.Coach,
         appointment.coachId,
-        `An appointment has been cancelled by an administrator.`,
+        `一个预约已被管理员取消。`,
         `/coach/appointment/all`,
         Date.now(),
       );
@@ -81,14 +80,13 @@ export function useApiAdminAppointmentCancel(app: Hono) {
         type: SystemLogType.AdminCancelAppointment,
         campusId: appointment.campusId,
         relatedId: appointment.id,
-        text:
-          `Appointment ID ${appointment.id} cancelled by admin ${claim.id}.`,
+        text: `预约ID ${appointment.id} 被管理员 ${claim.id} 取消。`,
       });
 
-      return c.json({ message: "Appointment cancelled successfully." });
+      return c.json({ message: "预约已成功取消。" });
     } catch (error) {
-      console.error("Error cancelling appointment:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("取消预约时发生错误：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>My Students</title>
+    <title>我的学生</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
 </head>
@@ -14,13 +14,13 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-body">
-                        <h3 class="card-title text-center mb-4">My Students</h3>
+                        <h3 class="card-title text-center mb-4">我的学生</h3>
                         <div id="message" class="alert d-none" role="alert"></div>
                         <div class="list-group" id="students-list">
-                            <p class="text-center">Loading students...</p>
+                            <p class="text-center">正在加载学生...</p>
                         </div>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                            <a href="/coach/home" class="btn btn-secondary">Back to Home</a>
+                            <a href="/coach/home" class="btn btn-secondary">返回主页</a>
                         </div>
                     </div>
                 </div>
@@ -31,17 +31,17 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="studentDetailsModalLabel">Student Details</h5>
+                    <h5 class="modal-title" id="studentDetailsModalLabel">学生详情</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p><strong>Sex:</strong> <span id="modal-sex-text"></span></p>
-                    <p><strong>Birth Year:</strong> <span id="modal-birthyear-text"></span></p>
-                    <p><strong>Phone:</strong> <span id="modal-phone-text"></span></p>
-                    <p><strong>Email:</strong> <span id="modal-email-text"></span></p>
+                    <p><strong>性别:</strong> <span id="modal-sex-text"></span></p>
+                    <p><strong>出生年份:</strong> <span id="modal-birthyear-text"></span></p>
+                    <p><strong>电话:</strong> <span id="modal-phone-text"></span></p>
+                    <p><strong>电子邮件:</strong> <span id="modal-email-text"></span></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
                 </div>
             </div>
         </div>
@@ -49,9 +49,9 @@
     <script>
         function getSexString(sex) {
             switch (sex) {
-                case 1: return "Male";
-                case 2: return "Female";
-                default: return "Unspecified";
+                case 1: return "男";
+                case 2: return "女";
+                default: return "未指定";
             }
         }
 
@@ -73,20 +73,20 @@
                                 data-bs-birthyear="${student.birthYear}"
                                 data-bs-phone="${student.phone}"
                                 data-bs-email="${student.email}">
-                                Details
+                                详情
                             </button>
                         </div>
                     `;
                     studentsList.appendChild(studentItem);
                 });
             } else if (response.ok && students.length === 0) {
-                studentsList.innerHTML = `<p class="text-center">No students found.</p>`;
+                studentsList.innerHTML = `<p class="text-center">未找到学生。</p>`;
             } else {
                 const messageDiv = document.getElementById("message");
-                messageDiv.textContent = students.message || "An error occurred loading students.";
+                messageDiv.textContent = students.message || "加载学生时发生错误。";
                 messageDiv.className = "alert alert-danger";
                 messageDiv.classList.remove("d-none");
-                studentsList.innerHTML = `<p class="text-center">Error loading students.</p>`;
+                studentsList.innerHTML = `<p class="text-center">加载学生时出错。</p>`;
             }
         }
 
@@ -106,9 +106,9 @@
             const modalEmailText = studentDetailsModal.querySelector('#modal-email-text');
 
             modalSexText.textContent = getSexString(parseInt(sex));
-            modalBirthYearText.textContent = birthYear || "Not specified";
-            modalPhoneText.textContent = phone || "Not specified";
-            const displayEmail = (email === "null" || email === null) ? "Not specified" : email;
+            modalBirthYearText.textContent = birthYear || "未指定";
+            modalPhoneText.textContent = phone || "未指定";
+            const displayEmail = (email === "null" || email === null) ? "未指定" : email;
             modalEmailText.textContent = displayEmail;
         });
     </script>

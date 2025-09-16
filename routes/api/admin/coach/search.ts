@@ -9,7 +9,7 @@ export function useApiAdminCoachSearch(app: Hono) {
     const claim = await getClaim(c);
 
     if (!query) {
-      return c.json({ message: "Search query is required." }, 400);
+      return c.json({ message: "搜索查询是必填项。" }, 400);
     }
 
     try {
@@ -19,14 +19,14 @@ export function useApiAdminCoachSearch(app: Hono) {
       } else {
         const admin = getAdminById(claim.id);
         if (!admin) {
-          return c.json({ message: "Admin not found." }, 404);
+          return c.json({ message: "未找到管理员。" }, 404);
         }
         coaches = searchCoachesByIdCardOrPhone(query, admin.campus);
       }
       return c.json(coaches);
     } catch (error) {
-      console.error("Error searching coaches:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("搜索教练时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

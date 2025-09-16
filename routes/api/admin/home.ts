@@ -14,12 +14,12 @@ export function useApiAdminHome(app: Hono) {
     } else if (claim.type === "admin") {
       const admin = getAdminById(claim.id);
       if (!admin) {
-        return c.json({ message: "Admin not found." }, 404);
+        return c.json({ message: "未找到管理员。" }, 404);
       }
       const unreadCount = getUnreadNotificationCountForAdmin(admin.campus);
       return c.json({ unreadNotificationCount: unreadCount });
     } else {
-      return c.json({ message: "Unauthorized." }, 403);
+      return c.json({ message: "未授权。" }, 403);
     }
   });
 }

@@ -15,17 +15,17 @@ export function useApiStudentPassword(app: Hono) {
     const claim = await getClaim(c);
 
     if (!claim || claim.type !== "student") {
-      return c.json({ message: "Unauthorized" }, 401);
+      return c.json({ message: "未授权" }, 401);
     }
 
     const student = getStudentById(claim.id);
     if (!student) {
-      return c.json({ message: "Student not found" }, 404);
+      return c.json({ message: "未找到学生" }, 404);
     }
 
     // Verify current password
     if (!verifyStudent(student.username, currentPassword)) {
-      return c.json({ message: "Invalid current password" }, 400);
+      return c.json({ message: "当前密码无效" }, 400);
     }
 
     // Validate new password
@@ -39,13 +39,13 @@ export function useApiStudentPassword(app: Hono) {
       addSystemLog({
         campusId: student.campusId,
         type: SystemLogType.StudentChangePassword,
-        text: `Student ${student.username} changed their password.`,
+        text: `学生 ${student.username} 更改了密码。`,
         relatedId: claim.id,
       });
-      return c.json({ message: "Password changed successfully" });
+      return c.json({ message: "密码更改成功" });
     } catch (error) {
-      console.error("Error changing student password:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("更改学生密码时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

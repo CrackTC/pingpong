@@ -34,10 +34,10 @@ export function useApiCoachRegister(app: Hono) {
 
     // Basic validation
     if (!username || username.trim() === "") {
-      return c.json({ success: false, message: "Username is required." }, 400);
+      return c.json({ success: false, message: "用户名为必填项。" }, 400);
     }
     if (!password || password.trim() === "") {
-      return c.json({ success: false, message: "Password is required." }, 400);
+      return c.json({ success: false, message: "密码为必填项。" }, 400);
     }
 
     const passwordError = validatePassword(password);
@@ -46,13 +46,13 @@ export function useApiCoachRegister(app: Hono) {
     }
 
     if (!realName || realName.trim() === "") {
-      return c.json({ success: false, message: "Real Name is required." }, 400);
+      return c.json({ success: false, message: "真实姓名为必填项。" }, 400);
     }
     // Sex is optional
     if (sex !== null && sex !== undefined && (isNaN(sex) || !(sex in Sex))) {
       return c.json({
         success: false,
-        message: "Valid Sex is required if provided.",
+        message: "如果提供，则需要有效的性别。",
       }, 400);
     }
     // Birth Year is optional
@@ -63,33 +63,33 @@ export function useApiCoachRegister(app: Hono) {
     ) {
       return c.json({
         success: false,
-        message: "Valid Birth Year is required if provided.",
+        message: "如果提供，则需要有效的出生年份。",
       }, 400);
     }
     if (isNaN(campusId)) {
-      return c.json({ success: false, message: "Campus is required." }, 400);
+      return c.json({ success: false, message: "校区为必填项。" }, 400);
     }
     if (!phone || !/^\d{11}$/.test(phone)) {
       return c.json(
-        { success: false, message: "Phone must be 11 digits." },
+        { success: false, message: "手机号码必须是11位数字。" },
         400,
       );
     }
     if (!idCardNumber || !/^\d{18}$/.test(idCardNumber)) {
       return c.json({
         success: false,
-        message: "ID card number must be 18 digits.",
+        message: "身份证号码必须是18位数字。",
       }, 400);
     }
     if (!comment || comment.trim() === "") {
-      return c.json({ success: false, message: "Comment is required." }, 400);
+      return c.json({ success: false, message: "评论为必填项。" }, 400);
     }
 
     // Check if username already exists
     const existingCoach = getCoachByUsername(username);
     if (existingCoach) {
       return c.json(
-        { success: false, message: "Username already exists." },
+        { success: false, message: "用户名已存在。" },
         409,
       );
     }
@@ -110,7 +110,7 @@ export function useApiCoachRegister(app: Hono) {
       return c.json(
         {
           success: false,
-          message: "Phone number or ID card number already registered.",
+          message: "手机号码或身份证号码已注册。",
         },
         409,
       );
@@ -119,7 +119,7 @@ export function useApiCoachRegister(app: Hono) {
     // Check if campusId is valid
     const campus = getCampusById(campusId);
     if (!campus) {
-      return c.json({ success: false, message: "Invalid Campus ID." }, 400);
+      return c.json({ success: false, message: "无效的校区ID。" }, 400);
     }
 
     let avatarPath: string = "";
@@ -133,7 +133,7 @@ export function useApiCoachRegister(app: Hono) {
         new Uint8Array(await avatarFile.arrayBuffer()),
       );
     } else {
-      return c.json({ success: false, message: "Avatar is required." }, 400);
+      return c.json({ success: false, message: "头像为必填项。" }, 400);
     }
 
     try {
@@ -153,15 +153,15 @@ export function useApiCoachRegister(app: Hono) {
       addSystemLog({
         campusId,
         type: SystemLogType.CoachRegister,
-        text: `New coach registered: ${username} (${realName})`,
+        text: `新教练注册：${username} (${realName})`,
         relatedId: id,
       });
       return c.json({ success: true });
     } catch (error) {
-      console.error("Error registering coach:", error);
+      console.error("注册教练时出错：", error);
       return c.json({
         success: false,
-        message: "An unexpected error occurred.",
+        message: "发生意外错误。",
       }, 500);
     }
   });

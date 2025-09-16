@@ -34,18 +34,18 @@ export function useApiAdminCoachAdd(app: Hono) {
     // Validate coach type
     if (isNaN(type) || !(type in CoachType) || type === CoachType.Pending) {
       return c.json(
-        { success: false, message: "Invalid coach type provided." },
+        { success: false, message: "无效的教练类型。" },
         400,
       );
     }
 
     // Basic validation
     if (!username || typeof username !== "string" || username.trim() === "") {
-      return c.json({ success: false, message: "Username is required." }, 400);
+      return c.json({ success: false, message: "请填写用户名。" }, 400);
     }
 
     if (!password || password.trim() === "") {
-      return c.json({ success: false, message: "Password is required." }, 400);
+      return c.json({ success: false, message: "请填写密码。" }, 400);
     }
 
     const passwordError = validatePassword(password);
@@ -54,7 +54,7 @@ export function useApiAdminCoachAdd(app: Hono) {
     }
 
     if (!realName || typeof realName !== "string" || realName.trim() === "") {
-      return c.json({ success: false, message: "Real Name is required." }, 400);
+      return c.json({ success: false, message: "请填写真实姓名。" }, 400);
     }
     if (
       sex !== null && sex !== undefined &&
@@ -62,7 +62,7 @@ export function useApiAdminCoachAdd(app: Hono) {
     ) {
       return c.json({
         success: false,
-        message: "Valid Sex is required if provided.",
+        message: "请提供有效的性别。",
       }, 400);
     }
     if (
@@ -72,22 +72,22 @@ export function useApiAdminCoachAdd(app: Hono) {
     ) {
       return c.json({
         success: false,
-        message: "Valid Birth Year is required if provided.",
+        message: "请提供有效的出生年份。",
       }, 400);
     }
     if (isNaN(campusId)) {
-      return c.json({ success: false, message: "Campus is required." }, 400);
+      return c.json({ success: false, message: "请提供有效的校区ID。" }, 400);
     }
     if (!phone || !/^\d{11}$/.test(phone)) {
       return c.json(
-        { success: false, message: "Phone must be 11 digits." },
+        { success: false, message: "手机号必须是11位数字。" },
         400,
       );
     }
     if (!idCardNumber || !/^\d{18}$/.test(idCardNumber)) {
       return c.json({
         success: false,
-        message: "ID card number must be 18 digits.",
+        message: "身份证号码必须是18位数字。",
       }, 400);
     }
 
@@ -95,7 +95,7 @@ export function useApiAdminCoachAdd(app: Hono) {
     const existingCoach = getCoachByUsername(username);
     if (existingCoach) {
       return c.json(
-        { success: false, message: "Username already exists." },
+        { success: false, message: "用户名已被占用。" },
         409,
       );
     }
@@ -115,7 +115,7 @@ export function useApiAdminCoachAdd(app: Hono) {
       return c.json(
         {
           success: false,
-          message: "Phone number or ID card number already registered.",
+          message: "手机号或身份证号码已被占用。",
         },
         409,
       );
@@ -124,7 +124,7 @@ export function useApiAdminCoachAdd(app: Hono) {
     // Check if campusId is valid
     const campus = getCampusById(campusId);
     if (!campus) {
-      return c.json({ success: false, message: "Invalid Campus ID." }, 400);
+      return c.json({ success: false, message: "无效的校区ID。" }, 400);
     }
 
     let avatarPath: string = "";
@@ -159,16 +159,16 @@ export function useApiAdminCoachAdd(app: Hono) {
         type: SystemLogType.CoachAdd,
         campusId: campusId,
         relatedId: coachId,
-        text: `Coach ${realName} (Username: ${username}) added as ${
+        text: `教练 ${realName} (用户名: ${username}) 被添加，类型为 ${
           CoachType[type]
-        }.`,
+        }。`,
       });
       return c.json({ success: true });
     } catch (error) {
-      console.error("Error adding coach:", error);
+      console.error("添加教练时发生错误", error);
       return c.json({
         success: false,
-        message: "An unexpected error occurred.",
+        message: "未知错误",
       }, 500);
     }
   });

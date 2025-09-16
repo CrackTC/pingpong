@@ -17,22 +17,22 @@ export function useApiCoachSelectionReject(app: Hono) {
     const claim = await getClaim(c);
 
     if (!claim || claim.type !== "coach") {
-      return c.json({ message: "Unauthorized" }, 401);
+      return c.json({ message: "未授权" }, 401);
     }
 
     const selection = getSelectionById(selectionId);
 
     if (!selection) {
-      return c.json({ message: "Selection not found" }, 404);
+      return c.json({ message: "未找到选择" }, 404);
     }
 
     if (selection.coachId !== claim.id) {
-      return c.json({ message: "Unauthorized to reject this selection" }, 403);
+      return c.json({ message: "无权拒绝此选择" }, 403);
     }
 
     const coach = getCoachById(selection.coachId);
     if (!coach) {
-      return c.json({ message: "Coach not found" }, 404);
+      return c.json({ message: "未找到教练" }, 404);
     }
 
     try {
@@ -41,7 +41,7 @@ export function useApiCoachSelectionReject(app: Hono) {
         selection.campusId,
         NotificationTarget.Student,
         selection.studentId,
-        `Your coach selection request for ${coach.realName} has been rejected.`, // Use coach.realName
+        `您对 ${coach.realName} 的教练选择请求已被拒绝。`, // Use coach.realName
         `/student/selection/all`, // Link to student's profile
         Date.now(),
       );
@@ -49,13 +49,13 @@ export function useApiCoachSelectionReject(app: Hono) {
         campusId: selection.campusId,
         type: SystemLogType.CoachRejectSelection,
         text:
-          `Coach ${coach.realName} rejected selection request from student ID ${selection.studentId}.`,
+          `教练 ${coach.realName} 拒绝了学生 ID ${selection.studentId} 的选择请求。`,
         relatedId: selectionId,
       });
-      return c.json({ message: "Selection rejected successfully" });
+      return c.json({ message: "选择成功拒绝" });
     } catch (error) {
-      console.error("Error rejecting selection:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("拒绝选择时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

@@ -20,11 +20,11 @@ export function useApiCoachSelectionApprove(app: Hono) {
     const selection = getSelectionById(selectionId);
 
     if (!selection) {
-      return c.json({ message: "Selection not found" }, 404);
+      return c.json({ message: "未找到选择" }, 404);
     }
 
     if (selection.coachId !== claim.id) {
-      return c.json({ message: "Unauthorized to approve this selection" }, 403);
+      return c.json({ message: "无权批准此选择" }, 403);
     }
 
     const MAX_STUDENTS = 20;
@@ -32,13 +32,13 @@ export function useApiCoachSelectionApprove(app: Hono) {
     if (approvedStudentCount >= MAX_STUDENTS) {
       return c.json({
         message:
-          `Coach has reached the maximum limit of ${MAX_STUDENTS} approved students.`,
+          `教练已达到 ${MAX_STUDENTS} 名已批准学生的上限。`,
       }, 400);
     }
 
     const coach = getCoachById(selection.coachId); // Get coach details
     if (!coach) {
-      return c.json({ message: "Coach not found" }, 404);
+      return c.json({ message: "未找到教练" }, 404);
     }
 
     try {
@@ -47,7 +47,7 @@ export function useApiCoachSelectionApprove(app: Hono) {
         selection.campusId,
         NotificationTarget.Student,
         selection.studentId,
-        `Your coach selection request for ${coach.realName} has been approved!`, // Use coach.realName
+        `您对 ${coach.realName} 的教练选择请求已获批准！`, // Use coach.realName
         `/student/selection/all`, // Link to student's profile
         Date.now(),
       );
@@ -55,13 +55,13 @@ export function useApiCoachSelectionApprove(app: Hono) {
         campusId: selection.campusId,
         type: SystemLogType.CoachApproveSelection,
         text:
-          `Coach ${coach.realName} approved selection request of student ID ${selection.studentId}.`,
+          `教练 ${coach.realName} 批准了学生 ID ${selection.studentId} 的选择请求。`,
         relatedId: selection.id,
       });
-      return c.json({ message: "Selection approved successfully" });
+      return c.json({ message: "选择成功批准" });
     } catch (error) {
-      console.error("Error approving selection:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("批准选择时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

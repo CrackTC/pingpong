@@ -22,19 +22,19 @@ export function useApiAdminStudentRecharge(app: Hono) {
       !studentId || !amount || !Number.isInteger(amount) || amount < 10 ||
       amount > 10000
     ) {
-      return c.json({ message: "Invalid student ID or amount." }, 400);
+      return c.json({ message: "无效的学生ID或金额。" }, 400);
     }
 
     const student = getStudentById(studentId);
     if (!student) {
-      return c.json({ message: "Student not found." }, 404);
+      return c.json({ message: "未找到学生。" }, 404);
     }
 
     // Authorization
     if (claim.type === "admin") {
       const admin = getAdminById(claim.id);
       if (admin?.campus !== student.campusId) {
-        return c.json({ message: "Unauthorized" }, 401);
+        return c.json({ message: "未授权" }, 401);
       }
     }
 
@@ -57,7 +57,7 @@ export function useApiAdminStudentRecharge(app: Hono) {
         student.campusId,
         NotificationTarget.Student,
         studentId,
-        `Your account has been recharged with ${amount} by an administrator.`,
+        `您的账户已由管理员充值 ${amount}。`,
         "/student/recharge/all",
         Date.now(),
       );
@@ -68,17 +68,17 @@ export function useApiAdminStudentRecharge(app: Hono) {
         campusId: student.campusId,
         type: SystemLogType.StudentRecharge,
         text:
-          `Admin ${claim.id} recharged ${amount} to student ID ${studentId}. New balance: ${updatedStudent?.balance}`,
+          `管理员 ${claim.id} 为学生 ID ${studentId} 充值 ${amount}。新余额：${updatedStudent?.balance}`,
         relatedId: studentId,
       });
 
       return c.json({
-        message: "Recharge successful.",
+        message: "充值成功。",
         newBalance: updatedStudent?.balance,
       });
     } catch (error) {
-      console.error("Error recharging student account:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("充值学生账户时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

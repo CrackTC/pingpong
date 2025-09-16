@@ -10,8 +10,8 @@ export function useApiCoachMigrationPending(app: Hono) {
       const migrations = getPendingMigrationsForCoach(claim.id);
       return c.json(migrations);
     } catch (error) {
-      console.error("Error fetching pending coach migrations:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取待处理教练迁移时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

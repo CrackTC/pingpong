@@ -20,24 +20,24 @@ export function useApiStudentContestRegister(app: Hono) {
     const claim = await getClaim(c);
 
     if (isNaN(contestId)) {
-      return c.json({ message: "Invalid contest ID." }, 400);
+      return c.json({ message: "无效的比赛ID。" }, 400);
     }
 
     try {
       const student = getStudentById(claim.id);
       if (!student) {
-        return c.json({ message: "Student not found." }, 404);
+        return c.json({ message: "未找到学生。" }, 404);
       }
 
       if (student.balance < 30) {
         return c.json({
-          message: "You need at least 30 units to register for a contest.",
+          message: "您需要至少30个单位才能报名参加比赛。",
         }, 400);
       }
 
       const contest = getContestById(contestId);
       if (!contest) {
-        return c.json({ message: "Contest not found." }, 404);
+        return c.json({ message: "未找到比赛。" }, 404);
       }
 
       const contestDate = new Date(contest.time);
@@ -46,7 +46,7 @@ export function useApiStudentContestRegister(app: Hono) {
 
       if (hasStudentRegisteredForMonth(claim.id, year, month)) {
         return c.json({
-          message: "You have already registered for a contest this month.",
+          message: "您本月已报名参加比赛。",
         }, 400);
       }
 
@@ -62,14 +62,14 @@ export function useApiStudentContestRegister(app: Hono) {
         campusId: student.campusId,
         type: SystemLogType.StudentRegisterContest,
         text:
-          `Student ${student.realName} (ID: ${student.id}) registered for contest ${contest.name} (ID: ${contest.id}).`,
+          `学生 ${student.realName} (ID: ${student.id}) 报名参加比赛 ${contest.name} (ID: ${contest.id})。`,
         relatedId: student.id,
       });
 
-      return c.json({ message: "Registration successful!" });
+      return c.json({ message: "报名成功！" });
     } catch (error) {
-      console.error("Error registering for contest:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("报名比赛时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

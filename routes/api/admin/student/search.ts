@@ -9,7 +9,7 @@ export function useApiAdminStudentSearch(app: Hono) {
     const claim = await getClaim(c);
 
     if (!phone) {
-      return c.json({ message: "Search query is required." }, 400);
+      return c.json({ message: "搜索查询是必填项。" }, 400);
     }
 
     try {
@@ -19,16 +19,16 @@ export function useApiAdminStudentSearch(app: Hono) {
       } else if (claim.type === "admin") {
         const admin = getAdminById(claim.id);
         if (!admin) {
-          return c.json({ message: "Admin not found." }, 404);
+          return c.json({ message: "未找到管理员。" }, 404);
         }
         students = searchStudentsByPhone(phone, admin.campus);
       } else {
-        return c.json({ message: "Unauthorized" }, 401);
+        return c.json({ message: "未授权" }, 401);
       }
       return c.json(students);
     } catch (error) {
-      console.error("Error searching students:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("搜索学生时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

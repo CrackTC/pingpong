@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Search Student</title>
+        <title>搜索学生</title>
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -18,7 +18,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h3 class="card-title text-center mb-4">
-                                Search Student
+                                搜索学生
                             </h3>
                             <div
                                 id="message-area"
@@ -28,7 +28,7 @@
                             <form id="search-form">
                                 <div class="mb-3">
                                     <label for="search-query" class="form-label"
-                                        >Phone Number</label
+                                        >手机号码</label
                                     >
                                     <input
                                         type="text"
@@ -42,7 +42,7 @@
                                     type="submit"
                                     class="btn btn-primary w-100"
                                 >
-                                    Search
+                                    搜索
                                 </button>
                             </form>
 
@@ -54,7 +54,7 @@
                                 <a
                                     href="/admin/home"
                                     class="btn btn-secondary"
-                                    >Back to Home</a
+                                    >返回主页</a
                                 >
                             </div>
                         </div>
@@ -68,18 +68,18 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="studentDetailsModalLabel">Student Details</h5>
+                        <h5 class="modal-title" id="studentDetailsModalLabel">学生详情</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="studentDetailsModalBody">
                         <!-- Student details will be loaded here -->
                     </div>
                     <div class="modal-footer">
-                        <a href="#" id="editStudentBtn" class="btn btn-primary">Edit</a>
-                        <a href="#" id="viewAppointmentsBtn" class="btn btn-info">View Active Appointments</a>
-                        <button type="button" class="btn btn-success" id="rechargeStudentBtn">Recharge</button>
-                        <button type="button" class="btn btn-danger" id="deleteStudentBtn">Delete</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a href="#" id="editStudentBtn" class="btn btn-primary">编辑</a>
+                        <a href="#" id="viewAppointmentsBtn" class="btn btn-info">查看活跃预约</a>
+                        <button type="button" class="btn btn-success" id="rechargeStudentBtn">充值</button>
+                        <button type="button" class="btn btn-danger" id="deleteStudentBtn">删除</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
                     </div>
                 </div>
             </div>
@@ -90,18 +90,18 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="rechargeModalLabel">Recharge Student Account</h5>
+                        <h5 class="modal-title" id="rechargeModalLabel">学生账户充值</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <form id="recharge-form">
                             <input type="hidden" id="rechargeStudentId">
                             <div class="mb-3">
-                                <label for="rechargeAmount" class="form-label">Amount</label>
+                                <label for="rechargeAmount" class="form-label">金额</label>
                                 <input type="number" class="form-control" id="rechargeAmount" required min="10" max="10000">
                             </div>
                             <div class="d-grid mb-3">
-                                <button type="submit" class="btn btn-primary">Confirm Recharge</button>
+                                <button type="submit" class="btn btn-primary">确认充值</button>
                             </div>
                             <div id="recharge-message" class="alert d-none" role="alert"></div>
                         </form>
@@ -127,9 +127,9 @@
 
             function getSexString(sex) {
                 switch (sex) {
-                    case 1: return "Male";
-                    case 2: return "Female";
-                    default: return "Unspecified";
+                    case 1: return "男";
+                    case 2: return "女";
+                    default: return "未指定";
                 }
             }
 
@@ -150,9 +150,9 @@
 
                     if (response.ok) {
                         if (students.length > 0) {
-                            let resultsHtml = '<table class="table table-striped"><thead><tr><th>Real Name</th><th>Campus</th><th>Phone</th><th>Actions</th></tr></thead><tbody>';
+                            let resultsHtml = '<table class="table table-striped"><thead><tr><th>真实姓名</th><th>校区</th><th>电话</th><th>操作</th></tr></thead><tbody>';
                             students.forEach((s) => {
-                                resultsHtml += `<tr><td>${s.realName}</td><td>${s.campusName}</td><td>${s.phone}</td><td><button class="btn btn-primary btn-sm details-btn" data-student-id="${s.id}">Details</button></td></tr>`;
+                                resultsHtml += `<tr><td>${s.realName}</td><td>${s.campusName}</td><td>${s.phone}</td><td><button class="btn btn-primary btn-sm details-btn" data-student-id="${s.id}">详情</button></td></tr>`;
                             });
                             resultsHtml += "</tbody></table>";
                             resultsListDiv.innerHTML = resultsHtml;
@@ -165,14 +165,14 @@
                                         // Populate and show modal
                                         const modalBody = document.getElementById('studentDetailsModalBody');
                                         modalBody.innerHTML = `
-                                            <p><strong>Username:</strong> ${student.username}</p>
-                                            <p><strong>Real Name:</strong> ${student.realName}</p>
-                                            <p><strong>Sex:</strong> ${getSexString(student.sex)}</p>
-                                            <p><strong>Birth Year:</strong> ${student.birthYear || "Not specified"}</p>
-                                            <p><strong>Campus:</strong> ${student.campusName}</p>
-                                            <p><strong>Phone:</strong> ${student.phone}</p>
-                                            <p><strong>Email:</strong> ${student.email || "Not specified"}</p>
-                                            <p><strong>Balance:</strong> ${student.balance}</p>
+                                            <p><strong>用户名:</strong> ${student.username}</p>
+                                            <p><strong>真实姓名:</strong> ${student.realName}</p>
+                                            <p><strong>性别:</strong> ${getSexString(student.sex)}</p>
+                                            <p><strong>出生年份:</strong> ${student.birthYear || "未指定"}</p>
+                                            <p><strong>校区:</strong> ${student.campusName}</p>
+                                            <p><strong>电话:</strong> ${student.phone}</p>
+                                            <p><strong>电子邮件:</strong> ${student.email || "未指定"}</p>
+                                            <p><strong>余额:</strong> ${student.balance}</p>
                                         `;
                                         const editStudentBtn = document.getElementById('editStudentBtn');
                                         editStudentBtn.href = `/admin/student/edit?id=${student.id}`;
@@ -189,7 +189,7 @@
 
                                         const deleteStudentBtn = document.getElementById('deleteStudentBtn');
                                         deleteStudentBtn.onclick = async () => {
-                                            if (confirm('Are you sure you want to delete this student?')) {
+                                            if (confirm('您确定要删除此学生吗？')) {
                                                 try {
                                                     const response = await fetch('/api/admin/student/delete', {
                                                         method: 'POST',
@@ -208,10 +208,10 @@
                                                         // Refresh the search results
                                                         document.getElementById('search-form').dispatchEvent(new Event('submit'));
                                                     } else {
-                                                        alert(data.message || 'Failed to delete student.');
+                                                        alert(data.message || '删除学生失败。');
                                                     }
                                                 } catch (error) {
-                                                    alert('An unexpected error occurred.');
+                                                    alert('发生意外错误。');
                                                 }
                                             }
                                         };
@@ -222,17 +222,17 @@
                                 });
                             });
                         } else {
-                            resultsListDiv.innerHTML = '<p class="text-center">No students found.</p>';
+                            resultsListDiv.innerHTML = '<p class="text-center">未找到学生。</p>';
                         }
                     } else {
                         displayMessage(
-                            students.message || "Failed to search students.",
+                            students.message || "搜索学生失败。",
                             "danger",
                         );
                     }
                 } catch (error) {
                     displayMessage(
-                        "An unexpected error occurred while searching students.",
+                        "搜索学生时发生意外错误。",
                         "danger",
                     );
                 }
@@ -246,7 +246,7 @@
 
                 // Validation
                 if (!amount || !Number.isInteger(amount) || amount < 10 || amount > 10000) {
-                    messageDiv.textContent = "Invalid amount. Amount must be an integer between 10 and 10000.";
+                    messageDiv.textContent = "无效金额。金额必须是10到10000之间的整数。";
                     messageDiv.className = 'alert alert-danger';
                     messageDiv.classList.remove('d-none');
                     return;
@@ -264,7 +264,7 @@
                     const data = await response.json();
 
                     if (response.ok) {
-                        messageDiv.textContent = "Recharge successful!";
+                        messageDiv.textContent = "充值成功！";
                         messageDiv.className = 'alert alert-success';
                         messageDiv.classList.remove('d-none');
 
@@ -274,14 +274,14 @@
                             student.balance = data.newBalance;
                             const modalBody = document.getElementById('studentDetailsModalBody');
                             modalBody.innerHTML = `
-                                <p><strong>Username:</strong> ${student.username}</p>
-                                <p><strong>Real Name:</strong> ${student.realName}</p>
-                                <p><strong>Sex:</strong> ${getSexString(student.sex)}</p>
-                                <p><strong>Birth Year:</strong> ${student.birthYear || "Not specified"}</p>
-                                <p><strong>Campus:</strong> ${student.campusName}</p>
-                                <p><strong>Phone:</strong> ${student.phone}</p>
-                                <p><strong>Email:</strong> ${student.email || "Not specified"}</p>
-                                <p><strong>Balance:</strong> ${student.balance}</p>
+                                <p><strong>用户名:</strong> ${student.username}</p>
+                                <p><strong>真实姓名:</strong> ${student.realName}</p>
+                                <p><strong>性别:</strong> ${getSexString(student.sex)}</p>
+                                <p><strong>出生年份:</strong> ${student.birthYear || "未指定"}</p>
+                                <p><strong>校区:</strong> ${student.campusName}</p>
+                                <p><strong>电话:</strong> ${student.phone}</p>
+                                <p><strong>电子邮件:</strong> ${student.email || "未指定"}</p>
+                                <p><strong>余额:</strong> ${student.balance}</p>
                             `;
                         }
 
@@ -291,12 +291,12 @@
                             messageDiv.classList.add('d-none');
                         }, 2000);
                     } else {
-                        messageDiv.textContent = data.message || "Recharge failed.";
+                        messageDiv.textContent = data.message || "充值失败。";
                         messageDiv.className = 'alert alert-danger';
                         messageDiv.classList.remove('d-none');
                     }
                 } catch (error) {
-                    messageDiv.textContent = "An unexpected error occurred.";
+                    messageDiv.textContent = "发生意外错误。";
                     messageDiv.className = 'alert alert-danger';
                     messageDiv.classList.remove('d-none');
                 }

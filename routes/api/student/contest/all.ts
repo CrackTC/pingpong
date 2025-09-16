@@ -51,12 +51,12 @@ export function useApiStudentContestAll(app: Hono) {
 
         const contestTime = getFourthSundayOfMonth(yearToAdd, monthToAdd);
 
-        const monthName = new Date(yearToAdd, monthToAdd).toLocaleString('default', { month: 'long' });
+        const monthName = new Date(yearToAdd, monthToAdd).toLocaleString('zh-CN', { month: 'long' });
 
         // Add Beginner, Intermediate, Senior contests for the determined month
-        addContest(`${yearToAdd} ${monthName} Monthly Contest - Junior`, ContestType.Junior, contestTime);
-        addContest(`${yearToAdd} ${monthName} Monthly Contest - Mid`, ContestType.Mid, contestTime);
-        addContest(`${yearToAdd} ${monthName} Monthly Contest - Senior`, ContestType.Senior, contestTime);
+        addContest(`${yearToAdd}年${monthName}月度赛 - 初级组`, ContestType.Junior, contestTime);
+        addContest(`${yearToAdd}年${monthName}月度赛 - 中级组`, ContestType.Mid, contestTime);
+        addContest(`${yearToAdd}年${monthName}月度赛 - 高级组`, ContestType.Senior, contestTime);
 
         scheduleTask(arrangeMatches, new Date(contestTime));
       }
@@ -66,8 +66,8 @@ export function useApiStudentContestAll(app: Hono) {
 
       return c.json(allContests);
     } catch (error) {
-      console.error("Error fetching/adding contests:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取/添加比赛时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

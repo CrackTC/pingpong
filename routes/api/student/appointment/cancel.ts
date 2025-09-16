@@ -18,28 +18,28 @@ export function useApiStudentAppointmentCancel(app: Hono) {
     const { appointmentId } = await c.req.json();
 
     if (isNaN(appointmentId)) {
-      return c.json({ message: "Invalid appointment ID." }, 400);
+      return c.json({ message: "无效的预约ID。" }, 400);
     }
 
     try {
       const appointment = getAppointmentById(appointmentId);
       if (!appointment) {
-        return c.json({ message: "Appointment not found." }, 404);
+        return c.json({ message: "未找到预约。" }, 404);
       }
 
       const student = getStudentById(appointment.studentId);
       if (!student) {
-        return c.json({ message: "Student not found" }, 404);
+        return c.json({ message: "未找到学生" }, 404);
       }
 
       const claim = await getClaim(c);
       if (claim.id !== student.id) {
-        return c.json({ message: "Unauthorized" }, 403);
+        return c.json({ message: "未授权" }, 403);
       }
 
       if (appointment.status !== AppointmentStatus.Approved) {
         return c.json(
-          { message: "Only approved appointments can be cancelled." },
+          { message: "只有已批准的预约才能取消。" },
           400,
         );
       }
@@ -49,7 +49,7 @@ export function useApiStudentAppointmentCancel(app: Hono) {
         return c.json(
           {
             message:
-              "You have reached the maximum of 3 cancellations this month. Please contact support for further assistance.",
+              "您本月已达到3次取消上限。请联系支持人员以获得进一步帮助。",
           },
           400,
         );
@@ -63,7 +63,7 @@ export function useApiStudentAppointmentCancel(app: Hono) {
       );
       if (startDate.getTime() - (new Date().getTime()) < 24 * 60 * 60 * 1000) {
         return c.json(
-          { message: "Cannot cancel appointment within 24 hours." },
+          { message: "无法在24小时内取消预约。" },
           400,
         );
       }
@@ -77,7 +77,7 @@ export function useApiStudentAppointmentCancel(app: Hono) {
         appointment.campusId,
         NotificationTarget.Coach,
         appointment.coachId,
-        `Student ${student.realName} has requested to cancel an appointment.`,
+        `学生 ${student.realName} 已请求取消预约。`,
         `/coach/appointment/cancelling`,
         Date.now(),
       );
@@ -86,14 +86,14 @@ export function useApiStudentAppointmentCancel(app: Hono) {
         campusId: appointment.campusId,
         type: SystemLogType.StudentCancelAppointment,
         text:
-          `Student ${student.realName} (ID: ${student.id}) requested to cancel appointment ID ${appointment.id}.`,
+          `学生 ${student.realName} (ID: ${student.id}) 请求取消预约 ID ${appointment.id}。`,
         relatedId: appointment.id,
       });
 
-      return c.json({ message: "Appointment cancellation request sent." });
+      return c.json({ message: "预约取消请求已发送。" });
     } catch (error) {
-      console.error("Error cancelling appointment:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("取消预约时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

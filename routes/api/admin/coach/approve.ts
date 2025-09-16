@@ -12,13 +12,13 @@ export function useApiApproveCoach(app: Hono) {
     const claim = await getClaim(c);
 
     if (!claim) {
-      return c.json({ success: false, message: "Unauthorized" }, 401);
+      return c.json({ success: false, message: "未授权" }, 401);
     }
 
     // Get coach's campusId
     const coach = getCoachById(coachId);
     if (!coach) {
-      return c.json({ success: false, message: "Coach not found" }, 404);
+      return c.json({ success: false, message: "未找到教练" }, 404);
     }
 
     // Admin-specific campus validation
@@ -27,7 +27,7 @@ export function useApiApproveCoach(app: Hono) {
       if (!admin || admin.campus !== coach.campusId) {
         return c.json({
           success: false,
-          message: "Admin can only approve coaches from their own campus.",
+          message: "管理员只能批准自己校区的教练。",
         }, 403);
       }
     }
@@ -35,7 +35,7 @@ export function useApiApproveCoach(app: Hono) {
     // Validate input
     if (!coachId || !type) {
       return c.json(
-        { success: false, message: "Missing coachId or type" },
+        { success: false, message: "缺少教练ID或类型" },
         400,
       );
     }
@@ -47,7 +47,7 @@ export function useApiApproveCoach(app: Hono) {
       CoachType.Senior,
     ];
     if (!validCoachTypes.includes(type as CoachType)) {
-      return c.json({ success: false, message: "Invalid coach type" }, 400);
+      return c.json({ success: false, message: "无效的教练类型" }, 400);
     }
 
     try {
@@ -55,7 +55,7 @@ export function useApiApproveCoach(app: Hono) {
       addSystemLog({
         campusId: coach.campusId,
         type: SystemLogType.CoachApprove,
-        text: `Coach ID ${coachId} approved as ${CoachType[type]}`,
+        text: `教练ID ${coachId} 已批准为 ${CoachType[type]}`,
         relatedId: coachId,
       });
       return c.json({ success: true });
@@ -63,7 +63,7 @@ export function useApiApproveCoach(app: Hono) {
       if (error instanceof Error) {
         return c.json({ success: false, message: error.message }, 500);
       }
-      return c.json({ success: false, message: "Unknown error" }, 500);
+      return c.json({ success: false, message: "未知错误" }, 500);
     }
   });
 }

@@ -39,8 +39,8 @@ export function useApiStudentMatchAll(app: Hono) {
 
       return c.json(enrichedMatches);
     } catch (error) {
-      console.error("Error fetching student matches:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取学生比赛时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

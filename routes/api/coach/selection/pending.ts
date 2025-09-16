@@ -10,8 +10,8 @@ export function useApiCoachSelectionPending(app: Hono) {
       const pendingSelections = getPendingSelectionsForCoach(claim.id);
       return c.json(pendingSelections);
     } catch (error) {
-      console.error("Error fetching pending selections:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取待处理选择时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

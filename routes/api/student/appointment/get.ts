@@ -8,17 +8,17 @@ export function useApiStudentAppointmentGet(app: Hono) {
     const claim = await getClaim(c);
 
     if (!id) {
-      return c.json({ success: false, message: "Appointment ID is required." }, 400);
+      return c.json({ success: false, message: "预约ID是必填项。" }, 400);
     }
 
     const appointment = getAppointmentById(parseInt(id));
     if (!appointment) {
-      return c.json({ success: false, message: "Appointment not found." }, 404);
+      return c.json({ success: false, message: "未找到预约。" }, 404);
     }
 
     // Authorization check
     if (appointment.studentId !== claim.id) {
-        return c.json({ success: false, message: "Unauthorized" }, 401);
+        return c.json({ success: false, message: "未授权" }, 401);
     }
 
     return c.json(appointment);

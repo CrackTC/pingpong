@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Admin Home</title>
+        <title>管理员主页</title>
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -19,60 +19,60 @@
                     <div class="card">
                         <div class="card-body">
                             <h3 class="card-title text-center mb-4">
-                                Admin Dashboard
+                                管理员仪表盘
                             </h3>
                             <div class="d-grid gap-2">
                                 <a
                                     href="/admin/coach/pending"
                                     class="btn btn-primary"
                                 >
-                                    Pending Coach Registrations
+                                    待处理教练注册
                                 </a>
                                 <a
                                     href="/admin/coach/search"
                                     class="btn btn-primary"
                                 >
-                                    Search Coach
+                                    搜索教练
                                 </a>
                                 <a
                                     href="/admin/coach/add"
                                     class="btn btn-primary"
                                 >
-                                    Add Coach
+                                    添加教练
                                 </a>
                                 <a
                                     href="/admin/student/search"
                                     class="btn btn-primary"
                                 >
-                                    Search Student
+                                    搜索学生
                                 </a>
                                 <a
                                     href="/admin/student/add"
                                     class="btn btn-primary"
                                 >
-                                    Add Student
+                                    添加学生
                                 </a>
                                 <a
                                     href="/admin/migrations"
                                     class="btn btn-primary"
                                 >
-                                    Pending Migrations
+                                    待处理迁移
                                 </a>
                                                                 <a
                                     href="/admin/table/all"
                                     class="btn btn-primary"
                                 >
-                                    All Tables
+                                    所有球台
                                 </a>
                                 <a
                                     href="/admin/system-logs"
                                     class="btn btn-primary"
                                 >
-                                    System Logs
+                                    系统日志
                                 </a>
-                                <a href="/admin/notifications" id="notifications-btn" class="btn btn-secondary">Notifications</a>
+                                <a href="/admin/notifications" id="notifications-btn" class="btn btn-secondary">通知</a>
                                 <a href="/admin/logout" class="btn btn-danger"
-                                    >Logout</a
+                                    >登出</a
                                 >
                             </div>
                         </div>
@@ -93,12 +93,12 @@
                 if (data.unreadNotificationCount > 0) {
                     notificationsBtn.classList.remove('btn-secondary');
                     notificationsBtn.classList.add('btn-warning');
-                    notificationsBtn.textContent = `Notifications (${data.unreadNotificationCount})`;
+                    notificationsBtn.textContent = `通知 (${data.unreadNotificationCount})`;
                 } else {
-                    notificationsBtn.textContent = `Notifications`;
+                    notificationsBtn.textContent = `通知`;
                 }
             })
-            .catch(error => console.error('Error fetching admin home data:', error));
+            .catch(error => console.error('获取管理员主页数据时出错：', error));
     </script>
     </body>
 </html>

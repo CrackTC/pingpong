@@ -27,7 +27,7 @@ export function useApiAdminStudentAdd(app: Hono) {
 
     // Basic validation
     if (!username || typeof username !== "string" || username.trim() === "") {
-      return c.json({ success: false, message: "Username is required." }, 400);
+      return c.json({ success: false, message: "用户名为必填项。" }, 400);
     }
 
     const passwordError = validatePassword(password);
@@ -36,7 +36,7 @@ export function useApiAdminStudentAdd(app: Hono) {
     }
 
     if (!realName || typeof realName !== "string" || realName.trim() === "") {
-      return c.json({ success: false, message: "Real Name is required." }, 400);
+      return c.json({ success: false, message: "真实姓名为必填项。" }, 400);
     }
     if (
       sex !== null &&
@@ -46,7 +46,7 @@ export function useApiAdminStudentAdd(app: Hono) {
       return c.json(
         {
           success: false,
-          message: "Valid Sex is required if provided.",
+          message: "如果提供，则需要有效的性别。",
         },
         400,
       );
@@ -61,17 +61,17 @@ export function useApiAdminStudentAdd(app: Hono) {
       return c.json(
         {
           success: false,
-          message: "Valid Birth Year is required if provided.",
+          message: "如果提供，则需要有效的出生年份。",
         },
         400,
       );
     }
     if (isNaN(campusId)) {
-      return c.json({ success: false, message: "Campus is required." }, 400);
+      return c.json({ success: false, message: "校区为必填项。" }, 400);
     }
     if (!phone || !/^\d{11}$/.test(phone)) {
       return c.json(
-        { success: false, message: "Phone must be 11 digits." },
+        { success: false, message: "手机号码必须是11位数字。" },
         400,
       );
     }
@@ -80,7 +80,7 @@ export function useApiAdminStudentAdd(app: Hono) {
     const existingStudent = getStudentByUsername(username);
     if (existingStudent) {
       return c.json(
-        { success: false, message: "Username already exists." },
+        { success: false, message: "用户名已存在。" },
         409,
       );
     }
@@ -91,7 +91,7 @@ export function useApiAdminStudentAdd(app: Hono) {
       return c.json(
         {
           success: false,
-          message: "Phone number already registered in this campus.",
+          message: "该校区已注册该手机号码。",
         },
         409,
       );
@@ -100,18 +100,18 @@ export function useApiAdminStudentAdd(app: Hono) {
     // Check if campusId is valid
     const campus = getCampusById(campusId);
     if (!campus) {
-      return c.json({ success: false, message: "Invalid Campus ID." }, 400);
+      return c.json({ success: false, message: "无效的校区ID。" }, 400);
     }
 
     const claim = await getClaim(c);
     if (claim.type === "admin") {
       const admin = getAdminById(claim.id);
       if (!admin) {
-        return c.json({ success: false, message: "Admin not found." }, 404);
+        return c.json({ success: false, message: "未找到管理员。" }, 404);
       }
       if (admin.campus !== campusId) {
         return c.json(
-          { success: false, message: "Admin not authorized for this campus." },
+          { success: false, message: "管理员无权管理此校区。" },
           403,
         );
       }
@@ -131,14 +131,14 @@ export function useApiAdminStudentAdd(app: Hono) {
       addSystemLog({
         campusId,
         type: SystemLogType.StudentAdd,
-        text: `Student ${realName} (ID: ${id}) added by admin ${claim.id}.`,
+        text: `学生 ${realName} (ID: ${id}) 已被管理员 ${claim.id} 添加。`,
         relatedId: id,
       });
       return c.json({ success: true });
     } catch (error) {
-      console.error("Error adding student:", error);
+      console.error("添加学生时出错：", error);
       return c.json(
-        { success: false, message: "An unexpected error occurred." },
+        { success: false, message: "发生意外错误。" },
         500,
       );
     }

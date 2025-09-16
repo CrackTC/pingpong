@@ -10,8 +10,8 @@ export function useApiStudentRechargeAll(app: Hono) {
       const orders = getRechargeOrdersByStudentId(claim.id);
       return c.json(orders);
     } catch (error) {
-      console.error("Error fetching recharge orders:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取充值订单时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

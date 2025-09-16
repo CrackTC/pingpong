@@ -17,7 +17,7 @@ export function useApiCoachAppointmentReview(app: Hono) {
 
     if (!appointmentId || !rating) {
       return c.json(
-        { message: "Appointment ID and rating are required." },
+        { message: "预约ID和评分是必填项。" },
         400,
       );
     }
@@ -25,23 +25,23 @@ export function useApiCoachAppointmentReview(app: Hono) {
     try {
       const appointment = getAppointmentById(appointmentId);
       if (!appointment) {
-        return c.json({ message: "Appointment not found." }, 404);
+        return c.json({ message: "未找到预约。" }, 404);
       }
 
       if (appointment.coachId !== claim.id) {
-        return c.json({ message: "Unauthorized." }, 401);
+        return c.json({ message: "未授权。" }, 401);
       }
 
       if (appointment.status !== AppointmentStatus.Completed) {
         return c.json({
-          message: "You can only review completed appointments.",
+          message: "您只能评价已完成的预约。",
         }, 400);
       }
 
       const existingReviews = getReviewsByAppointmentId(appointmentId);
       if (existingReviews.some((r) => r.type === ReviewType.CoachToStudent)) {
         return c.json({
-          message: "You have already reviewed this appointment.",
+          message: "您已评价过此预约。",
         }, 400);
       }
 
@@ -58,14 +58,14 @@ export function useApiCoachAppointmentReview(app: Hono) {
         campusId: appointment.campusId,
         type: SystemLogType.CoachReviewStudent,
         text:
-          `Coach (ID: ${claim.id}) reviewed student (ID: ${appointment.studentId}) for appointment (ID: ${appointmentId}) with rating ${rating}.`,
+          `教练 (ID: ${claim.id}) 评价了学生 (ID: ${appointment.studentId}) 的预约 (ID: ${appointmentId})，评分为 ${rating}。`,
         relatedId: id,
       });
 
-      return c.json({ message: "Review submitted successfully." });
+      return c.json({ message: "评价提交成功。" });
     } catch (error) {
-      console.error("Error submitting review:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("提交评价时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

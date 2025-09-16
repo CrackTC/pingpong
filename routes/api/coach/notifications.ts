@@ -11,8 +11,8 @@ export function useApiCoachNotifications(app: Hono) {
       const notifications = getNotificationsForUser(claim.id, NotificationTarget.Coach);
       return c.json(notifications);
     } catch (error) {
-      console.error("Error fetching coach notifications:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取教练通知时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

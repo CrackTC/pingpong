@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Edit Student</title>
+    <title>编辑学生</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
 </head>
@@ -14,45 +14,45 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-body">
-                        <h3 class="card-title text-center mb-4">Edit Student</h3>
+                        <h3 class="card-title text-center mb-4">编辑学生</h3>
                         <div id="message" class="alert d-none" role="alert"></div>
                         <form id="edit-student-form">
                             <input type="hidden" id="studentId" name="id">
                             <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
+                                <label for="username" class="form-label">用户名</label>
                                 <input type="text" class="form-control" id="username" name="username" readonly>
                             </div>
                             <div class="mb-3">
-                                <label for="realName" class="form-label">Real Name</label>
+                                <label for="realName" class="form-label">真实姓名</label>
                                 <input type="text" class="form-control" id="realName" name="realName" required>
                             </div>
                             <div class="mb-3">
-                                <label for="sex" class="form-label">Sex</label>
+                                <label for="sex" class="form-label">性别</label>
                                 <select class="form-select" id="sex" name="sex">
-                                    <option value="">Select Sex</option>
-                                    <option value="1">Male</option>
-                                    <option value="2">Female</option>
-                                    <option value="3">Other</option>
+                                    <option value="">选择性别</option>
+                                    <option value="1">男</option>
+                                    <option value="2">女</option>
+                                    <option value="3">其他</option>
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="birthYear" class="form-label">Birth Year</label>
+                                <label for="birthYear" class="form-label">出生年份</label>
                                 <input type="number" class="form-control" id="birthYear" name="birthYear">
                             </div>
                             <div class="mb-3">
-                                <label for="campusId" class="form-label">Campus</label>
+                                <label for="campusId" class="form-label">校区</label>
                                 <select class="form-select" id="campusId" name="campusId" required></select>
                             </div>
                             <div class="mb-3">
-                                <label for="phone" class="form-label">Phone</label>
+                                <label for="phone" class="form-label">电话</label>
                                 <input type="text" class="form-control" id="phone" name="phone" required>
                             </div>
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
+                                <label for="email" class="form-label">电子邮件</label>
                                 <input type="email" class="form-control" id="email" name="email">
                             </div>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                            <a href="/admin/student/search" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">保存更改</button>
+                            <a href="/admin/student/search" class="btn btn-secondary">取消</a>
                         </form>
                     </div>
                 </div>
@@ -87,7 +87,7 @@
                 document.getElementById('email').value = student.email;
             } else {
                 const messageDiv = document.getElementById('message');
-                messageDiv.textContent = student.message || "Failed to fetch student data.";
+                messageDiv.textContent = student.message || "获取学生数据失败。";
                 messageDiv.className = 'alert alert-danger';
                 messageDiv.classList.remove('d-none');
             }
@@ -118,7 +118,7 @@
             const data = await response.json();
 
             if (response.ok) {
-                messageDiv.textContent = "Student updated successfully!";
+                messageDiv.textContent = "学生更新成功！";
                 messageDiv.className = 'alert alert-success';
                 messageDiv.classList.remove('d-none');
                 setTimeout(() => {

@@ -10,7 +10,7 @@ export function useApiAdminSystemLogs(app: Hono) {
     if (claim.type === "admin") {
       const admin = getAdminById(claim.id);
       if (!admin) {
-        return c.json({ message: "Admin not found." }, 404);
+        return c.json({ message: "未找到管理员。" }, 404);
       }
       const logs = getSystemLogs(admin.campus);
       return c.json(logs);
@@ -18,7 +18,7 @@ export function useApiAdminSystemLogs(app: Hono) {
       const logs = getSystemLogs(); // Get all logs for root
       return c.json(logs);
     } else {
-      return c.json({ message: "Unauthorized." }, 403);
+      return c.json({ message: "未授权。" }, 403);
     }
   });
 }

@@ -11,8 +11,8 @@ export function useApiStudentNotifications(app: Hono) {
       const notifications = getNotificationsForUser(claim.id, NotificationTarget.Student);
       return c.json(notifications);
     } catch (error) {
-      console.error("Error fetching student notifications:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取学生通知时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

@@ -19,14 +19,14 @@ export function useApiStudentLogin(app: Hono) {
       addSystemLog({
         campusId: student.campusId,
         type: SystemLogType.StudentLogin,
-        text: `Student ${student.realName} (ID: ${student.id}) logged in.`,
+        text: `学生 ${student.realName} (ID: ${student.id}) 已登录。`,
         relatedId: student.id,
       });
       return c.json({ success: true, redirect: "/student/home" }); // Assuming /student/home exists
     } else {
       return c.json({
         success: false,
-        message: "Invalid username or password.",
+        message: "用户名或密码无效。",
       }, 401);
     }
   });

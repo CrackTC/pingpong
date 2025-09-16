@@ -11,13 +11,13 @@ export function useApiAdminCoachPending(app: Hono) { // Renamed function
     if (claim.type === "admin") {
       const admin = getAdminById(claim.id);
       if (!admin) {
-        return c.json({ message: "Admin not found" }, 404);
+        return c.json({ message: "未找到管理员" }, 404);
       }
       coaches = getPendingCoaches(admin.campus); // Pass admin's campusId
     } else if (claim.type === "root") {
       coaches = getPendingCoaches(); // Root sees all pending coaches
     } else {
-      return c.json({ message: "Forbidden" }, 403);
+      return c.json({ message: "禁止访问" }, 403);
     }
 
     return c.json(coaches);

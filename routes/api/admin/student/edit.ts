@@ -30,25 +30,25 @@ export function useApiAdminStudentEdit(app: Hono) {
       : null;
 
     if (isNaN(id)) {
-      return c.json({ message: "Invalid student ID." }, 400);
+      return c.json({ message: "无效的学生ID。" }, 400);
     }
 
     // Check if student exists
     const student = getStudentById(id);
     if (!student) {
-      return c.json({ success: false, message: "Student not found." }, 404);
+      return c.json({ success: false, message: "未找到学生。" }, 404);
     }
 
     // Authorization check
     if (claim.type === "admin") {
       const admin = getAdminById(claim.id);
       if (admin?.campus !== student.campusId) {
-        return c.json({ success: false, message: "Unauthorized" }, 401);
+        return c.json({ success: false, message: "未授权" }, 401);
       }
     }
 
     if (phone && !/^\d{11}$/.test(phone)) {
-      return c.json({ message: "Phone must be 11 digits." }, 400);
+      return c.json({ message: "手机号码必须是11位数字。" }, 400);
     }
 
     // Check if phone number already exists in the same campus for another student
@@ -61,7 +61,7 @@ export function useApiAdminStudentEdit(app: Hono) {
       return c.json(
         {
           success: false,
-          message: "Phone number already registered in this campus.",
+          message: "该校区已注册该手机号码。",
         },
         409,
       );
@@ -80,7 +80,7 @@ export function useApiAdminStudentEdit(app: Hono) {
         student.campusId,
         NotificationTarget.Student,
         id,
-        "Your profile has been updated by an administrator.",
+        "您的个人资料已由管理员更新。",
         "/student/profile",
         Date.now(),
       );
@@ -89,14 +89,14 @@ export function useApiAdminStudentEdit(app: Hono) {
         campusId: student.campusId,
         type: SystemLogType.StudentUpdate,
         text:
-          `Admin ${claim.id} updated student profile: ${student.realName} (ID: ${student.id})`,
+          `管理员 ${claim.id} 更新了学生个人资料：${student.realName} (ID: ${student.id})`,
         relatedId: id,
       });
 
-      return c.json({ message: "Student profile updated successfully" });
+      return c.json({ message: "学生个人资料更新成功" });
     } catch (error) {
-      console.error("Error updating student profile:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("更新学生个人资料时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

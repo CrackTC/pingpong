@@ -10,8 +10,8 @@ export function useApiStudentDeductionAll(app: Hono) {
       const deductions = getEnrichedDeductionsByStudentId(claim.id);
       return c.json(deductions);
     } catch (error) {
-      console.error("Error fetching deduction records:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取扣费记录时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

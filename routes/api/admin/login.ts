@@ -20,7 +20,7 @@ export function useApiAdminLogin(app: Hono) {
       addSystemLog({
         campusId: admin!.campus,
         type: SystemLogType.AdminLogin,
-        text: `Admin ${admin?.username} (ID: ${admin?.id}) logged in.`,
+        text: `管理员 ${admin?.username} (ID: ${admin?.id}) 已登录。`,
         relatedId: admin?.id ?? 0,
       });
 
@@ -28,7 +28,7 @@ export function useApiAdminLogin(app: Hono) {
     } else {
       return c.json({
         success: false,
-        message: "Invalid username or password.",
+        message: "用户名或密码无效。",
       }, 401);
     }
   });

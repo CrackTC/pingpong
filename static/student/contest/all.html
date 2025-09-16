@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>All Contests</title>
+    <title>所有比赛</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
 </head>
@@ -16,7 +16,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h3 class="card-title text-center mb-4">
-                            All Contests
+                            所有比赛
                         </h3>
                         <div id="message-area" class="alert d-none" role="alert"></div>
 
@@ -25,7 +25,7 @@
                         </div>
 
                         <div class="d-grid gap-2 mt-3">
-                            <a href="/student/home" class="btn btn-secondary">Back to Home</a>
+                            <a href="/student/home" class="btn btn-secondary">返回主页</a>
                         </div>
                     </div>
                 </div>
@@ -47,10 +47,10 @@
 
         function getContestTypeString(type) {
             switch (type) {
-                case 1: return "Junior";
-                case 2: return "Mid";
-                case 3: return "Senior";
-                default: return "Unknown";
+                case 1: return "初级";
+                case 2: return "中级";
+                case 3: return "高级";
+                default: return "未知";
             }
         }
 
@@ -62,12 +62,12 @@
                 if (response.ok) {
                     if (contests.length > 0) {
                         let contestsHtml =
-                            '<table class="table table-striped"><thead><tr><th>Name</th><th>Type</th><th>Date</th><th>Actions</th></tr></thead><tbody>';
+                            '<table class="table table-striped"><thead><tr><th>名称</th><th>类型</th><th>日期</th><th>操作</th></tr></thead><tbody>';
                         contests.forEach((contest) => {
                             const contestDate = new Date(contest.time);
                             const now = Date.now();
                             const isPast = contest.time < now;
-                            const buttonText = isPast ? "Registration Closed" : "Register";
+                            const buttonText = isPast ? "报名已关闭" : "报名";
                             const buttonClass = isPast ? "btn-secondary" : "btn-primary register-btn";
                             const isDisabled = isPast ? "disabled" : "";
 
@@ -80,12 +80,12 @@
                                                             button.addEventListener('click', async (event) => {
                                                                 const clickedButton = event.currentTarget;
                                                                 if (!clickedButton) {
-                                                                    console.error("Clicked button is null/undefined.");
+                                                                    console.error("点击的按钮为空/未定义。");
                                                                     return;
                                                                 }
                                                                 const contestId = clickedButton.dataset.contestId;
                                                                 clickedButton.disabled = true; // Disable button immediately
-                                                                clickedButton.textContent = "Registering...";
+                                                                clickedButton.textContent = "报名中...";
                             
                                                                 try {
                                                                     const response = await fetch('/api/student/contest/register', {
@@ -100,33 +100,33 @@
                             
                                                                     if (response.ok) {
                                                                         displayMessage(data.message, "success");
-                                                                        clickedButton.textContent = "Registered";
+                                                                        clickedButton.textContent = "已报名";
                                                                         clickedButton.classList.remove("btn-primary");
                                                                         clickedButton.classList.add("btn-success");
                                                                     } else {
-                                                                        displayMessage(data.message || 'Registration failed.', "danger");
+                                                                        displayMessage(data.message || '报名失败。', "danger");
                                                                         clickedButton.disabled = false; // Re-enable on failure
-                                                                        clickedButton.textContent = "Register";
+                                                                        clickedButton.textContent = "报名";
                                                                     }
                                                                 } catch (error) {
-                                                                    displayMessage('An unexpected error occurred.', "danger");
+                                                                    displayMessage('发生意外错误。', "danger");
                                                                     clickedButton.disabled = false; // Re-enable on failure
-                                                                    clickedButton.textContent = "Register";
+                                                                    clickedButton.textContent = "报名";
                                                                 }
                                                             });                        });
                     } else {
                         contestsListDiv.innerHTML =
-                            '<p class="text-center">No contests found.</p>';
+                            '<p class="text-center">未找到比赛。</p>';
                     }
                 } else {
                     displayMessage(
-                        contests.message || "Failed to fetch contests.",
+                        contests.message || "获取比赛失败。",
                         "danger",
                     );
                 }
             } catch (error) {
                 displayMessage(
-                    "An unexpected error occurred while fetching contests.",
+                    "获取比赛时发生意外错误。",
                     "danger",
                 );
             }

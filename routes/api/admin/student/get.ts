@@ -10,20 +10,20 @@ export function useApiAdminStudentGet(app: Hono) {
 
     if (!id) {
       return c.json(
-        { success: false, message: "Student ID is required." },
+        { success: false, message: "学生ID是必填项。" },
         400,
       );
     }
 
     const student = getStudentById(parseInt(id));
     if (!student) {
-      return c.json({ success: false, message: "Student not found." }, 404);
+      return c.json({ success: false, message: "未找到学生。" }, 404);
     }
 
     if (claim.type === "admin") {
       const admin = getAdminById(claim.id);
       if (admin?.campus !== student.campusId) {
-        return c.json({ success: false, message: "Unauthorized" }, 401);
+        return c.json({ success: false, message: "未授权" }, 401);
       }
     }
 

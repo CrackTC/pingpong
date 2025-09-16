@@ -31,15 +31,15 @@ export function useApiAdminCoachEdit(app: Hono) {
     const avatarFile = formData.get("avatar") as File;
 
     if (isNaN(coachId)) {
-      return c.json({ message: "Invalid coach ID." }, 400);
+      return c.json({ message: "无效的教练ID。" }, 400);
     }
 
     if (phone && !/^\d{11}$/.test(phone)) {
-      return c.json({ message: "Phone must be 11 digits." }, 400);
+      return c.json({ message: "手机号码必须是11位数字。" }, 400);
     }
 
     if (idCardNumber && !/^\d{18}$/.test(idCardNumber)) {
-      return c.json({ message: "ID card number must be 18 digits." }, 400);
+      return c.json({ message: "身份证号码必须是18位数字。" }, 400);
     }
 
     let avatarPath: string | undefined;
@@ -82,18 +82,18 @@ export function useApiAdminCoachEdit(app: Hono) {
 
       const coach = getCoachById(coachId);
       if (!coach) {
-        return c.json({ message: "Coach not found after update." }, 404);
+        return c.json({ message: "更新后未找到教练。" }, 404);
       }
 
       const claim = await getClaim(c);
       if (claim.type === "admin") {
         const admin = getAdminById(claim.id);
         if (!admin) {
-          return c.json({ message: "Admin not found." }, 404);
+          return c.json({ message: "未找到管理员。" }, 404);
         }
         if (admin.campus !== coach.campusId) {
           return c.json({
-            message: "Admin can only edit coaches from their own campus.",
+            message: "管理员只能编辑自己校区的教练。",
           }, 403);
         }
       }
@@ -102,7 +102,7 @@ export function useApiAdminCoachEdit(app: Hono) {
         coach.campusId,
         NotificationTarget.Coach,
         coachId,
-        "Your profile has been updated by an administrator.",
+        "您的个人资料已由管理员更新。",
         "/coach/profile",
         Date.now(),
       );
@@ -110,34 +110,34 @@ export function useApiAdminCoachEdit(app: Hono) {
       addSystemLog({
         campusId: coach.campusId,
         type: SystemLogType.CoachUpdate,
-        text: `Coach ID ${coachId} profile updated by admin ID ${claim.id}`,
+        text: `教练ID ${coachId} 的个人资料已由管理员ID ${claim.id} 更新`,
         relatedId: coachId,
       });
 
       return c.json({
-        message: "Coach profile updated successfully",
+        message: "教练个人资料更新成功",
         avatarPath: avatarPath || coach?.avatarPath,
       });
     } catch (error) {
-      console.error("Error updating coach profile:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("更新教练个人资料时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 
   app.get("/api/admin/coach/:id", (c) => {
     const id = parseInt(c.req.param("id"));
     if (isNaN(id)) {
-      return c.json({ message: "Invalid coach ID." }, 400);
+      return c.json({ message: "无效的教练ID。" }, 400);
     }
     try {
       const coach = getCoachById(id);
       if (!coach) {
-        return c.json({ message: "Coach not found." }, 404);
+        return c.json({ message: "未找到教练。" }, 404);
       }
       return c.json(coach);
     } catch (error) {
-      console.error("Error fetching coach data:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取教练数据时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

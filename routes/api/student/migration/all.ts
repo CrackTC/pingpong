@@ -10,8 +10,8 @@ export function useApiStudentMigrationAll(app: Hono) {
       const migrations = getMigrationsByStudentId(claim.id, false);
       return c.json(migrations);
     } catch (error) {
-      console.error("Error fetching student migrations:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取学生迁移时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

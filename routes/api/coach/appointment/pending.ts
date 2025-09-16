@@ -11,8 +11,8 @@ export function useApiCoachAppointmentPending(app: Hono) {
       const appointments = getPendingAppointmentsByCoachId(coachId);
       return c.json(appointments);
     } catch (error) {
-      console.error("Error fetching pending appointments:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取待处理预约时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

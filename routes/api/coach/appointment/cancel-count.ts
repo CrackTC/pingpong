@@ -11,8 +11,8 @@ export function useApiCoachAppointmentCancelCount(app: Hono) {
       const cancelCount = getCoachCancelCountThisMonth(coachId);
       return c.json({ cancelCount });
     } catch (error) {
-      console.error("Error fetching coach cancel count:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取教练取消次数时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

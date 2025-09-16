@@ -10,24 +10,24 @@ export function useApiAppointmentReviews(app: Hono) {
     const claim = await getClaim(c);
 
     if (isNaN(appointmentId)) {
-      return c.json({ message: "Invalid appointment ID." }, 400);
+      return c.json({ message: "无效的预约ID。" }, 400);
     }
 
     try {
       const appointment = getAppointmentById(appointmentId);
       if (!appointment) {
-        return c.json({ message: "Appointment not found." }, 404);
+        return c.json({ message: "未找到预约。" }, 404);
       }
 
       // Verify user is part of the appointment
       if (claim.type !== "student" && claim.type !== "coach") {
-        return c.json({ message: "Unauthorized role." }, 403);
+        return c.json({ message: "未授权的角色。" }, 403);
       }
       if (claim.type === "student" && claim.id !== appointment.studentId) {
-        return c.json({ message: "Unauthorized." }, 403);
+        return c.json({ message: "未授权。" }, 403);
       }
       if (claim.type === "coach" && claim.id !== appointment.coachId) {
-        return c.json({ message: "Unauthorized." }, 403);
+        return c.json({ message: "未授权。" }, 403);
       }
 
       const reviews = getReviewsByAppointmentId(appointmentId);
@@ -54,8 +54,8 @@ export function useApiAppointmentReviews(app: Hono) {
         theirReview: canShowTheirReview ? theirReview : null,
       });
     } catch (error) {
-      console.error("Error fetching reviews:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取评价时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

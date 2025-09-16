@@ -25,10 +25,10 @@ export function useApiStudentRegister(app: Hono) {
 
     // Basic validation
     if (!username || typeof username !== "string" || username.trim() === "") {
-      return c.json({ success: false, message: "Username is required." }, 400);
+      return c.json({ success: false, message: "用户名为必填项。" }, 400);
     }
     if (!password || typeof password !== "string" || password.trim() === "") {
-      return c.json({ success: false, message: "Password is required." }, 400);
+      return c.json({ success: false, message: "密码为必填项。" }, 400);
     }
 
     const passwordError = validatePassword(password);
@@ -37,7 +37,7 @@ export function useApiStudentRegister(app: Hono) {
     }
 
     if (!realName || typeof realName !== "string" || realName.trim() === "") {
-      return c.json({ success: false, message: "Real Name is required." }, 400);
+      return c.json({ success: false, message: "真实姓名为必填项。" }, 400);
     }
     // Sex is optional
     if (
@@ -46,7 +46,7 @@ export function useApiStudentRegister(app: Hono) {
     ) {
       return c.json({
         success: false,
-        message: "Valid Sex is required if provided.",
+        message: "如果提供，则需要有效的性别。",
       }, 400);
     }
     // Birth Year is optional
@@ -57,15 +57,15 @@ export function useApiStudentRegister(app: Hono) {
     ) {
       return c.json({
         success: false,
-        message: "Valid Birth Year is required if provided.",
+        message: "如果提供，则需要有效的出生年份。",
       }, 400);
     }
     if (typeof campusId !== "number") {
-      return c.json({ success: false, message: "Campus is required." }, 400);
+      return c.json({ success: false, message: "校区为必填项。" }, 400);
     }
     if (!phone || typeof phone !== "string" || !/^\d{11}$/.test(phone)) {
       return c.json(
-        { success: false, message: "Phone must be 11 digits." },
+        { success: false, message: "手机号码必须是11位数字。" },
         400,
       );
     }
@@ -78,7 +78,7 @@ export function useApiStudentRegister(app: Hono) {
     if (existingStudentWithPhone) {
       return c.json({
         success: false,
-        message: "Phone number already registered in this campus.",
+        message: "该校区已注册该手机号码。",
       }, 409);
     }
 
@@ -86,7 +86,7 @@ export function useApiStudentRegister(app: Hono) {
     const existingStudent = getStudentByUsername(username);
     if (existingStudent) {
       return c.json(
-        { success: false, message: "Username already exists." },
+        { success: false, message: "用户名已存在。" },
         409,
       );
     }
@@ -94,7 +94,7 @@ export function useApiStudentRegister(app: Hono) {
     // Check if campusId is valid
     const campus = getCampusById(campusId);
     if (!campus) {
-      return c.json({ success: false, message: "Invalid Campus ID." }, 400);
+      return c.json({ success: false, message: "无效的校区ID。" }, 400);
     }
 
     try {
@@ -111,15 +111,15 @@ export function useApiStudentRegister(app: Hono) {
       addSystemLog({
         campusId,
         type: SystemLogType.StudentRegister,
-        text: `New student registered: ${username} (ID: ${id})`,
+        text: `新学生注册：${username} (ID: ${id})`,
         relatedId: id,
       });
       return c.json({ success: true });
     } catch (error) {
-      console.error("Error registering student:", error);
+      console.error("注册学生时出错：", error);
       return c.json({
         success: false,
-        message: "An unexpected error occurred.",
+        message: "发生意外错误。",
       }, 500);
     }
   });

@@ -9,13 +9,13 @@ export function useApiStudentCoachTimeslots(app: Hono) {
     const { coachId } = await c.req.json(); // Get coachId from request body
 
     if (isNaN(coachId)) {
-      return c.json({ message: "Invalid coach ID." }, 400);
+      return c.json({ message: "无效的教练ID。" }, 400);
     }
 
     try {
       const coach = getCoachById(coachId);
       if (!coach) {
-        return c.json({ message: "Coach not found." }, 404);
+        return c.json({ message: "未找到教练。" }, 404);
       }
 
       const appointments = getActiveAppointmentsByCoachId(coachId);
@@ -44,8 +44,8 @@ export function useApiStudentCoachTimeslots(app: Hono) {
 
       return c.json(timeslotsWithStatus);
     } catch (error) {
-      console.error("Error fetching coach timeslots:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取教练时间段时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

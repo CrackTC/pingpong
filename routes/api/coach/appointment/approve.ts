@@ -24,28 +24,28 @@ export function useApiCoachAppointmentApprove(app: Hono) {
     const { appointmentId } = await c.req.json();
 
     if (isNaN(appointmentId)) {
-      return c.json({ message: "Invalid appointment ID." }, 400);
+      return c.json({ message: "无效的预约ID。" }, 400);
     }
 
     try {
       const appointment = getAppointmentById(appointmentId);
       if (!appointment) {
-        return c.json({ message: "Appointment not found." }, 404);
+        return c.json({ message: "未找到预约。" }, 404);
       }
 
       const claim = await getClaim(c);
       if (claim.id !== appointment.coachId) {
-        return c.json({ message: "Unauthorized." }, 403);
+        return c.json({ message: "未授权。" }, 403);
       }
 
       const student = getStudentById(appointment.studentId);
       if (!student) {
-        return c.json({ message: "Student not found." }, 404);
+        return c.json({ message: "未找到学生。" }, 404);
       }
 
       const coach = getCoachById(appointment.coachId);
       if (!coach) {
-        return c.json({ message: "Coach not found." }, 404);
+        return c.json({ message: "未找到教练。" }, 404);
       }
 
       let rate = 0;
@@ -60,7 +60,7 @@ export function useApiCoachAppointmentApprove(app: Hono) {
           rate = 200;
           break;
         default:
-          return c.json({ message: "Invalid coach type." }, 400);
+          return c.json({ message: "无效的教练类型。" }, 400);
       }
 
       const durationInMinutes =
@@ -75,12 +75,12 @@ export function useApiCoachAppointmentApprove(app: Hono) {
           student.campusId,
           NotificationTarget.Student,
           student.id,
-          `Your appointment was rejected due to insufficient balance. Please recharge your account.`,
+          `您的预约因余额不足而被拒绝。请充值您的账户。`,
           "/student/recharge",
           Date.now(),
         );
         return c.json({
-          message: "Insufficient balance. Appointment rejected.",
+          message: "余额不足。预约已拒绝。",
         }, 400);
       }
 
@@ -133,7 +133,7 @@ export function useApiCoachAppointmentApprove(app: Hono) {
             student.campusId,
             NotificationTarget.Student,
             student.id,
-            `You have an upcoming appointment in 24 hours.`,
+            `您有一个24小时内即将开始的预约。`,
             "/student/appointment/all",
             Date.now(),
           );
@@ -141,7 +141,7 @@ export function useApiCoachAppointmentApprove(app: Hono) {
             coach.campusId,
             NotificationTarget.Coach,
             coach.id,
-            `You have an upcoming appointment in 24 hours.`,
+            `您有一个24小时内即将开始的预约。`,
             "/coach/appointment/all",
             Date.now(),
           );
@@ -171,7 +171,7 @@ export function useApiCoachAppointmentApprove(app: Hono) {
             student.campusId,
             NotificationTarget.Student,
             student.id,
-            `Your appointment has been completed. Please remember to rate your coach.`,
+            `您的预约已完成。请记得评价您的教练。`,
             `/student/appointment/review/${appointment.id}`,
             Date.now(),
           );
@@ -179,7 +179,7 @@ export function useApiCoachAppointmentApprove(app: Hono) {
             coach.campusId,
             NotificationTarget.Coach,
             coach.id,
-            `Your appointment has been completed. Please remember to rate your student.`,
+            `您的预约已完成。请记得评价您的学生。`,
             `/coach/appointment/review/${appointment.id}`,
             Date.now(),
           );
@@ -190,7 +190,7 @@ export function useApiCoachAppointmentApprove(app: Hono) {
         student.campusId,
         NotificationTarget.Student,
         student.id,
-        `Your appointment has been approved by the coach.`,
+        `您的预约已获得教练批准。`,
         "/student/appointment/all",
         Date.now(),
       );
@@ -199,14 +199,14 @@ export function useApiCoachAppointmentApprove(app: Hono) {
         campusId: student.campusId,
         type: SystemLogType.CoachApproveAppointment,
         text:
-          `Coach ${coach.realName} approved appointment #${appointment.id} for student ${student.realName}.`,
+          `教练 ${coach.realName} 批准了学生 ${student.realName} 的预约 #${appointment.id}。`,
         relatedId: appointment.id,
       });
 
-      return c.json({ message: "Appointment approved successfully." });
+      return c.json({ message: "预约成功批准。" });
     } catch (error) {
-      console.error("Error approving appointment:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("批准预约时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

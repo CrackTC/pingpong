@@ -14,7 +14,7 @@ export function useApiPayment(app: Hono) {
     const order = getRechargeOrderByOrderNumber(orderNumber);
 
     if (!order) {
-      return c.json({ message: "Order not found." }, 404);
+      return c.json({ message: "未找到订单。" }, 404);
     }
 
     return c.json(order);
@@ -25,16 +25,16 @@ export function useApiPayment(app: Hono) {
     const order = getRechargeOrderByOrderNumber(orderNumber);
 
     if (!order) {
-      return c.json({ message: "Order not found." }, 404);
+      return c.json({ message: "未找到订单。" }, 404);
     }
 
     if (order.status !== RechargeOrderStatus.Created) {
-      return c.json({ message: "Order has already been processed." }, 400);
+      return c.json({ message: "订单已被处理。" }, 400);
     }
 
     const student = getStudentById(order.studentId);
     if (!student) {
-      return c.json({ message: "Student not found." }, 404);
+      return c.json({ message: "未找到学生。" }, 404);
     }
 
     try {
@@ -45,13 +45,13 @@ export function useApiPayment(app: Hono) {
         campusId: student.campusId,
         type: SystemLogType.PaymentComplete,
         text:
-          `Student ID ${order.studentId} completed a recharge of $${order.amount}.`,
+          `学生ID ${order.studentId} 完成了 ${order.amount} 元的充值。`,
         relatedId: order.id,
       });
-      return c.json({ message: "Payment successful." });
+      return c.json({ message: "支付成功。" });
     } catch (error) {
-      console.error("Error processing payment:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("处理付款时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 
@@ -60,16 +60,16 @@ export function useApiPayment(app: Hono) {
     const order = getRechargeOrderByOrderNumber(orderNumber);
 
     if (!order) {
-      return c.json({ message: "Order not found." }, 404);
+      return c.json({ message: "未找到订单。" }, 404);
     }
 
     if (order.status !== RechargeOrderStatus.Created) {
-      return c.json({ message: "Order has already been processed." }, 400);
+      return c.json({ message: "订单已被处理。" }, 400);
     }
 
     const student = getStudentById(order.studentId);
     if (!student) {
-      return c.json({ message: "Student not found." }, 404);
+      return c.json({ message: "未找到学生。" }, 404);
     }
 
     try {
@@ -78,13 +78,13 @@ export function useApiPayment(app: Hono) {
         campusId: student.campusId,
         type: SystemLogType.PaymentCancel,
         text:
-          `Student ID ${order.studentId} cancelled a recharge of $${order.amount}.`,
+          `学生ID ${order.studentId} 取消了 ${order.amount} 元的充值。`,
         relatedId: order.id,
       });
-      return c.json({ message: "Order cancelled." });
+      return c.json({ message: "订单已取消。" });
     } catch (error) {
-      console.error("Error cancelling order:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("取消订单时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

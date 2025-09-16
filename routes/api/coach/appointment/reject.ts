@@ -16,24 +16,24 @@ export function useApiCoachAppointmentReject(app: Hono) {
     const { appointmentId } = await c.req.json();
 
     if (isNaN(appointmentId)) {
-      return c.json({ message: "Invalid appointment ID." }, 400);
+      return c.json({ message: "无效的预约ID。" }, 400);
     }
 
     try {
       const appointment = getAppointmentById(appointmentId);
       if (!appointment) {
-        return c.json({ message: "Appointment not found." }, 404);
+        return c.json({ message: "未找到预约。" }, 404);
       }
 
       const coach = getCoachById(appointment.coachId);
       if (!coach) {
-        return c.json({ message: "Coach not found." }, 404);
+        return c.json({ message: "未找到教练。" }, 404);
       }
 
       const claim = await getClaim(c);
       if (claim.id !== appointment.coachId) {
         return c.json({
-          message: "You are not authorized to reject this appointment.",
+          message: "您无权拒绝此预约。",
         }, 403);
       }
 
@@ -43,7 +43,7 @@ export function useApiCoachAppointmentReject(app: Hono) {
         appointment.campusId,
         NotificationTarget.Student,
         appointment.studentId,
-        `Your appointment has been rejected by the coach.`,
+        `您的预约已被教练拒绝。`,
         "/student/appointment/all",
         Date.now(),
       );
@@ -52,14 +52,14 @@ export function useApiCoachAppointmentReject(app: Hono) {
         campusId: appointment.campusId,
         type: SystemLogType.CoachRejectAppointment,
         text:
-          `Coach ${coach.realName} (ID: ${coach.id}) rejected appointment ID: ${appointment.id}.`,
+          `教练 ${coach.realName} (ID: ${coach.id}) 拒绝了预约 ID: ${appointment.id}。`,
         relatedId: appointment.id,
       });
 
-      return c.json({ message: "Appointment rejected successfully." });
+      return c.json({ message: "预约成功拒绝。" });
     } catch (error) {
-      console.error("Error rejecting appointment:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("拒绝预约时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

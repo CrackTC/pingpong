@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Search Coach</title>
+        <title>搜索教练</title>
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -18,7 +18,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h3 class="card-title text-center mb-4">
-                                Search Coach
+                                搜索教练
                             </h3>
                             <div
                                 id="message-area"
@@ -28,7 +28,7 @@
                             <form id="search-form">
                                 <div class="mb-3">
                                     <label for="search-query" class="form-label"
-                                        >ID Card Number or Phone Number</label
+                                        >身份证号码或手机号码</label
                                     >
                                     <input
                                         type="text"
@@ -42,7 +42,7 @@
                                     type="submit"
                                     class="btn btn-primary w-100"
                                 >
-                                    Search
+                                    搜索
                                 </button>
                             </form>
 
@@ -54,7 +54,7 @@
                                 <a
                                     href="/admin/home"
                                     class="btn btn-secondary"
-                                    >Back to Home</a
+                                    >返回主页</a
                                 >
                             </div>
                         </div>
@@ -68,17 +68,17 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="coachDetailsModalLabel">Coach Details</h5>
+                        <h5 class="modal-title" id="coachDetailsModalLabel">教练详情</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="coachDetailsModalBody">
                         <!-- Coach details will be loaded here -->
                     </div>
                     <div class="modal-footer">
-                        <a href="#" id="editCoachBtn" class="btn btn-primary">Edit</a>
-                        <a href="#" id="viewAppointmentsBtn" class="btn btn-info">View Active Appointments</a>
-                        <button type="button" class="btn btn-danger" id="deleteCoachBtn">Delete</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a href="#" id="editCoachBtn" class="btn btn-primary">编辑</a>
+                        <a href="#" id="viewAppointmentsBtn" class="btn btn-info">查看活跃预约</a>
+                        <button type="button" class="btn btn-danger" id="deleteCoachBtn">删除</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
                     </div>
                 </div>
             </div>
@@ -100,19 +100,19 @@
 
             function getSexString(sex) {
                 switch (sex) {
-                    case 1: return "Male";
-                    case 2: return "Female";
-                    default: return "Unspecified";
+                    case 1: return "男";
+                    case 2: return "女";
+                    default: return "未指定";
                 }
             }
 
             function getCoachTypeString(type) {
                 switch (type) {
-                    case 1: return "Pending";
-                    case 2: return "Junior";
-                    case 3: return "Intermediate";
-                    case 4: return "Senior";
-                    default: return "Unknown";
+                    case 1: return "待批准";
+                    case 2: return "初级";
+                    case 3: return "中级";
+                    case 4: return "高级";
+                    default: return "未知";
                 }
             }
 
@@ -132,9 +132,9 @@
 
                     if (response.ok) {
                         if (coaches.length > 0) {
-                            let resultsHtml = '<table class="table table-striped"><thead><tr><th>Real Name</th><th>Actions</th></tr></thead><tbody>';
+                            let resultsHtml = '<table class="table table-striped"><thead><tr><th>真实姓名</th><th>操作</th></tr></thead><tbody>';
                             coaches.forEach((c) => {
-                                resultsHtml += `<tr><td>${c.realName}</td><td><button class="btn btn-primary btn-sm details-btn" data-coach-id="${c.id}">Details</button></td></tr>`;
+                                resultsHtml += `<tr><td>${c.realName}</td><td><button class="btn btn-primary btn-sm details-btn" data-coach-id="${c.id}">详情</button></td></tr>`;
                             });
                             resultsHtml += "</tbody></table>";
                             resultsListDiv.innerHTML = resultsHtml;
@@ -147,17 +147,17 @@
                                         // Populate and show modal
                                         const modalBody = document.getElementById('coachDetailsModalBody');
                                         modalBody.innerHTML = `
-                                            <p class="text-center"><img src="${coach.avatarPath}" alt="Avatar" width="100" height="100"></p>
-                                            <p><strong>Username:</strong> ${coach.username}</p>
-                                            <p><strong>Real Name:</strong> ${coach.realName}</p>
-                                            <p><strong>Sex:</strong> ${getSexString(coach.sex)}</p>
-                                            <p><strong>Birth Year:</strong> ${coach.birthYear || "Not specified"}</p>
-                                            <p><strong>Campus:</strong> ${coach.campusName}</p>
-                                            <p><strong>Phone:</strong> ${coach.phone}</p>
-                                            <p><strong>Email:</strong> ${coach.email || "Not specified"}</p>
-                                            <p><strong>ID Card Number:</strong> ${coach.idCardNumber || "Not specified"}</p>
-                                            <p><strong>Type:</strong> ${getCoachTypeString(coach.type)}</p>
-                                            <p><strong>Comment:</strong> ${coach.comment || "Not specified"}</p>
+                                            <p class="text-center"><img src="${coach.avatarPath}" alt="头像" width="100" height="100"></p>
+                                            <p><strong>用户名:</strong> ${coach.username}</p>
+                                            <p><strong>真实姓名:</strong> ${coach.realName}</p>
+                                            <p><strong>性别:</strong> ${getSexString(coach.sex)}</p>
+                                            <p><strong>出生年份:</strong> ${coach.birthYear || "未指定"}</p>
+                                            <p><strong>校区:</strong> ${coach.campusName}</p>
+                                            <p><strong>电话:</strong> ${coach.phone}</p>
+                                            <p><strong>电子邮件:</strong> ${coach.email || "未指定"}</p>
+                                            <p><strong>身份证号码:</strong> ${coach.idCardNumber || "未指定"}</p>
+                                            <p><strong>类型:</strong> ${getCoachTypeString(coach.type)}</p>
+                                            <p><strong>评论:</strong> ${coach.comment || "未指定"}</p>
                                         `;
                                         const coachDetailsModal = new bootstrap.Modal(document.getElementById('coachDetailsModal'));
                                         document.getElementById('editCoachBtn').href = `/admin/coach/edit/${coach.id}`;
@@ -165,7 +165,7 @@
 
                                         const deleteCoachBtn = document.getElementById('deleteCoachBtn');
                                         deleteCoachBtn.onclick = async () => {
-                                            if (confirm('Are you sure you want to delete this coach?')) {
+                                            if (confirm('您确定要删除此教练吗？')) {
                                                 try {
                                                     const response = await fetch('/api/admin/coach/delete', {
                                                         method: 'POST',
@@ -184,10 +184,10 @@
                                                         // Refresh the search results
                                                         document.getElementById('search-form').dispatchEvent(new Event('submit'));
                                                     } else {
-                                                        alert(data.message || 'Failed to delete coach.');
+                                                        alert(data.message || '删除教练失败。');
                                                     }
                                                 } catch (error) {
-                                                    alert('An unexpected error occurred.');
+                                                    alert('发生意外错误。');
                                                 }
                                             }
                                         };
@@ -197,17 +197,17 @@
                                 });
                             });
                         } else {
-                            resultsListDiv.innerHTML = '<p class="text-center">No coaches found.</p>';
+                            resultsListDiv.innerHTML = '<p class="text-center">未找到教练。</p>';
                         }
                     } else {
                         displayMessage(
-                            coaches.message || "Failed to search coaches.",
+                            coaches.message || "搜索教练失败。",
                             "danger",
                         );
                     }
                 } catch (error) {
                     displayMessage(
-                        "An unexpected error occurred while searching coaches.",
+                        "搜索教练时发生意外错误。",
                         "danger",
                     );
                 }

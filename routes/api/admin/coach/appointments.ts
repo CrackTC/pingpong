@@ -8,24 +8,24 @@ export function useApiAdminCoachAppointments(app: Hono) {
   app.get("/api/admin/coach/appointments/:id", async (c) => {
     const id = c.req.param("id");
     if (!id) {
-      return c.json({ success: false, message: "Coach ID is required." }, 400);
+      return c.json({ success: false, message: "教练ID是必填项。" }, 400);
     }
 
     const claim = await getClaim(c);
     if (claim.type === "admin") {
       const admin = getAdminById(claim.id);
       if (!admin) {
-        return c.json({ success: false, message: "Admin not found." }, 404);
+        return c.json({ success: false, message: "未找到管理员。" }, 404);
       }
       const coach = getCoachById(parseInt(id));
       if (!coach) {
-        return c.json({ success: false, message: "Coach not found." }, 404);
+        return c.json({ success: false, message: "未找到教练。" }, 404);
       }
       if (admin.campus != coach.campusId) {
         return c.json({
           success: false,
           message:
-            "You do not have permission to view this coach's appointments.",
+            "您无权查看此教练的预约。",
         }, 403);
       }
     }
@@ -34,8 +34,8 @@ export function useApiAdminCoachAppointments(app: Hono) {
       const appointments = getActiveAppointmentsByCoachId(parseInt(id));
       return c.json(appointments);
     } catch (error) {
-      console.error("Error fetching active appointments:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("获取活跃预约时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }

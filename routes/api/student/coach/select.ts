@@ -24,18 +24,18 @@ export function useApiStudentSelectCoach(app: Hono) {
 
     const student = getStudentById(claim.id);
     if (!student) {
-      return c.json({ message: "Student not found" }, 404);
+      return c.json({ message: "未找到学生" }, 404);
     }
 
     const coach = getCoachById(coachId);
     if (!coach) {
-      return c.json({ message: "Coach not found" }, 404);
+      return c.json({ message: "未找到教练" }, 404);
     }
 
     if (coach.type === CoachType.Pending) {
       return c.json({
         message:
-          "This coach is currently pending approval and cannot be selected.",
+          "此教练目前待批准，无法选择。",
       }, 400);
     }
 
@@ -46,7 +46,7 @@ export function useApiStudentSelectCoach(app: Hono) {
     );
     if (existingSelection) {
       return c.json({
-        message: "You have already made a selection to this coach.",
+        message: "您已选择此教练。",
       }, 400);
     }
 
@@ -55,14 +55,14 @@ export function useApiStudentSelectCoach(app: Hono) {
     if (activeSelectionCount >= 2) {
       return c.json({
         message:
-          "You already have 2 pending or approved coach selections. You cannot select more coaches.",
+          "您已有2个待处理或已批准的教练选择。您不能选择更多教练。",
       }, 400);
     }
 
     const currentStudentCount = getSelectionCountForCoach(coachId);
     if (currentStudentCount >= MAX_STUDENTS_PER_COACH) {
       return c.json({
-        message: `Coach already has ${MAX_STUDENTS_PER_COACH} students.`,
+        message: `教练已有 ${MAX_STUDENTS_PER_COACH} 名学生。`,
       }, 400);
     }
 
@@ -77,7 +77,7 @@ export function useApiStudentSelectCoach(app: Hono) {
         student.campusId,
         NotificationTarget.Coach,
         coachId,
-        `New student selection request from ${student.realName}`,
+        `来自 ${student.realName} 的新学生选择请求`,
         `/coach/selection/pending`, // Link for coach to view pending selections
         Date.now(),
       );
@@ -85,16 +85,16 @@ export function useApiStudentSelectCoach(app: Hono) {
         campusId: student.campusId,
         type: SystemLogType.StudentSelectCoach,
         text:
-          `Student ${student.realName} (ID: ${student.id}) selected Coach ${coach.realName} (ID: ${coach.id}).`,
+          `学生 ${student.realName} (ID: ${student.id}) 选择了教练 ${coach.realName} (ID: ${coach.id})。`,
         relatedId: id,
       });
       return c.json({
         message:
-          "Coach selection request sent successfully. Waiting for coach approval.",
+          "教练选择请求已成功发送。等待教练批准。",
       });
     } catch (error) {
-      console.error("Error selecting coach:", error);
-      return c.json({ message: "An unexpected error occurred." }, 500);
+      console.error("选择教练时出错：", error);
+      return c.json({ message: "发生意外错误。" }, 500);
     }
   });
 }
