@@ -63,4 +63,3 @@ export function useApiStudentRoutes(app: Hono) {
   useApiStudentMatchAll(app);
   useApiStudentMeCoaches(app);
 }
-

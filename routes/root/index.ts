@@ -13,4 +13,3 @@ export function useRootRoutes(app: Hono) {
   useRootCampuses(app);
   useRootAdmins(app);
 }
-

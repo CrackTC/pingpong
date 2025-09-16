@@ -7,4 +7,3 @@ export function useApiDebugClaim(app: Hono) {
     return c.json(claim);
   });
 }
-

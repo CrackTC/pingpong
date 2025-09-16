@@ -39,4 +39,3 @@ export function useCoachRoutes(app: Hono) {
   useCoachSelectionPending(app);
   useCoachMigrationPending(app);
 }
-

@@ -11,4 +11,3 @@ export function useApiRootRoutes(app: Hono) {
   useApiAddAdmin(app);
   useApiGetAllAdmins(app);
 }
-

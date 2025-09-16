@@ -35,4 +35,3 @@ export function useAdminRoutes(app: Hono) {
   useAdminTableAdd(app);
   useAdminTableAll(app);
 }
-

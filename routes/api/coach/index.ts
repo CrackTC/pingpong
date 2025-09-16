@@ -55,4 +55,3 @@ export function useApiCoachRoutes(app: Hono) {
   useApiCoachMigrationReject(app);
   useApiCoachMigrationPending(app);
 }
-

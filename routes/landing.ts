@@ -6,4 +6,3 @@ export function useLanding(app: Hono) {
     return c.html(page);
   });
 }
-

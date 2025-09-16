@@ -43,4 +43,3 @@ export function useStudentRoutes(app: Hono) {
   useStudentAppointmentCancelling(app);
   useStudentAppointmentReview(app);
 }
-

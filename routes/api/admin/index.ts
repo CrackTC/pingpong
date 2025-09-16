@@ -51,4 +51,3 @@ export function useApiAdminRoutes(app: Hono) {
   useApiAdminMigrationsApprove(app);
   useApiAdminMigrationsReject(app);
 }
-
