@@ -1,0 +1,58 @@
+import { Hono } from "hono";
+
+import { useApiCoachLogin } from "./login.ts";
+import { useApiCoachMe } from "./me.ts";
+import { useApiCoachPassword } from "./password.ts";
+import { useApiCoachEdit } from "./edit.ts";
+import { useApiCoachHome } from "./home.ts";
+import { useApiCoachNotifications } from "./notifications.ts";
+import { useApiCoachNotificationsMarkRead } from "./notifications/mark-read.ts";
+import { useApiCoachStudents } from "./students.ts";
+import { useApiCoachAvatar } from "./avatar.ts";
+import { useApiCoachTimeslotAll } from "./timeslot/all.ts";
+import { useApiCoachTimeslotAdd } from "./timeslot/add.ts";
+import { useApiCoachAppointmentPending } from "./appointment/pending.ts";
+import { useApiCoachAppointmentAll } from "./appointment/all.ts";
+import { useApiCoachAppointmentApprove } from "./appointment/approve.ts";
+import { useApiCoachAppointmentReject } from "./appointment/reject.ts";
+import { useApiCoachAppointmentCancel } from "./appointment/cancel.ts";
+import { useApiCoachAppointmentCancelling } from "./appointment/cancelling.ts";
+import { useApiCoachAppointmentReview } from "./appointment/review.ts";
+import { useApiCoachApproveCancellation } from "./appointment/cancel/approve.ts";
+import { useApiCoachSelectionPending } from "./selection/pending.ts";
+import { useApiCoachSelectionApprove } from "./selection/approve.ts";
+import { useApiCoachSelectionReject } from "./selection/reject.ts";
+import { useApiCoachRegister } from "./register.ts";
+import { useApiCoachMigrationApprove } from "./migration/approve.ts";
+import { useApiCoachMigrationReject } from "./migration/reject.ts";
+import { useApiCoachMigrationPending } from "./migration/pending.ts";
+
+export function useApiCoachRoutes(app: Hono) {
+  useApiCoachLogin(app);
+  useApiCoachMe(app);
+  useApiCoachPassword(app);
+  useApiCoachEdit(app);
+  useApiCoachHome(app);
+  useApiCoachNotifications(app);
+  useApiCoachNotificationsMarkRead(app);
+  useApiCoachStudents(app);
+  useApiCoachAvatar(app);
+  useApiCoachTimeslotAll(app);
+  useApiCoachTimeslotAdd(app);
+  useApiCoachAppointmentPending(app);
+  useApiCoachAppointmentAll(app);
+  useApiCoachAppointmentApprove(app);
+  useApiCoachAppointmentReject(app);
+  useApiCoachAppointmentCancel(app);
+  useApiCoachAppointmentCancelling(app);
+  useApiCoachAppointmentReview(app);
+  useApiCoachApproveCancellation(app);
+  useApiCoachSelectionPending(app);
+  useApiCoachSelectionApprove(app);
+  useApiCoachSelectionReject(app);
+  useApiCoachRegister(app);
+  useApiCoachMigrationApprove(app);
+  useApiCoachMigrationReject(app);
+  useApiCoachMigrationPending(app);
+}
+

@@ -1,0 +1,66 @@
+import { Hono } from "hono";
+
+import { useApiStudentLogin } from "./login.ts";
+import { useApiStudentRegister } from "./register.ts";
+import { useApiStudentMe } from "./me.ts";
+import { useApiStudentPassword } from "./password.ts";
+import { useApiStudentEdit } from "./edit.ts";
+import { useApiStudentHome } from "./home.ts";
+import { useApiStudentNotifications } from "./notifications.ts";
+import { useApiStudentNotificationsMarkRead } from "./notifications/mark-read.ts";
+import { useApiStudentCoachSearch } from "./coach/search.ts";
+import { useApiStudentCoachTimeslots } from "./coach/timeslots.ts";
+import { useApiStudentSelectCoach } from "./coach/select.ts";
+import { useApiStudentCoachChange } from "./coach/change.ts";
+import { useApiStudentSelectionAll } from "./selection/all.ts";
+import { useApiStudentMigrationAll } from "./migration/all.ts";
+import { useApiStudentTableAvailable } from "./table/available.ts";
+import { useApiStudentAppointmentBook } from "./appointment/book.ts";
+import { useApiStudentAppointmentAll } from "./appointment/all.ts";
+import { useApiStudentAppointmentGet } from "./appointment/get.ts";
+import { useApiStudentAppointmentCancel } from "./appointment/cancel.ts";
+import { useApiStudentAppointmentCancelling } from "./appointment/cancelling.ts";
+import { useApiStudentApproveCancellation } from "./appointment/cancel/approve.ts";
+import { useApiStudentAppointmentReview } from "./appointment/review.ts";
+import { useApiStudentAppointmentCancelCount } from "./appointment/cancel-count.ts";
+import { useApiStudentRecharge } from "./recharge.ts";
+import { useApiStudentRechargeAll } from "./recharge/all.ts";
+import { useApiStudentDeductionAll } from "./deduction/all.ts";
+import { useApiStudentContestAll } from "./contest/all.ts";
+import { useApiStudentContestRegister } from "./contest/register.ts";
+import { useApiStudentMatchAll } from "./match/all.ts";
+import { useApiStudentMeCoaches } from "./me/coaches.ts";
+
+export function useApiStudentRoutes(app: Hono) {
+  useApiStudentLogin(app);
+  useApiStudentRegister(app);
+  useApiStudentMe(app);
+  useApiStudentPassword(app);
+  useApiStudentEdit(app);
+  useApiStudentHome(app);
+  useApiStudentNotifications(app);
+  useApiStudentNotificationsMarkRead(app);
+  useApiStudentCoachSearch(app);
+  useApiStudentCoachTimeslots(app);
+  useApiStudentSelectCoach(app);
+  useApiStudentCoachChange(app);
+  useApiStudentSelectionAll(app);
+  useApiStudentMigrationAll(app);
+  useApiStudentTableAvailable(app);
+  useApiStudentAppointmentBook(app);
+  useApiStudentAppointmentAll(app);
+  useApiStudentAppointmentGet(app);
+  useApiStudentAppointmentCancel(app);
+  useApiStudentAppointmentCancelling(app);
+  useApiStudentApproveCancellation(app);
+  useApiStudentAppointmentReview(app);
+  useApiStudentAppointmentCancelCount(app);
+  useApiStudentRecharge(app);
+  useApiStudentRechargeAll(app);
+  useApiStudentDeductionAll(app);
+  useApiStudentContestAll(app);
+  useApiStudentContestRegister(app);
+  useApiStudentMatchAll(app);
+  useApiStudentMeCoaches(app);
+}
+

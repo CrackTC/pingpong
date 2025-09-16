@@ -1,0 +1,54 @@
+import { Hono } from "hono";
+
+import { useApiAdminLogin } from "./login.ts";
+import { useApiAdminHome } from "./home.ts";
+import { useApiAdminNotifications } from "./notifications.ts";
+import { useApiAdminNotificationsMarkRead } from "./notifications/mark-read.ts";
+import { useApiAdminTableAdd } from "./table/add.ts";
+import { useApiAdminTableAll } from "./table/all.ts";
+import { useApiAdminAppointmentCancel } from "./appointment/cancel.ts";
+import { useApiAdminSystemLogs } from "./system-logs.ts";
+import { useApiAdminCoachEdit } from "./coach/edit.ts";
+import { useApiAdminCoachAdd } from "./coach/add.ts";
+import { useApiAdminCoachSearch } from "./coach/search.ts";
+import { useApiAdminCoachDelete } from "./coach/delete.ts";
+import { useApiAdminCoachPending } from "./coach/pending.ts";
+import { useApiAdminCoachAppointments } from "./coach/appointments.ts";
+import { useApiAdminStudentEdit } from "./student/edit.ts";
+import { useApiAdminStudentAdd } from "./student/add.ts";
+import { useApiAdminStudentSearch } from "./student/search.ts";
+import { useApiAdminStudentGet } from "./student/get.ts";
+import { useApiAdminStudentDelete } from "./student/delete.ts";
+import { useApiAdminStudentRecharge } from "./student/recharge.ts";
+import { useApiAdminStudentAppointments } from "./student/appointments.ts";
+import { useApiAdminMigrations } from "./migrations.ts";
+import { useApiAdminMigrationsApprove } from "./migrations/approve.ts";
+import { useApiAdminMigrationsReject } from "./migrations/reject.ts";
+
+export function useApiAdminRoutes(app: Hono) {
+  useApiAdminLogin(app);
+  useApiAdminHome(app);
+  useApiAdminNotifications(app);
+  useApiAdminNotificationsMarkRead(app);
+  useApiAdminTableAdd(app);
+  useApiAdminTableAll(app);
+  useApiAdminAppointmentCancel(app);
+  useApiAdminSystemLogs(app);
+  useApiAdminCoachEdit(app);
+  useApiAdminCoachAdd(app);
+  useApiAdminCoachSearch(app);
+  useApiAdminCoachDelete(app);
+  useApiAdminCoachPending(app);
+  useApiAdminCoachAppointments(app);
+  useApiAdminStudentEdit(app);
+  useApiAdminStudentAdd(app);
+  useApiAdminStudentSearch(app);
+  useApiAdminStudentGet(app);
+  useApiAdminStudentDelete(app);
+  useApiAdminStudentRecharge(app);
+  useApiAdminStudentAppointments(app);
+  useApiAdminMigrations(app);
+  useApiAdminMigrationsApprove(app);
+  useApiAdminMigrationsReject(app);
+}
+
