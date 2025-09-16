@@ -9,6 +9,7 @@ import { useApiGetAllCampuses } from "./campus/all.ts";
 import { useApiAppointmentReviews } from "./appointment/reviews.ts";
 import { useApiPayment } from "./payment.ts";
 import { useApiDebugArrangeMatches } from "./debug/arrangeMatches.ts";
+import { useApiDebugClaim } from "./debug/claim.ts";
 
 export function useApiRoutes(app: Hono) {
   useApiRootRoutes(app);
@@ -20,5 +21,5 @@ export function useApiRoutes(app: Hono) {
   useApiAppointmentReviews(app);
   useApiPayment(app);
   useApiDebugArrangeMatches(app);
+  useApiDebugClaim(app);
 }
-

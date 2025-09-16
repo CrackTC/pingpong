@@ -32,10 +32,4 @@ app.use("/api/campus/*", userAuth);
 // Mount all routes via aggregators
 useRoutes(app);
 
-app.get("/", async (c) => {
-  const claim = await getClaim(c);
-  return c.json(claim);
-});
-
 Deno.serve(app.fetch);
-

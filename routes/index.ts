@@ -6,9 +6,11 @@ import { useCoachRoutes } from "./coach/index.ts";
 import { useStudentRoutes } from "./student/index.ts";
 import { useApiRoutes } from "./api/index.ts";
 import { usePayment } from "./payment.ts";
+import { useLanding } from "./landing.ts";
 
 export function useRoutes(app: Hono) {
   // UI routes grouped by role
+  useLanding(app);
   useRootRoutes(app);
   useAdminRoutes(app);
   useCoachRoutes(app);
@@ -20,4 +22,3 @@ export function useRoutes(app: Hono) {
   // API routes
   useApiRoutes(app);
 }
-

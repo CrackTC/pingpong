@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>请选择身份登录</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container py-5">
+      <div class="row justify-content-center mb-4">
+        <div class="col-auto">
+          <h2 class="mb-0">请选择身份登录</h2>
+        </div>
+      </div>
+
+      <div class="row g-3 justify-content-center">
+        <div class="col-12 col-md-6 col-lg-3">
+          <a href="/student/login" class="btn btn-primary w-100 py-3">学生登录</a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <a href="/coach/login" class="btn btn-success w-100 py-3">教练登录</a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <a href="/admin/login" class="btn btn-warning w-100 py-3">管理员登录</a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <a href="/root/login" class="btn btn-secondary w-100 py-3">Root登录</a>
+        </div>
+      </div>
+
+      <div class="row justify-content-center mt-4">
+        <div class="col-auto">
+          <a href="/api/debug/claim" class="link-secondary small">查看当前 Claim (调试)</a>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+  </html>
+
