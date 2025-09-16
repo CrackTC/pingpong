@@ -1,139 +1,162 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>所有比赛</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-</head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
 
-<body class="bg-light">
+  <body class="bg-light">
     <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-10">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title text-center mb-4">
-                            所有比赛
-                        </h3>
-                        <div id="message-area" class="alert d-none" role="alert"></div>
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">
+                所有比赛
+              </h3>
+              <div id="message-area" class="alert d-none" role="alert"></div>
 
-                        <div id="contests-list" class="mt-4" style="overflow-x: auto">
-                            <!-- Contests will be loaded here -->
-                        </div>
+              <div id="contests-list" class="mt-4" style="overflow-x: auto">
+                <!-- Contests will be loaded here -->
+              </div>
 
-                        <div class="d-grid gap-2 mt-3">
-                            <a href="/student/home" class="btn btn-secondary">返回主页</a>
-                        </div>
-                    </div>
-                </div>
+              <div class="d-grid gap-2 mt-3">
+                <a href="/student/home" class="btn btn-secondary">返回主页</a>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
     <script>
-        const messageArea = document.getElementById("message-area");
-        const contestsListDiv = document.getElementById("contests-list");
+      const messageArea = document.getElementById("message-area");
+      const contestsListDiv = document.getElementById("contests-list");
 
-        function displayMessage(message, type) {
-            messageArea.textContent = message;
-            messageArea.className = `alert alert-${type}`;
-            messageArea.classList.remove("d-none");
+      function displayMessage(message, type) {
+        messageArea.textContent = message;
+        messageArea.className = `alert alert-${type}`;
+        messageArea.classList.remove("d-none");
+      }
+
+      function getContestTypeString(type) {
+        switch (type) {
+          case 1:
+            return "初级";
+          case 2:
+            return "中级";
+          case 3:
+            return "高级";
+          default:
+            return "未知";
         }
+      }
 
-        function getContestTypeString(type) {
-            switch (type) {
-                case 1: return "初级";
-                case 2: return "中级";
-                case 3: return "高级";
-                default: return "未知";
-            }
-        }
+      async function fetchContests() {
+        try {
+          const response = await fetch("/api/student/contest/all");
+          const contests = await response.json();
 
-        async function fetchContests() {
-            try {
-                const response = await fetch("/api/student/contest/all");
-                const contests = await response.json();
+          if (response.ok) {
+            if (contests.length > 0) {
+              let contestsHtml =
+                '<table class="table table-striped"><thead><tr><th>名称</th><th>类型</th><th>日期</th><th>操作</th></tr></thead><tbody>';
+              contests.forEach((contest) => {
+                const contestDate = new Date(contest.time);
+                const now = Date.now();
+                const isPast = contest.time < now;
+                const buttonText = isPast ? "报名已关闭" : "报名";
+                const buttonClass = isPast
+                  ? "btn-secondary"
+                  : "btn-primary register-btn";
+                const isDisabled = isPast ? "disabled" : "";
 
-                if (response.ok) {
-                    if (contests.length > 0) {
-                        let contestsHtml =
-                            '<table class="table table-striped"><thead><tr><th>名称</th><th>类型</th><th>日期</th><th>操作</th></tr></thead><tbody>';
-                        contests.forEach((contest) => {
-                            const contestDate = new Date(contest.time);
-                            const now = Date.now();
-                            const isPast = contest.time < now;
-                            const buttonText = isPast ? "报名已关闭" : "报名";
-                            const buttonClass = isPast ? "btn-secondary" : "btn-primary register-btn";
-                            const isDisabled = isPast ? "disabled" : "";
+                contestsHtml += `<tr><td>${contest.name}</td><td>${
+                  getContestTypeString(contest.type)
+                }</td><td>${contestDate.toLocaleString()}</td><td><button class="btn ${buttonClass} btn-sm" data-contest-id="${contest.id}" ${isDisabled}>${buttonText}</button></td></tr>`;
+              });
+              contestsHtml += "</tbody></table>";
+              contestsListDiv.innerHTML = contestsHtml;
 
-                            contestsHtml += `<tr><td>${contest.name}</td><td>${getContestTypeString(contest.type)}</td><td>${contestDate.toLocaleString()}</td><td><button class="btn ${buttonClass} btn-sm" data-contest-id="${contest.id}" ${isDisabled}>${buttonText}</button></td></tr>`;
-                        });
-                        contestsHtml += "</tbody></table>";
-                        contestsListDiv.innerHTML = contestsHtml;
-
-                        document.querySelectorAll('.register-btn').forEach(button => {
-                                                            button.addEventListener('click', async (event) => {
-                                                                const clickedButton = event.currentTarget;
-                                                                if (!clickedButton) {
-                                                                    console.error("点击的按钮为空/未定义。");
-                                                                    return;
-                                                                }
-                                                                const contestId = clickedButton.dataset.contestId;
-                                                                clickedButton.disabled = true; // Disable button immediately
-                                                                clickedButton.textContent = "报名中...";
-                            
-                                                                try {
-                                                                    const response = await fetch('/api/student/contest/register', {
-                                                                        method: 'POST',
-                                                                        headers: {
-                                                                            'Content-Type': 'application/json'
-                                                                        },
-                                                                        body: JSON.stringify({ contestId: parseInt(contestId) })
-                                                                    });
-                            
-                                                                    const data = await response.json();
-                            
-                                                                    if (response.ok) {
-                                                                        displayMessage(data.message, "success");
-                                                                        clickedButton.textContent = "已报名";
-                                                                        clickedButton.classList.remove("btn-primary");
-                                                                        clickedButton.classList.add("btn-success");
-                                                                    } else {
-                                                                        displayMessage(data.message || '报名失败。', "danger");
-                                                                        clickedButton.disabled = false; // Re-enable on failure
-                                                                        clickedButton.textContent = "报名";
-                                                                    }
-                                                                } catch (error) {
-                                                                    displayMessage('发生意外错误。', "danger");
-                                                                    clickedButton.disabled = false; // Re-enable on failure
-                                                                    clickedButton.textContent = "报名";
-                                                                }
-                                                            });                        });
-                    } else {
-                        contestsListDiv.innerHTML =
-                            '<p class="text-center">未找到比赛。</p>';
+              document.querySelectorAll(".register-btn").forEach(
+                (button) => {
+                  button.addEventListener("click", async (event) => {
+                    const clickedButton = event.currentTarget;
+                    if (!clickedButton) {
+                      console.error("点击的按钮为空/未定义。");
+                      return;
                     }
-                } else {
-                    displayMessage(
-                        contests.message || "获取比赛失败。",
-                        "danger",
-                    );
-                }
-            } catch (error) {
-                displayMessage(
-                    "获取比赛时发生意外错误。",
-                    "danger",
-                );
+                    const contestId = clickedButton.dataset.contestId;
+                    clickedButton.disabled = true; // Disable button immediately
+                    clickedButton.textContent = "报名中...";
+
+                    try {
+                      const response = await fetch(
+                        "/api/student/contest/register",
+                        {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            contestId: parseInt(contestId),
+                          }),
+                        },
+                      );
+
+                      const data = await response.json();
+
+                      if (response.ok) {
+                        displayMessage(data.message, "success");
+                        clickedButton.textContent = "已报名";
+                        clickedButton.classList.remove("btn-primary");
+                        clickedButton.classList.add("btn-success");
+                      } else {
+                        displayMessage(
+                          data.message || "报名失败。",
+                          "danger",
+                        );
+                        clickedButton.disabled = false; // Re-enable on failure
+                        clickedButton.textContent = "报名";
+                      }
+                    } catch (error) {
+                      displayMessage("发生意外错误。", "danger");
+                      clickedButton.disabled = false; // Re-enable on failure
+                      clickedButton.textContent = "报名";
+                    }
+                  });
+                },
+              );
+            } else {
+              contestsListDiv.innerHTML =
+                '<p class="text-center">未找到比赛。</p>';
             }
+          } else {
+            displayMessage(
+              contests.message || "获取比赛失败。",
+              "danger",
+            );
+          }
+        } catch (error) {
+          displayMessage(
+            "获取比赛时发生意外错误。",
+            "danger",
+          );
         }
+      }
 
-        fetchContests();
+      fetchContests();
     </script>
-</body>
-
+  </body>
 </html>

@@ -18,8 +18,7 @@ export function useApiStudentRecharge(app: Hono) {
 
     if (!amount || !Number.isInteger(amount) || amount < 10 || amount > 10000) {
       return c.json({
-        message:
-          "无效金额。金额必须是10到10000之间的整数。",
+        message: "无效金额。金额必须是10到10000之间的整数。",
       }, 400);
     }
 

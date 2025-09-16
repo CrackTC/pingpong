@@ -48,8 +48,7 @@ export function useApiStudentCoachChange(app: Hono) {
       const currentStudentCount = getSelectionCountForCoach(newCoachId);
       if (currentStudentCount >= MAX_STUDENTS_PER_COACH) {
         return c.json({
-          message:
-            `新教练已有 ${MAX_STUDENTS_PER_COACH} 名学生。`,
+          message: `新教练已有 ${MAX_STUDENTS_PER_COACH} 名学生。`,
         }, 400);
       }
 

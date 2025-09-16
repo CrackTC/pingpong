@@ -1,283 +1,349 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>搜索教练时间段</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
-    <body class="bg-light">
-        <div class="container">
-            <div class="row justify-content-center mt-5">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title text-center mb-4">
-                                搜索教练时间段
-                            </h3>
-                            <div
-                                id="message-area"
-                                class="alert d-none"
-                                role="alert"
-                            ></div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>搜索教练时间段</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">
+                搜索教练时间段
+              </h3>
+              <div
+                id="message-area"
+                class="alert d-none"
+                role="alert"
+              >
+              </div>
 
-                            <div class="mb-3">
-                                <label for="coachSelect" class="form-label"
-                                    >选择教练:</label
-                                >
-                                <select class="form-select" id="coachSelect">
-                                    <option value="">
-                                        -- 选择一位教练 --
-                                    </option>
-                                </select>
-                            </div>
+              <div class="mb-3">
+                <label for="coachSelect" class="form-label">选择教练:</label>
+                <select class="form-select" id="coachSelect">
+                  <option value="">
+                    -- 选择一位教练 --
+                  </option>
+                </select>
+              </div>
 
-                            <div id="timeslots-list" class="mt-4">
-                                <p class="text-center">
-                                    选择一位教练以查看其时间段。
-                                </p>
-                            </div>
+              <div id="timeslots-list" class="mt-4">
+                <p class="text-center">
+                  选择一位教练以查看其时间段。
+                </p>
+              </div>
 
-                            <div class="d-grid gap-2 mt-3">
-                                <a
-                                    href="/student/home"
-                                    class="btn btn-secondary"
-                                    >返回主页</a
-                                >
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              <div class="d-grid gap-2 mt-3">
+                <a
+                  href="/student/home"
+                  class="btn btn-secondary"
+                >返回主页</a>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <div class="modal fade" id="bookAppointmentModal" tabindex="-1" aria-labelledby="bookAppointmentModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="bookAppointmentModalLabel">预订预约</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="tableSelect" class="form-label">选择球台:</label>
-                            <select class="form-select" id="tableSelect">
-                                <option value="">让系统选择</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-primary" id="confirmBookingBtn">确定</button>
-                    </div>
-                </div>
+    <div
+      class="modal fade"
+      id="bookAppointmentModal"
+      tabindex="-1"
+      aria-labelledby="bookAppointmentModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="bookAppointmentModalLabel">预订预约</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="tableSelect" class="form-label">选择球台:</label>
+              <select class="form-select" id="tableSelect">
+                <option value="">让系统选择</option>
+              </select>
             </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              取消
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="confirmBookingBtn"
+            >
+              确定
+            </button>
+          </div>
         </div>
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"
-        ></script>
-        <script>
-            const messageArea = document.getElementById("message-area");
-            const coachSelect = document.getElementById("coachSelect");
-            const timeslotsListDiv = document.getElementById("timeslots-list");
-            const bookAppointmentModal = new bootstrap.Modal(document.getElementById('bookAppointmentModal'));
-            const tableSelect = document.getElementById('tableSelect');
-            const confirmBookingBtn = document.getElementById('confirmBookingBtn');
-            let selectedTimeslotId = null;
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const messageArea = document.getElementById("message-area");
+      const coachSelect = document.getElementById("coachSelect");
+      const timeslotsListDiv = document.getElementById(
+        "timeslots-list",
+      );
+      const bookAppointmentModal = new bootstrap.Modal(
+        document.getElementById("bookAppointmentModal"),
+      );
+      const tableSelect = document.getElementById("tableSelect");
+      const confirmBookingBtn = document.getElementById(
+        "confirmBookingBtn",
+      );
+      let selectedTimeslotId = null;
 
-            function displayMessage(message, type) {
-                messageArea.textContent = message;
-                messageArea.className = `alert alert-${type}`;
-                messageArea.classList.remove("d-none");
+      function displayMessage(message, type) {
+        messageArea.textContent = message;
+        messageArea.className = `alert alert-${type}`;
+        messageArea.classList.remove("d-none");
+      }
+
+      function getWeekdayString(weekday) {
+        const weekdays = [
+          "星期日",
+          "星期一",
+          "星期二",
+          "星期三",
+          "星期四",
+          "星期五",
+          "星期六",
+        ];
+        return weekdays[weekday];
+      }
+
+      async function fetchStudentCoaches() {
+        try {
+          const response = await fetch("/api/student/me/coaches");
+          const coaches = await response.json();
+
+          if (response.ok) {
+            if (coaches.length > 0) {
+              coaches.forEach((coach) => {
+                const option = document.createElement("option");
+                option.value = coach.coachId;
+                option.textContent = coach.coachRealName ||
+                  coach.coachUsername ||
+                  `教练ID: ${coach.coachId}`;
+                coachSelect.appendChild(option);
+              });
+            } else {
+              const option = document.createElement("option");
+              option.value = "";
+              option.textContent = "未找到教练。";
+              option.disabled = true;
+              coachSelect.appendChild(option);
             }
+          } else {
+            displayMessage(
+              coaches.message || "获取教练失败。",
+              "danger",
+            );
+          }
+        } catch (error) {
+          displayMessage(
+            "An unexpected error occurred while fetching coaches.",
+            "danger",
+          );
+        }
+      }
 
-            function getWeekdayString(weekday) {
-                const weekdays = [
-                    "星期日",
-                    "星期一",
-                    "星期二",
-                    "星期三",
-                    "星期四",
-                    "星期五",
-                    "星期六",
-                ];
-                return weekdays[weekday];
-            }
+      async function fetchCoachTimeslots(coachId) {
+        if (!coachId) {
+          timeslotsListDiv.innerHTML =
+            '<p class="text-center">Select a coach to view their timeslots.</p>';
+          return;
+        }
+        // Get the selected coach's name
+        const selectedCoachOption =
+          coachSelect.options[coachSelect.selectedIndex];
+        const selectedCoachName = selectedCoachOption.textContent;
 
-            async function fetchStudentCoaches() {
-                try {
-                    const response = await fetch("/api/student/me/coaches");
-                    const coaches = await response.json();
+        try {
+          const response = await fetch(
+            "/api/student/coach/timeslots",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                coachId: parseInt(coachId),
+              }),
+            },
+          );
+          const timeslots = await response.json();
 
-                    if (response.ok) {
-                        if (coaches.length > 0) {
-                            coaches.forEach((coach) => {
-                                const option = document.createElement("option");
-                                option.value = coach.coachId;
-                                option.textContent =
-                                    coach.coachRealName ||
-                                    coach.coachUsername ||
-                                    `教练ID: ${coach.coachId}`;
-                                coachSelect.appendChild(option);
-                            });
-                        } else {
-                            const option = document.createElement("option");
-                            option.value = "";
-                            option.textContent = "未找到教练。";
-                            option.disabled = true;
-                            coachSelect.appendChild(option);
-                        }
-                    } else {
-                        displayMessage(
-                            coaches.message || "获取教练失败。",
-                            "danger",
-                        );
-                    }
-                } catch (error) {
-                    displayMessage(
-                        "An unexpected error occurred while fetching coaches.",
-                        "danger",
-                    );
+          if (response.ok) {
+            if (timeslots.length > 0) {
+              let timeslotsHtml =
+                `<h4 class="text-center mb-3">${selectedCoachName} 的可预约时段</h4>`;
+              timeslotsHtml +=
+                '<table class="table table-striped"><thead><tr><th>时间</th><th>星期</th><th>状态</th><th></th></tr></thead><tbody>';
+              timeslots.forEach((ts) => {
+                const startTime =
+                  String(ts.startHour).padStart(2, "0") +
+                  ":" +
+                  String(ts.startMinute).padStart(2, "0");
+                const endTime = String(ts.endHour).padStart(2, "0") +
+                  ":" +
+                  String(ts.endMinute).padStart(2, "0");
+
+                const now = new Date();
+                const appointmentDate = new Date();
+                appointmentDate.setHours(
+                  ts.startHour,
+                  ts.startMinute,
+                  0,
+                  0,
+                );
+
+                let diff = ts.weekday - now.getDay();
+                if (
+                  diff < 0 ||
+                  (diff === 0 &&
+                    appointmentDate.getTime() < now.getTime())
+                ) {
+                  diff += 7;
                 }
-            }
+                appointmentDate.setDate(now.getDate() + diff);
 
-            async function fetchCoachTimeslots(coachId) {
-                if (!coachId) {
-                    timeslotsListDiv.innerHTML =
-                        '<p class="text-center">Select a coach to view their timeslots.</p>';
-                    return;
-                }
-                // Get the selected coach's name
-                const selectedCoachOption =
-                    coachSelect.options[coachSelect.selectedIndex];
-                const selectedCoachName = selectedCoachOption.textContent;
+                const appointmentDateStr = appointmentDate
+                  .toLocaleDateString();
+                const timeStr =
+                  `${appointmentDateStr} ${startTime} - ${endTime}`;
 
-                try {
+                const status = ts.isBooked
+                  ? `<span class="text-danger">已被预约（${ts.tableName}）</span>`
+                  : `<span class="text-success">可预约</span>`;
+                const bookButton = ts.isBooked
+                  ? ""
+                  : `<button class="btn btn-primary btn-sm book-btn" data-timeslot-id="${ts.id}">预约</button>`;
+                timeslotsHtml += `<tr><td>${timeStr}</td><td>${
+                  getWeekdayString(ts.weekday)
+                }</td><td>${status}</td><td>${bookButton}</td></tr>`;
+              });
+              timeslotsHtml += "</tbody></table>";
+              timeslotsListDiv.innerHTML = timeslotsHtml;
+
+              document.querySelectorAll(".book-btn").forEach(
+                (button) => {
+                  button.addEventListener("click", async (event) => {
+                    selectedTimeslotId =
+                      event.target.dataset.timeslotId;
+
                     const response = await fetch(
-                        "/api/student/coach/timeslots",
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                                coachId: parseInt(coachId),
-                            }),
-                        },
+                      "/api/student/table/available",
+                      {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          timeslotId: selectedTimeslotId,
+                        }),
+                      },
                     );
-                    const timeslots = await response.json();
 
                     if (response.ok) {
-                        if (timeslots.length > 0) {
-                            let timeslotsHtml = `<h4 class="text-center mb-3">${selectedCoachName} 的可预约时段</h4>`;
-                            timeslotsHtml +=
-                                '<table class="table table-striped"><thead><tr><th>时间</th><th>星期</th><th>状态</th><th></th></tr></thead><tbody>';
-                            timeslots.forEach((ts) => {
-                                const startTime =
-                                    String(ts.startHour).padStart(2, "0") +
-                                    ":" +
-                                    String(ts.startMinute).padStart(2, "0");
-                                const endTime =
-                                    String(ts.endHour).padStart(2, "0") +
-                                    ":" +
-                                    String(ts.endMinute).padStart(2, "0");
-
-                                const now = new Date();
-                                const appointmentDate = new Date();
-                                appointmentDate.setHours(ts.startHour, ts.startMinute, 0, 0);
-
-                                let diff = ts.weekday - now.getDay();
-                                if (diff < 0 || (diff === 0 && appointmentDate.getTime() < now.getTime())) {
-                                    diff += 7;
-                                }
-                                appointmentDate.setDate(now.getDate() + diff);
-
-                                const appointmentDateStr = appointmentDate.toLocaleDateString();
-                                const timeStr = `${appointmentDateStr} ${startTime} - ${endTime}`;
-
-                                const status = ts.isBooked ? `<span class="text-danger">已被预约（${ts.tableName}）</span>` : `<span class="text-success">可预约</span>`;
-                                const bookButton = ts.isBooked ? '' : `<button class="btn btn-primary btn-sm book-btn" data-timeslot-id="${ts.id}">预约</button>`;
-                                timeslotsHtml += `<tr><td>${timeStr}</td><td>${getWeekdayString(ts.weekday)}</td><td>${status}</td><td>${bookButton}</td></tr>`;
-                            });
-                            timeslotsHtml += "</tbody></table>";
-                            timeslotsListDiv.innerHTML = timeslotsHtml;
-
-                            document.querySelectorAll('.book-btn').forEach(button => {
-                                button.addEventListener('click', async (event) => {
-                                    selectedTimeslotId = event.target.dataset.timeslotId;
-                                    
-                                    const response = await fetch('/api/student/table/available', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ timeslotId: selectedTimeslotId })
-                                    });
-
-                                    if (response.ok) {
-                                        const availableTables = await response.json();
-                                        tableSelect.innerHTML = '<option value="">Let system select</option>';
-                                        availableTables.forEach(table => {
-                                            const option = document.createElement('option');
-                                            option.value = table.id;
-                                            option.textContent = table.name;
-                                            tableSelect.appendChild(option);
-                                        });
-                                        bookAppointmentModal.show();
-                                    } else {
-                                        const error = await response.json();
-                                        displayMessage(error.message || 'Failed to fetch available tables.', 'danger');
-                                    }
-                                });
-                            });
-                        } else {
-                            timeslotsListDiv.innerHTML = `<h4 class="text-center mb-3">${selectedCoachName} 的可预约时段</h4><p class="text-center">该教练暂无可用时段。</p>`;
-                        }
+                      const availableTables = await response.json();
+                      tableSelect.innerHTML =
+                        '<option value="">Let system select</option>';
+                      availableTables.forEach((table) => {
+                        const option = document.createElement("option");
+                        option.value = table.id;
+                        option.textContent = table.name;
+                        tableSelect.appendChild(option);
+                      });
+                      bookAppointmentModal.show();
                     } else {
-                        displayMessage(
-                            timeslots.message || "获取时间段失败。",
-                            "danger",
-                        );
-                        timeslotsListDiv.innerHTML = `<h4 class="text-center mb-3">${selectedCoachName} 的可预约时段</h4><p class="text-center">加载时间段失败。</p>`;
-                    }
-                } catch (error) {
-                    displayMessage(
-                        "获取时间段时发生未知错误。",
+                      const error = await response.json();
+                      displayMessage(
+                        error.message ||
+                          "Failed to fetch available tables.",
                         "danger",
-                    );
-                    timeslotsListDiv.innerHTML = `<h4 class="text-center mb-3">${selectedCoachName} 的可预约时段</h4><p class="text-center">加载时间段时发生错误。</p>`;
-                }
+                      );
+                    }
+                  });
+                },
+              );
+            } else {
+              timeslotsListDiv.innerHTML =
+                `<h4 class="text-center mb-3">${selectedCoachName} 的可预约时段</h4><p class="text-center">该教练暂无可用时段。</p>`;
             }
+          } else {
+            displayMessage(
+              timeslots.message || "获取时间段失败。",
+              "danger",
+            );
+            timeslotsListDiv.innerHTML =
+              `<h4 class="text-center mb-3">${selectedCoachName} 的可预约时段</h4><p class="text-center">加载时间段失败。</p>`;
+          }
+        } catch (error) {
+          displayMessage(
+            "获取时间段时发生未知错误。",
+            "danger",
+          );
+          timeslotsListDiv.innerHTML =
+            `<h4 class="text-center mb-3">${selectedCoachName} 的可预约时段</h4><p class="text-center">加载时间段时发生错误。</p>`;
+        }
+      }
 
-            coachSelect.addEventListener("change", (event) => {
-                const selectedCoachId = event.target.value;
-                fetchCoachTimeslots(selectedCoachId);
-            });
+      coachSelect.addEventListener("change", (event) => {
+        const selectedCoachId = event.target.value;
+        fetchCoachTimeslots(selectedCoachId);
+      });
 
-            confirmBookingBtn.addEventListener('click', async () => {
-                const tableId = tableSelect.value;
-                const response = await fetch('/api/student/appointment/book', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ timeslotId: selectedTimeslotId, tableId: tableId ? parseInt(tableId) : null })
-                });
+      confirmBookingBtn.addEventListener("click", async () => {
+        const tableId = tableSelect.value;
+        const response = await fetch("/api/student/appointment/book", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            timeslotId: selectedTimeslotId,
+            tableId: tableId ? parseInt(tableId) : null,
+          }),
+        });
 
-                if (response.ok) {
-                    displayMessage('Appointment booked successfully!', 'success');
-                    bookAppointmentModal.hide();
-                    fetchCoachTimeslots(coachSelect.value);
-                } else {
-                    const error = await response.json();
-                    displayMessage(error.message || 'Failed to book appointment.', 'danger');
-                }
-            });
+        if (response.ok) {
+          displayMessage("Appointment booked successfully!", "success");
+          bookAppointmentModal.hide();
+          fetchCoachTimeslots(coachSelect.value);
+        } else {
+          const error = await response.json();
+          displayMessage(
+            error.message || "Failed to book appointment.",
+            "danger",
+          );
+        }
+      });
 
-            fetchStudentCoaches(); // 初次加载：获取教练列表
-        </script>
-    </body>
+      fetchStudentCoaches(); // 初次加载：获取教练列表
+    </script>
+  </body>
 </html>

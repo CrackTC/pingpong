@@ -51,12 +51,27 @@ export function useApiStudentContestAll(app: Hono) {
 
         const contestTime = getFourthSundayOfMonth(yearToAdd, monthToAdd);
 
-        const monthName = new Date(yearToAdd, monthToAdd).toLocaleString('zh-CN', { month: 'long' });
+        const monthName = new Date(yearToAdd, monthToAdd).toLocaleString(
+          "zh-CN",
+          { month: "long" },
+        );
 
         // Add Beginner, Intermediate, Senior contests for the determined month
-        addContest(`${yearToAdd}年${monthName}月度赛 - 初级组`, ContestType.Junior, contestTime);
-        addContest(`${yearToAdd}年${monthName}月度赛 - 中级组`, ContestType.Mid, contestTime);
-        addContest(`${yearToAdd}年${monthName}月度赛 - 高级组`, ContestType.Senior, contestTime);
+        addContest(
+          `${yearToAdd}年${monthName}月度赛 - 初级组`,
+          ContestType.Junior,
+          contestTime,
+        );
+        addContest(
+          `${yearToAdd}年${monthName}月度赛 - 中级组`,
+          ContestType.Mid,
+          contestTime,
+        );
+        addContest(
+          `${yearToAdd}年${monthName}月度赛 - 高级组`,
+          ContestType.Senior,
+          contestTime,
+        );
 
         scheduleTask(arrangeMatches, new Date(contestTime));
       }

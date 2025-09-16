@@ -1,153 +1,181 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>待处理预约</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
-    <body class="bg-light">
-        <div class="container">
-            <div class="row justify-content-center mt-5">
-                <div class="col-md-10">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title text-center mb-4">
-                                待处理预约
-                            </h3>
-                            <div
-                                id="message-area"
-                                class="alert d-none"
-                                role="alert"
-                            ></div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>待处理预约</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">
+                待处理预约
+              </h3>
+              <div
+                id="message-area"
+                class="alert d-none"
+                role="alert"
+              >
+              </div>
 
-                            <div id="appointments-list" class="mt-4">
-                                <!-- Appointments will be loaded here -->
-                            </div>
+              <div id="appointments-list" class="mt-4">
+                <!-- Appointments will be loaded here -->
+              </div>
 
-                            <div class="d-grid gap-2 mt-3">
-                                <a
-                                    href="/coach/home"
-                                    class="btn btn-secondary"
-                                    >返回主页</a
-                                >
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              <div class="d-grid gap-2 mt-3">
+                <a
+                  href="/coach/home"
+                  class="btn btn-secondary"
+                >返回主页</a>
+              </div>
             </div>
+          </div>
         </div>
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"
-        ></script>
-        <script>
-            const messageArea = document.getElementById("message-area");
-            const appointmentsListDiv = document.getElementById("appointments-list");
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const messageArea = document.getElementById("message-area");
+      const appointmentsListDiv = document.getElementById(
+        "appointments-list",
+      );
 
-            function displayMessage(message, type) {
-                messageArea.textContent = message;
-                messageArea.className = `alert alert-${type}`;
-                messageArea.classList.remove("d-none");
-            }
+      function displayMessage(message, type) {
+        messageArea.textContent = message;
+        messageArea.className = `alert alert-${type}`;
+        messageArea.classList.remove("d-none");
+      }
 
-            function getWeekdayString(weekday) {
-                const weekdays = [
-                    "星期日",
-                    "星期一",
-                    "星期二",
-                    "星期三",
-                    "星期四",
-                    "星期五",
-                    "星期六",
-                ];
-                return weekdays[weekday];
-            }
+      function getWeekdayString(weekday) {
+        const weekdays = [
+          "星期日",
+          "星期一",
+          "星期二",
+          "星期三",
+          "星期四",
+          "星期五",
+          "星期六",
+        ];
+        return weekdays[weekday];
+      }
 
-            async function fetchPendingAppointments() {
-                try {
-                    const response = await fetch("/api/coach/appointment/pending");
-                    const appointments = await response.json();
+      async function fetchPendingAppointments() {
+        try {
+          const response = await fetch(
+            "/api/coach/appointment/pending",
+          );
+          const appointments = await response.json();
+
+          if (response.ok) {
+            if (appointments.length > 0) {
+              let appointmentsHtml =
+                '<table class="table table-striped"><thead><tr><th>学生</th><th>球台</th><th>星期</th><th>开始时间</th><th>结束时间</th><th>操作</th></tr></thead><tbody>';
+              appointments.forEach((a) => {
+                const startTime = String(a.startHour).padStart(2, "0") +
+                  ":" +
+                  String(a.startMinute).padStart(2, "0");
+                const endTime = String(a.endHour).padStart(2, "0") +
+                  ":" +
+                  String(a.endMinute).padStart(2, "0");
+                appointmentsHtml +=
+                  `<tr><td>${a.studentName}</td><td>${a.tableName}</td><td>${
+                    getWeekdayString(a.weekday)
+                  }</td><td>${startTime}</td><td>${endTime}</td><td><button class="btn btn-success btn-sm approve-btn" data-appointment-id="${a.id}">批准</button> <button class="btn btn-danger btn-sm reject-btn" data-appointment-id="${a.id}">拒绝</button></td></tr>`;
+              });
+              appointmentsHtml += "</tbody></table>";
+              appointmentsListDiv.innerHTML = appointmentsHtml;
+
+              document.querySelectorAll(".approve-btn").forEach(
+                (button) => {
+                  button.addEventListener("click", async (event) => {
+                    const appointmentId =
+                      event.target.dataset.appointmentId;
+                    const response = await fetch(
+                      "/api/coach/appointment/approve",
+                      {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          appointmentId: parseInt(appointmentId),
+                        }),
+                      },
+                    );
 
                     if (response.ok) {
-                        if (appointments.length > 0) {
-                            let appointmentsHtml =
-                                '<table class="table table-striped"><thead><tr><th>学生</th><th>球台</th><th>星期</th><th>开始时间</th><th>结束时间</th><th>操作</th></tr></thead><tbody>';
-                            appointments.forEach((a) => {
-                                const startTime =
-                                    String(a.startHour).padStart(2, "0") +
-                                    ":" +
-                                    String(a.startMinute).padStart(2, "0");
-                                const endTime =
-                                    String(a.endHour).padStart(2, "0") +
-                                    ":" +
-                                    String(a.endMinute).padStart(2, "0");
-                                appointmentsHtml += `<tr><td>${a.studentName}</td><td>${a.tableName}</td><td>${getWeekdayString(a.weekday)}</td><td>${startTime}</td><td>${endTime}</td><td><button class="btn btn-success btn-sm approve-btn" data-appointment-id="${a.id}">批准</button> <button class="btn btn-danger btn-sm reject-btn" data-appointment-id="${a.id}">拒绝</button></td></tr>`;
-                            });
-                            appointmentsHtml += "</tbody></table>";
-                            appointmentsListDiv.innerHTML = appointmentsHtml;
-
-                            document.querySelectorAll('.approve-btn').forEach(button => {
-                                button.addEventListener('click', async (event) => {
-                                    const appointmentId = event.target.dataset.appointmentId;
-                                    const response = await fetch('/api/coach/appointment/approve', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ appointmentId: parseInt(appointmentId) })
-                                    });
-
-                                    if (response.ok) {
-                                        displayMessage('预约批准成功！', 'success');
-                                        fetchPendingAppointments(); // Refresh the list
-                                    } else {
-                                        const error = await response.json();
-                                        displayMessage(error.message || '批准预约失败。', 'danger');
-                                    }
-                                });
-                            });
-
-                            document.querySelectorAll('.reject-btn').forEach(button => {
-                                button.addEventListener('click', async (event) => {
-                                    const appointmentId = event.target.dataset.appointmentId;
-                                    const response = await fetch('/api/coach/appointment/reject', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ appointmentId: parseInt(appointmentId) })
-                                    });
-
-                                    if (response.ok) {
-                                        displayMessage('预约拒绝成功！', 'success');
-                                        fetchPendingAppointments(); // Refresh the list
-                                    } else {
-                                        const error = await response.json();
-                                        displayMessage(error.message || '拒绝预约失败。', 'danger');
-                                    }
-                                });
-                            });
-                        } else {
-                            appointmentsListDiv.innerHTML = '<p class="text-center">未找到待处理预约。</p>';
-                        }
+                      displayMessage("预约批准成功！", "success");
+                      fetchPendingAppointments(); // Refresh the list
                     } else {
-                        displayMessage(
-                            appointments.message || "获取待处理预约失败。",
-                            "danger",
-                        );
-                    }
-                } catch (error) {
-                    displayMessage(
-                        "获取待处理预约时发生意外错误。",
+                      const error = await response.json();
+                      displayMessage(
+                        error.message || "批准预约失败。",
                         "danger",
-                    );
-                }
-            }
+                      );
+                    }
+                  });
+                },
+              );
 
-            fetchPendingAppointments();
-        </script>
-    </body>
+              document.querySelectorAll(".reject-btn").forEach(
+                (button) => {
+                  button.addEventListener("click", async (event) => {
+                    const appointmentId =
+                      event.target.dataset.appointmentId;
+                    const response = await fetch(
+                      "/api/coach/appointment/reject",
+                      {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          appointmentId: parseInt(appointmentId),
+                        }),
+                      },
+                    );
+
+                    if (response.ok) {
+                      displayMessage("预约拒绝成功！", "success");
+                      fetchPendingAppointments(); // Refresh the list
+                    } else {
+                      const error = await response.json();
+                      displayMessage(
+                        error.message || "拒绝预约失败。",
+                        "danger",
+                      );
+                    }
+                  });
+                },
+              );
+            } else {
+              appointmentsListDiv.innerHTML =
+                '<p class="text-center">未找到待处理预约。</p>';
+            }
+          } else {
+            displayMessage(
+              appointments.message || "获取待处理预约失败。",
+              "danger",
+            );
+          }
+        } catch (error) {
+          displayMessage(
+            "获取待处理预约时发生意外错误。",
+            "danger",
+          );
+        }
+      }
+
+      fetchPendingAppointments();
+    </script>
+  </body>
 </html>

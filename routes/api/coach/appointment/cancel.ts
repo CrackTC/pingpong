@@ -83,8 +83,7 @@ export function useApiCoachAppointmentCancel(app: Hono) {
       addSystemLog({
         campusId: appointment.campusId,
         type: SystemLogType.CoachCancelAppointment,
-        text:
-          `教练 ${coach.realName} 请求取消预约 ID ${appointment.id}。`,
+        text: `教练 ${coach.realName} 请求取消预约 ID ${appointment.id}。`,
         relatedId: appointment.id,
       });
 

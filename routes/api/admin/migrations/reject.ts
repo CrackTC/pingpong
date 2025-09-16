@@ -32,8 +32,7 @@ export function useApiAdminMigrationsReject(app: Hono) {
 
       if ((migration.status & MigrationStatus.CampusAdminApproved) !== 0) {
         return c.json({
-          message:
-            "无法拒绝已被校区管理员批准的迁移。",
+          message: "无法拒绝已被校区管理员批准的迁移。",
         }, 400);
       }
 

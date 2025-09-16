@@ -18,8 +18,13 @@ export function getDeductionsByStudentId(studentId: number): Deduction[] {
   return stmt.all(studentId) as Deduction[];
 }
 
-export function getDeductionByRelatedId(relatedId: number, type: DeductionType): Deduction | undefined {
-  const stmt = db.prepare("SELECT * FROM deductions WHERE relatedId = ? AND type = ?");
+export function getDeductionByRelatedId(
+  relatedId: number,
+  type: DeductionType,
+): Deduction | undefined {
+  const stmt = db.prepare(
+    "SELECT * FROM deductions WHERE relatedId = ? AND type = ?",
+  );
   return stmt.get(relatedId, type) as Deduction | undefined;
 }
 
@@ -33,7 +38,9 @@ export function deleteDeductionsByStudentId(studentId: number) {
   stmt.run(studentId);
 }
 
-export function getEnrichedDeductionsByStudentId(studentId: number): (Deduction & { contestName?: string, appointmentDetails?: any })[] {
+export function getEnrichedDeductionsByStudentId(
+  studentId: number,
+): (Deduction & { contestName?: string; appointmentDetails?: any })[] {
   const stmt = db.prepare(`
     SELECT
       d.*,
@@ -48,5 +55,9 @@ export function getEnrichedDeductionsByStudentId(studentId: number): (Deduction 
     WHERE
       d.studentId = ?
   `);
-  return stmt.all(DeductionType.ContestRegistration, DeductionType.Appointment, studentId) as (Deduction & { contestName?: string, appointmentDetails?: any })[];
+  return stmt.all(
+    DeductionType.ContestRegistration,
+    DeductionType.Appointment,
+    studentId,
+  ) as (Deduction & { contestName?: string; appointmentDetails?: any })[];
 }

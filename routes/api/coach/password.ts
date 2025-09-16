@@ -39,8 +39,7 @@ export function useApiCoachPassword(app: Hono) {
       addSystemLog({
         campusId: coach.campusId,
         type: SystemLogType.CoachChangePassword,
-        text:
-          `教练 ${coach.realName} (ID: ${coach.id}) 更改了密码。`,
+        text: `教练 ${coach.realName} (ID: ${coach.id}) 更改了密码。`,
         relatedId: coach.id,
       });
       return c.json({ message: "密码更改成功" });

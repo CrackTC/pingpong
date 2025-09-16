@@ -24,8 +24,7 @@ export function useApiAdminCoachAppointments(app: Hono) {
       if (admin.campus != coach.campusId) {
         return c.json({
           success: false,
-          message:
-            "您无权查看此教练的预约。",
+          message: "您无权查看此教练的预约。",
         }, 403);
       }
     }

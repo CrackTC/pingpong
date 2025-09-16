@@ -1,210 +1,205 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>待处理迁移</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
-    <body class="bg-light">
-        <div class="container">
-            <div class="row justify-content-center mt-5">
-                <div class="col-md-10">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title text-center mb-4">
-                                待处理迁移
-                            </h3>
-                            <div id="migrations-list">
-                                <!-- Migrations will be loaded here -->
-                            </div>
-                            <div class="d-grid gap-2 mt-3">
-                                <a href="/admin/home" class="btn btn-secondary"
-                                    >返回主页</a
-                                >
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>待处理迁移</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">
+                待处理迁移
+              </h3>
+              <div id="migrations-list">
+                <!-- Migrations will be loaded here -->
+              </div>
+              <div class="d-grid gap-2 mt-3">
+                <a href="/admin/home" class="btn btn-secondary">返回主页</a>
+              </div>
             </div>
+          </div>
         </div>
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"
-        ></script>
-        <script>
-            const migrationsListDiv =
-                document.getElementById("migrations-list");
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const migrationsListDiv = document.getElementById(
+        "migrations-list",
+      );
 
-            function getStatusString(status) {
-                if (status === -1) {
-                    return "已拒绝";
-                }
-                if (status === 15) {
-                    return "已完成";
-                }
-                if (status === 1) {
-                    return "待处理";
-                }
+      function getStatusString(status) {
+        if (status === -1) {
+          return "已拒绝";
+        }
+        if (status === 15) {
+          return "已完成";
+        }
+        if (status === 1) {
+          return "待处理";
+        }
 
-                let result = "";
-                if (status & 2) {
-                    result += "原教练已批准 ";
-                }
-                if (status & 4) {
-                    result += "目标教练已批准 ";
-                }
-                if (status & 8) {
-                    result += "校区管理员已批准 ";
-                }
+        let result = "";
+        if (status & 2) {
+          result += "原教练已批准 ";
+        }
+        if (status & 4) {
+          result += "目标教练已批准 ";
+        }
+        if (status & 8) {
+          result += "校区管理员已批准 ";
+        }
 
-                return result.trim();
-            }
+        return result.trim();
+      }
 
-            async function fetchMigrations() {
-                try {
-                    const response = await fetch("/api/admin/migrations");
-                    const migrations = await response.json();
+      async function fetchMigrations() {
+        try {
+          const response = await fetch("/api/admin/migrations");
+          const migrations = await response.json();
 
-                    if (response.ok) {
-                        if (migrations.length > 0) {
-                            let migrationsHtml =
-                                '<table class="table table-striped"><thead><tr><th>学生姓名</th><th>原教练姓名</th><th>目标教练姓名</th><th>状态</th><th>操作</th></tr></thead><tbody>';
-                            migrations.forEach((m) => {
-                                migrationsHtml += `<tr><td>${m.studentName}</td><td>${m.originCoachName}</td><td>${m.destCoachName}</td><td>${getStatusString(m.status)}</td><td>
+          if (response.ok) {
+            if (migrations.length > 0) {
+              let migrationsHtml =
+                '<table class="table table-striped"><thead><tr><th>学生姓名</th><th>原教练姓名</th><th>目标教练姓名</th><th>状态</th><th>操作</th></tr></thead><tbody>';
+              migrations.forEach((m) => {
+                migrationsHtml +=
+                  `<tr><td>${m.studentName}</td><td>${m.originCoachName}</td><td>${m.destCoachName}</td><td>${
+                    getStatusString(m.status)
+                  }</td><td>
                                     <button class="btn btn-success btn-sm approve-btn" data-migration-id="${m.migrationId}">批准</button>
                                     <button class="btn btn-danger btn-sm reject-btn" data-migration-id="${m.migrationId}">拒绝</button>
                                 </td></tr>`;
-                            });
-                            migrationsHtml += "</tbody></table>";
-                            migrationsListDiv.innerHTML = migrationsHtml;
+              });
+              migrationsHtml += "</tbody></table>";
+              migrationsListDiv.innerHTML = migrationsHtml;
 
-                            document
-                                .querySelectorAll(".approve-btn")
-                                .forEach((button) => {
-                                    button.addEventListener(
-                                        "click",
-                                        async (event) => {
-                                            const migrationId =
-                                                event.currentTarget.dataset
-                                                    .migrationId;
-                                            if (
-                                                confirm(
-                                                    "您确定要批准此迁移吗？",
-                                                )
-                                            ) {
-                                                try {
-                                                    const response =
-                                                        await fetch(
-                                                            "/api/admin/migrations/approve",
-                                                            {
-                                                                method: "POST",
-                                                                headers: {
-                                                                    "Content-Type":
-                                                                        "application/json",
-                                                                },
-                                                                body: JSON.stringify(
-                                                                    {
-                                                                        migrationId:
-                                                                            parseInt(
-                                                                                migrationId,
-                                                                            ),
-                                                                    },
-                                                                ),
-                                                            },
-                                                        );
-                                                    const data =
-                                                        await response.json();
-                                                    if (response.ok) {
-                                                        alert(data.message);
-                                                        fetchMigrations(); // Refresh the list
-                                                    } else {
-                                                        alert(data.message || '批准迁移失败。');
-                                                    }
-                                                } catch (error) {
-                                                    alert(
-                                                        "发生意外错误。",
-                                                    );
-                                                }
-                                            }
-                                        },
-                                    );
-                                });
-
-                            document
-                                .querySelectorAll(".reject-btn")
-                                .forEach((button) => {
-                                    button.addEventListener(
-                                        "click",
-                                        async (event) => {
-                                            const migrationId =
-                                                event.currentTarget.dataset
-                                                    .migrationId;
-                                            if (
-                                                confirm(
-                                                    "您确定要拒绝此迁移吗？",
-                                                )
-                                            ) {
-                                                try {
-                                                    const response =
-                                                        await fetch(
-                                                            "/api/admin/migrations/reject",
-                                                            {
-                                                                method: "POST",
-                                                                headers: {
-                                                                    "Content-Type":
-                                                                        "application/json",
-                                                                },
-                                                                body: JSON.stringify(
-                                                                    {
-                                                                        migrationId:
-                                                                            parseInt(
-                                                                                migrationId,
-                                                                            ),
-                                                                    },
-                                                                ),
-                                                            },
-                                                        );
-                                                    const data =
-                                                        await response.json();
-                                                    if (response.ok) {
-                                                        alert(data.message);
-                                                        fetchMigrations(); // Refresh the list
-                                                    } else {
-                                                        alert(
-                                                            data.message ||
-                                                                "拒绝迁移失败。",
-                                                        );
-                                                    }
-                                                } catch (error) {
-                                                    alert(
-                                                        "发生意外错误。",
-                                                    );
-                                                }
-                                            }
-                                        },
-                                    );
-                                });
-                        } else {
-                            migrationsListDiv.innerHTML =
-                                '<p class="text-center">未找到待处理迁移。</p>';
+              document
+                .querySelectorAll(".approve-btn")
+                .forEach((button) => {
+                  button.addEventListener(
+                    "click",
+                    async (event) => {
+                      const migrationId = event.currentTarget.dataset
+                        .migrationId;
+                      if (
+                        confirm(
+                          "您确定要批准此迁移吗？",
+                        )
+                      ) {
+                        try {
+                          const response = await fetch(
+                            "/api/admin/migrations/approve",
+                            {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify(
+                                {
+                                  migrationId: parseInt(
+                                    migrationId,
+                                  ),
+                                },
+                              ),
+                            },
+                          );
+                          const data = await response.json();
+                          if (response.ok) {
+                            alert(data.message);
+                            fetchMigrations(); // Refresh the list
+                          } else {
+                            alert(data.message || "批准迁移失败。");
+                          }
+                        } catch (error) {
+                          alert(
+                            "发生意外错误。",
+                          );
                         }
-                    } else {
-                        migrationsListDiv.innerHTML = `<p class="text-center text-danger">${migrations.message || "获取迁移失败。"}</p>`;
-                    }
-                } catch (error) {
-                    migrationsListDiv.innerHTML =
-                        '<p class="text-center text-danger">获取迁移时发生意外错误。</p>';
-                }
-            }
+                      }
+                    },
+                  );
+                });
 
-            fetchMigrations();
-        </script>
-    </body>
+              document
+                .querySelectorAll(".reject-btn")
+                .forEach((button) => {
+                  button.addEventListener(
+                    "click",
+                    async (event) => {
+                      const migrationId = event.currentTarget.dataset
+                        .migrationId;
+                      if (
+                        confirm(
+                          "您确定要拒绝此迁移吗？",
+                        )
+                      ) {
+                        try {
+                          const response = await fetch(
+                            "/api/admin/migrations/reject",
+                            {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify(
+                                {
+                                  migrationId: parseInt(
+                                    migrationId,
+                                  ),
+                                },
+                              ),
+                            },
+                          );
+                          const data = await response.json();
+                          if (response.ok) {
+                            alert(data.message);
+                            fetchMigrations(); // Refresh the list
+                          } else {
+                            alert(
+                              data.message ||
+                                "拒绝迁移失败。",
+                            );
+                          }
+                        } catch (error) {
+                          alert(
+                            "发生意外错误。",
+                          );
+                        }
+                      }
+                    },
+                  );
+                });
+            } else {
+              migrationsListDiv.innerHTML =
+                '<p class="text-center">未找到待处理迁移。</p>';
+            }
+          } else {
+            migrationsListDiv.innerHTML =
+              `<p class="text-center text-danger">${
+                migrations.message || "获取迁移失败。"
+              }</p>`;
+          }
+        } catch (error) {
+          migrationsListDiv.innerHTML =
+            '<p class="text-center text-danger">获取迁移时发生意外错误。</p>';
+        }
+      }
+
+      fetchMigrations();
+    </script>
+  </body>
 </html>

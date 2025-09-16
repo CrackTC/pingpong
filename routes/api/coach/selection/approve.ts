@@ -31,8 +31,7 @@ export function useApiCoachSelectionApprove(app: Hono) {
     const approvedStudentCount = getSelectionCountForCoach(claim.id);
     if (approvedStudentCount >= MAX_STUDENTS) {
       return c.json({
-        message:
-          `教练已达到 ${MAX_STUDENTS} 名已批准学生的上限。`,
+        message: `教练已达到 ${MAX_STUDENTS} 名已批准学生的上限。`,
       }, 400);
     }
 

@@ -1,145 +1,138 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>添加校区</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>添加校区</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
 
-    <body class="bg-light">
-        <div class="container">
-            <div class="row justify-content-center mt-5">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title text-center mb-4">
-                                添加新校区
-                            </h3>
-                            <div
-                                id="message-area"
-                                class="alert d-none"
-                                role="alert"
-                            ></div>
-                            <form id="add-campus-form">
-                                <div class="mb-3">
-                                    <label for="campusName" class="form-label"
-                                        >校区名称</label
-                                    >
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="campusName"
-                                        name="name"
-                                        required
-                                    />
-                                </div>
-                                <div class="mb-3">
-                                    <label
-                                        for="campusAddress"
-                                        class="form-label"
-                                        >地址</label
-                                    >
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="campusAddress"
-                                        name="address"
-                                        required
-                                    />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="campusPhone" class="form-label"
-                                        >电话</label
-                                    >
-                                    <input
-                                        type="tel"
-                                        class="form-control"
-                                        id="campusPhone"
-                                        name="phone"
-                                        required
-                                    />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="campusEmail" class="form-label"
-                                        >电子邮件</label
-                                    >
-                                    <input
-                                        type="email"
-                                        class="form-control"
-                                        id="campusEmail"
-                                        name="email"
-                                        required
-                                    />
-                                </div>
-                                <button
-                                    type="submit"
-                                    class="btn btn-success w-100"
-                                >
-                                    添加校区
-                                </button>
-                            </form>
-                            <div class="d-grid gap-2 mt-3">
-                                <a
-                                    href="/root/campus/all"
-                                    class="btn btn-secondary"
-                                    >返回校区列表</a
-                                >
-                            </div>
-                        </div>
-                    </div>
+  <body class="bg-light">
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">
+                添加新校区
+              </h3>
+              <div
+                id="message-area"
+                class="alert d-none"
+                role="alert"
+              >
+              </div>
+              <form id="add-campus-form">
+                <div class="mb-3">
+                  <label for="campusName" class="form-label">校区名称</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="campusName"
+                    name="name"
+                    required
+                  />
                 </div>
+                <div class="mb-3">
+                  <label
+                    for="campusAddress"
+                    class="form-label"
+                  >地址</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="campusAddress"
+                    name="address"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="campusPhone" class="form-label">电话</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="campusPhone"
+                    name="phone"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="campusEmail" class="form-label">电子邮件</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="campusEmail"
+                    name="email"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  class="btn btn-success w-100"
+                >
+                  添加校区
+                </button>
+              </form>
+              <div class="d-grid gap-2 mt-3">
+                <a
+                  href="/root/campus/all"
+                  class="btn btn-secondary"
+                >返回校区列表</a>
+              </div>
             </div>
+          </div>
         </div>
-        <script>
-            const messageArea = document.getElementById("message-area");
+      </div>
+    </div>
+    <script>
+      const messageArea = document.getElementById("message-area");
 
-            function displayMessage(message, type) {
-                messageArea.textContent = message;
-                messageArea.className = `alert alert-${type}`;
-                messageArea.classList.remove("d-none");
-            }
+      function displayMessage(message, type) {
+        messageArea.textContent = message;
+        messageArea.className = `alert alert-${type}`;
+        messageArea.classList.remove("d-none");
+      }
 
-            document
-                .getElementById("add-campus-form")
-                .addEventListener("submit", async function (event) {
-                    event.preventDefault();
-                    const formData = new FormData(this);
-                    const campusData = Object.fromEntries(formData.entries());
+      document
+        .getElementById("add-campus-form")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+          const formData = new FormData(this);
+          const campusData = Object.fromEntries(formData.entries());
 
-                    const response = await fetch("/api/root/campus/add", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(campusData),
-                    });
+          const response = await fetch("/api/root/campus/add", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(campusData),
+          });
 
-                    if (response.ok) {
-                        displayMessage("校区添加成功!", "success");
-                        this.reset(); // Clear the form
-                        setTimeout(() => {
-                            window.location.href = "/root/campus/all"; // Redirect back to campuses list
-                        }, 2000); // Redirect after 2 seconds
-                    } else {
-                        const errorData = await response.json();
-                        displayMessage(
-                            "添加校区失败: " +
-                                (errorData.message || "未知错误"),
-                            "danger",
-                        );
-                    }
-                });
-        </script>
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"
-        ></script>
-    </body>
+          if (response.ok) {
+            displayMessage("校区添加成功!", "success");
+            this.reset(); // Clear the form
+            setTimeout(() => {
+              window.location.href = "/root/campus/all"; // Redirect back to campuses list
+            }, 2000); // Redirect after 2 seconds
+          } else {
+            const errorData = await response.json();
+            displayMessage(
+              "添加校区失败: " +
+                (errorData.message || "未知错误"),
+              "danger",
+            );
+          }
+        });
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

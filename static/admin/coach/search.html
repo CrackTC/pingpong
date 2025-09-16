@@ -1,217 +1,288 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>搜索教练</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
-    <body class="bg-light">
-        <div class="container">
-            <div class="row justify-content-center mt-5">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title text-center mb-4">
-                                搜索教练
-                            </h3>
-                            <div
-                                id="message-area"
-                                class="alert d-none"
-                                role="alert"
-                            ></div>
-                            <form id="search-form">
-                                <div class="mb-3">
-                                    <label for="search-query" class="form-label"
-                                        >身份证号码或手机号码</label
-                                    >
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="search-query"
-                                        name="query"
-                                        required
-                                    />
-                                </div>
-                                <button
-                                    type="submit"
-                                    class="btn btn-primary w-100"
-                                >
-                                    搜索
-                                </button>
-                            </form>
-
-                            <div id="results-list" class="mt-4">
-                                <!-- Search results will be loaded here -->
-                            </div>
-
-                            <div class="d-grid gap-2 mt-3">
-                                <a
-                                    href="/admin/home"
-                                    class="btn btn-secondary"
-                                    >返回主页</a
-                                >
-                            </div>
-                        </div>
-                    </div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>搜索教练</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">
+                搜索教练
+              </h3>
+              <div
+                id="message-area"
+                class="alert d-none"
+                role="alert"
+              >
+              </div>
+              <form id="search-form">
+                <div class="mb-3">
+                  <label for="search-query" class="form-label"
+                  >身份证号码或手机号码</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="search-query"
+                    name="query"
+                    required
+                  />
                 </div>
+                <button
+                  type="submit"
+                  class="btn btn-primary w-100"
+                >
+                  搜索
+                </button>
+              </form>
+
+              <div id="results-list" class="mt-4">
+                <!-- Search results will be loaded here -->
+              </div>
+
+              <div class="d-grid gap-2 mt-3">
+                <a
+                  href="/admin/home"
+                  class="btn btn-secondary"
+                >返回主页</a>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Modal -->
-        <div class="modal fade" id="coachDetailsModal" tabindex="-1" aria-labelledby="coachDetailsModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="coachDetailsModalLabel">教练详情</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body" id="coachDetailsModalBody">
-                        <!-- Coach details will be loaded here -->
-                    </div>
-                    <div class="modal-footer">
-                        <a href="#" id="editCoachBtn" class="btn btn-primary">编辑</a>
-                        <a href="#" id="viewAppointmentsBtn" class="btn btn-info">查看活跃预约</a>
-                        <button type="button" class="btn btn-danger" id="deleteCoachBtn">删除</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                    </div>
-                </div>
-            </div>
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="coachDetailsModal"
+      tabindex="-1"
+      aria-labelledby="coachDetailsModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="coachDetailsModalLabel">教练详情</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+            </button>
+          </div>
+          <div class="modal-body" id="coachDetailsModalBody">
+            <!-- Coach details will be loaded here -->
+          </div>
+          <div class="modal-footer">
+            <a href="#" id="editCoachBtn" class="btn btn-primary">编辑</a>
+            <a href="#" id="viewAppointmentsBtn" class="btn btn-info"
+            >查看活跃预约</a>
+            <button type="button" class="btn btn-danger" id="deleteCoachBtn">
+              删除
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              关闭
+            </button>
+          </div>
         </div>
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"
-        ></script>
-        <script>
-            const messageArea = document.getElementById("message-area");
-            const resultsListDiv = document.getElementById("results-list");
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const messageArea = document.getElementById("message-area");
+      const resultsListDiv = document.getElementById("results-list");
 
-            function displayMessage(message, type) {
-                messageArea.textContent = message;
-                messageArea.className = `alert alert-${type}`;
-                messageArea.classList.remove("d-none");
-            }
+      function displayMessage(message, type) {
+        messageArea.textContent = message;
+        messageArea.className = `alert alert-${type}`;
+        messageArea.classList.remove("d-none");
+      }
 
-            function getSexString(sex) {
-                switch (sex) {
-                    case 1: return "男";
-                    case 2: return "女";
-                    default: return "未指定";
-                }
-            }
+      function getSexString(sex) {
+        switch (sex) {
+          case 1:
+            return "男";
+          case 2:
+            return "女";
+          default:
+            return "未指定";
+        }
+      }
 
-            function getCoachTypeString(type) {
-                switch (type) {
-                    case 1: return "待批准";
-                    case 2: return "初级";
-                    case 3: return "中级";
-                    case 4: return "高级";
-                    default: return "未知";
-                }
-            }
+      function getCoachTypeString(type) {
+        switch (type) {
+          case 1:
+            return "待批准";
+          case 2:
+            return "初级";
+          case 3:
+            return "中级";
+          case 4:
+            return "高级";
+          default:
+            return "未知";
+        }
+      }
 
-            document.getElementById("search-form").addEventListener("submit", async function (event) {
-                event.preventDefault();
-                const query = document.getElementById("search-query").value;
+      document.getElementById("search-form").addEventListener(
+        "submit",
+        async function (event) {
+          event.preventDefault();
+          const query = document.getElementById("search-query").value;
 
-                try {
-                    const response = await fetch("/api/admin/coach/search", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ query }),
-                    });
-                    const coaches = await response.json();
+          try {
+            const response = await fetch("/api/admin/coach/search", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ query }),
+            });
+            const coaches = await response.json();
 
-                    if (response.ok) {
-                        if (coaches.length > 0) {
-                            let resultsHtml = '<table class="table table-striped"><thead><tr><th>真实姓名</th><th>操作</th></tr></thead><tbody>';
-                            coaches.forEach((c) => {
-                                resultsHtml += `<tr><td>${c.realName}</td><td><button class="btn btn-primary btn-sm details-btn" data-coach-id="${c.id}">详情</button></td></tr>`;
-                            });
-                            resultsHtml += "</tbody></table>";
-                            resultsListDiv.innerHTML = resultsHtml;
+            if (response.ok) {
+              if (coaches.length > 0) {
+                let resultsHtml =
+                  '<table class="table table-striped"><thead><tr><th>真实姓名</th><th>操作</th></tr></thead><tbody>';
+                coaches.forEach((c) => {
+                  resultsHtml +=
+                    `<tr><td>${c.realName}</td><td><button class="btn btn-primary btn-sm details-btn" data-coach-id="${c.id}">详情</button></td></tr>`;
+                });
+                resultsHtml += "</tbody></table>";
+                resultsListDiv.innerHTML = resultsHtml;
 
-                            document.querySelectorAll('.details-btn').forEach(button => {
-                                button.addEventListener('click', (event) => {
-                                    const coachId = event.currentTarget.dataset.coachId;
-                                    const coach = coaches.find(c => c.id == coachId);
-                                    if (coach) {
-                                        // Populate and show modal
-                                        const modalBody = document.getElementById('coachDetailsModalBody');
-                                        modalBody.innerHTML = `
+                document.querySelectorAll(".details-btn").forEach(
+                  (button) => {
+                    button.addEventListener("click", (event) => {
+                      const coachId =
+                        event.currentTarget.dataset.coachId;
+                      const coach = coaches.find((c) =>
+                        c.id == coachId
+                      );
+                      if (coach) {
+                        // Populate and show modal
+                        const modalBody = document.getElementById(
+                          "coachDetailsModalBody",
+                        );
+                        modalBody.innerHTML = `
                                             <p class="text-center"><img src="${coach.avatarPath}" alt="头像" width="100" height="100"></p>
                                             <p><strong>用户名:</strong> ${coach.username}</p>
                                             <p><strong>真实姓名:</strong> ${coach.realName}</p>
-                                            <p><strong>性别:</strong> ${getSexString(coach.sex)}</p>
-                                            <p><strong>出生年份:</strong> ${coach.birthYear || "未指定"}</p>
+                                            <p><strong>性别:</strong> ${
+                          getSexString(coach.sex)
+                        }</p>
+                                            <p><strong>出生年份:</strong> ${
+                          coach.birthYear || "未指定"
+                        }</p>
                                             <p><strong>校区:</strong> ${coach.campusName}</p>
                                             <p><strong>电话:</strong> ${coach.phone}</p>
-                                            <p><strong>电子邮件:</strong> ${coach.email || "未指定"}</p>
-                                            <p><strong>身份证号码:</strong> ${coach.idCardNumber || "未指定"}</p>
-                                            <p><strong>类型:</strong> ${getCoachTypeString(coach.type)}</p>
-                                            <p><strong>评论:</strong> ${coach.comment || "未指定"}</p>
+                                            <p><strong>电子邮件:</strong> ${
+                          coach.email || "未指定"
+                        }</p>
+                                            <p><strong>身份证号码:</strong> ${
+                          coach.idCardNumber || "未指定"
+                        }</p>
+                                            <p><strong>类型:</strong> ${
+                          getCoachTypeString(coach.type)
+                        }</p>
+                                            <p><strong>评论:</strong> ${
+                          coach.comment || "未指定"
+                        }</p>
                                         `;
-                                        const coachDetailsModal = new bootstrap.Modal(document.getElementById('coachDetailsModal'));
-                                        document.getElementById('editCoachBtn').href = `/admin/coach/edit/${coach.id}`;
-                                        document.getElementById('viewAppointmentsBtn').href = `/admin/appointments?coachId=${coach.id}`;
-
-                                        const deleteCoachBtn = document.getElementById('deleteCoachBtn');
-                                        deleteCoachBtn.onclick = async () => {
-                                            if (confirm('您确定要删除此教练吗？')) {
-                                                try {
-                                                    const response = await fetch('/api/admin/coach/delete', {
-                                                        method: 'POST',
-                                                        headers: {
-                                                            'Content-Type': 'application/json'
-                                                        },
-                                                        body: JSON.stringify({ coachId: coach.id })
-                                                    });
-
-                                                    const data = await response.json();
-
-                                                    if (response.ok) {
-                                                        alert(data.message);
-                                                        const coachDetailsModal = bootstrap.Modal.getInstance(document.getElementById('coachDetailsModal'));
-                                                        coachDetailsModal.hide();
-                                                        // Refresh the search results
-                                                        document.getElementById('search-form').dispatchEvent(new Event('submit'));
-                                                    } else {
-                                                        alert(data.message || '删除教练失败。');
-                                                    }
-                                                } catch (error) {
-                                                    alert('发生意外错误。');
-                                                }
-                                            }
-                                        };
-
-                                        coachDetailsModal.show();
-                                    }
-                                });
-                            });
-                        } else {
-                            resultsListDiv.innerHTML = '<p class="text-center">未找到教练。</p>';
-                        }
-                    } else {
-                        displayMessage(
-                            coaches.message || "搜索教练失败。",
-                            "danger",
+                        const coachDetailsModal = new bootstrap.Modal(
+                          document.getElementById("coachDetailsModal"),
                         );
-                    }
-                } catch (error) {
-                    displayMessage(
-                        "搜索教练时发生意外错误。",
-                        "danger",
-                    );
-                }
-            });
-        </script>
-    </body>
+                        document.getElementById("editCoachBtn").href =
+                          `/admin/coach/edit/${coach.id}`;
+                        document.getElementById("viewAppointmentsBtn")
+                          .href =
+                            `/admin/appointments?coachId=${coach.id}`;
+
+                        const deleteCoachBtn = document.getElementById(
+                          "deleteCoachBtn",
+                        );
+                        deleteCoachBtn.onclick = async () => {
+                          if (confirm("您确定要删除此教练吗？")) {
+                            try {
+                              const response = await fetch(
+                                "/api/admin/coach/delete",
+                                {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify({
+                                    coachId: coach.id,
+                                  }),
+                                },
+                              );
+
+                              const data = await response.json();
+
+                              if (response.ok) {
+                                alert(data.message);
+                                const coachDetailsModal = bootstrap
+                                  .Modal.getInstance(
+                                    document.getElementById(
+                                      "coachDetailsModal",
+                                    ),
+                                  );
+                                coachDetailsModal.hide();
+                                // Refresh the search results
+                                document.getElementById("search-form")
+                                  .dispatchEvent(new Event("submit"));
+                              } else {
+                                alert(data.message || "删除教练失败。");
+                              }
+                            } catch (error) {
+                              alert("发生意外错误。");
+                            }
+                          }
+                        };
+
+                        coachDetailsModal.show();
+                      }
+                    });
+                  },
+                );
+              } else {
+                resultsListDiv.innerHTML =
+                  '<p class="text-center">未找到教练。</p>';
+              }
+            } else {
+              displayMessage(
+                coaches.message || "搜索教练失败。",
+                "danger",
+              );
+            }
+          } catch (error) {
+            displayMessage(
+              "搜索教练时发生意外错误。",
+              "danger",
+            );
+          }
+        },
+      );
+    </script>
+  </body>
 </html>

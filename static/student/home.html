@@ -1,60 +1,84 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>学生主页</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-</head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
 
-<body class="bg-light">
+  <body class="bg-light">
     <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title text-center mb-4">学生仪表盘</h3>
-                        <div class="d-grid gap-2">
-                            <a href="/student/profile" class="btn btn-primary">我的资料</a>
-                            <a href="/student/coach/search" class="btn btn-primary">搜索教练</a>
-    <a href="/student/selection/all" class="btn btn-primary">我的选择</a>
-    <a href="/student/appointment/search" class="btn btn-primary">搜索教练时间段</a>
-    <a href="/student/appointment/all" class="btn btn-primary">我的所有预约</a>
-    <a href="/student/appointment/cancelling" class="btn btn-primary">待处理取消</a>
-    <a href="/student/recharge" class="btn btn-success">充值</a>
-    <a href="/student/recharge/all" class="btn btn-info">我的充值订单</a>
-    <a href="/student/deduction/all" class="btn btn-info">我的扣费记录</a>
-    <a href="/student/contest/all" class="btn btn-primary">比赛</a>
-    <a href="/student/match/all" class="btn btn-primary">我的比赛</a>
-    <a href="/student/migration/all" class="btn btn-info">我的迁移</a>
-    <a href="/student/notifications" id="notifications-btn" class="btn btn-secondary">通知</a>
-                            <a href="/student/logout" class="btn btn-danger">登出</a>
-                        </div>
-                    </div>
-                </div>
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">学生仪表盘</h3>
+              <div class="d-grid gap-2">
+                <a href="/student/profile" class="btn btn-primary">我的资料</a>
+                <a href="/student/coach/search" class="btn btn-primary"
+                >搜索教练</a>
+                <a href="/student/selection/all" class="btn btn-primary"
+                >我的选择</a>
+                <a href="/student/appointment/search" class="btn btn-primary"
+                >搜索教练时间段</a>
+                <a href="/student/appointment/all" class="btn btn-primary"
+                >我的所有预约</a>
+                <a
+                  href="/student/appointment/cancelling"
+                  class="btn btn-primary"
+                >待处理取消</a>
+                <a href="/student/recharge" class="btn btn-success">充值</a>
+                <a href="/student/recharge/all" class="btn btn-info"
+                >我的充值订单</a>
+                <a href="/student/deduction/all" class="btn btn-info"
+                >我的扣费记录</a>
+                <a href="/student/contest/all" class="btn btn-primary">比赛</a>
+                <a href="/student/match/all" class="btn btn-primary"
+                >我的比赛</a>
+                <a href="/student/migration/all" class="btn btn-info"
+                >我的迁移</a>
+                <a
+                  href="/student/notifications"
+                  id="notifications-btn"
+                  class="btn btn-secondary"
+                >通知</a>
+                <a href="/student/logout" class="btn btn-danger">登出</a>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
     <script>
-        fetch('/api/student/home')
-            .then(response => response.json())
-            .then(data => {
-                const notificationsBtn = document.getElementById('notifications-btn');
-                if (data.unreadNotificationCount > 0) {
-                    notificationsBtn.classList.remove('btn-secondary');
-                    notificationsBtn.classList.add('btn-warning');
-                    notificationsBtn.textContent = `通知 (${data.unreadNotificationCount})`;
-                } else {
-                    notificationsBtn.textContent = `通知`;
-                }
-            })
-            .catch(error => console.error('获取学生主页数据时出错：', error));
+      fetch("/api/student/home")
+        .then((response) => response.json())
+        .then((data) => {
+          const notificationsBtn = document.getElementById(
+            "notifications-btn",
+          );
+          if (data.unreadNotificationCount > 0) {
+            notificationsBtn.classList.remove("btn-secondary");
+            notificationsBtn.classList.add("btn-warning");
+            notificationsBtn.textContent =
+              `通知 (${data.unreadNotificationCount})`;
+          } else {
+            notificationsBtn.textContent = `通知`;
+          }
+        })
+        .catch((error) =>
+          console.error("获取学生主页数据时出错：", error)
+        );
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-</body>
-
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

@@ -1,96 +1,124 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>待处理教练</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>待处理教练</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
 
-    <body class="bg-light">
-        <div class="container">
-            <div class="row justify-content-center mt-5">
-                <div class="col-md-10">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title text-center mb-4">
-                                待处理教练注册
-                            </h3>
-                            <table class="table" style="table-layout: fixed;">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">用户名</th>
-                                        <th scope="col">真实姓名</th>
-                                        <th scope="col">校区</th>
-                                        <th scope="col">详情</th>
-                                        <th scope="col">类型</th>
-                                        <th scope="col">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="pending-coaches-table-body"></tbody>
-                            </table>
-                            <div
-                                class="d-grid gap-2 d-md-flex justify-content-md-end"
-                            >
-                                <a href="/admin/home" class="btn btn-primary"
-                                    >主页</a
-                                >
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="commentModalLabel">教练详情</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <p class="text-center"><img id="modal-avatar" src="" alt="头像" width="100" height="100"></p>
-                <p><strong>ID:</strong> <span id="modal-id-text"></span></p>
-                <p><strong>性别:</strong> <span id="modal-sex-text"></span></p>
-                <p><strong>出生年份:</strong> <span id="modal-birthyear-text"></span></p>
-                <p><strong>电话:</strong> <span id="modal-phone-text"></span></p>
-                <p><strong>电子邮件:</strong> <span id="modal-email-text"></span></p>
-                <p><strong>评论:</strong> <span id="modal-comment-text"></span></p>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+  <body class="bg-light">
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">
+                待处理教练注册
+              </h3>
+              <table class="table" style="table-layout: fixed">
+                <thead>
+                  <tr>
+                    <th scope="col">用户名</th>
+                    <th scope="col">真实姓名</th>
+                    <th scope="col">校区</th>
+                    <th scope="col">详情</th>
+                    <th scope="col">类型</th>
+                    <th scope="col">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="pending-coaches-table-body"></tbody>
+              </table>
+              <div
+                class="d-grid gap-2 d-md-flex justify-content-md-end"
+              >
+                <a href="/admin/home" class="btn btn-primary">主页</a>
               </div>
             </div>
           </div>
         </div>
-        <script>
-            function getSexString(sex) {
-                switch (sex) {
-                    case 1: return "男";
-                    case 2: return "女";
-                    default: return "未指定";
-                }
-            }
+      </div>
+    </div>
+    <div
+      class="modal fade"
+      id="commentModal"
+      tabindex="-1"
+      aria-labelledby="commentModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="commentModalLabel">教练详情</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+            </button>
+          </div>
+          <div class="modal-body">
+            <p class="text-center">
+              <img id="modal-avatar" src="" alt="头像" width="100" height="100">
+            </p>
+            <p><strong>ID:</strong> <span id="modal-id-text"></span></p>
+            <p><strong>性别:</strong> <span id="modal-sex-text"></span></p>
+            <p>
+              <strong>出生年份:</strong> <span id="modal-birthyear-text"></span>
+            </p>
+            <p><strong>电话:</strong> <span id="modal-phone-text"></span></p>
+            <p>
+              <strong>电子邮件:</strong> <span id="modal-email-text"></span>
+            </p>
+            <p><strong>评论:</strong> <span id="modal-comment-text"></span></p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              关闭
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function getSexString(sex) {
+        switch (sex) {
+          case 1:
+            return "男";
+          case 2:
+            return "女";
+          default:
+            return "未指定";
+        }
+      }
 
-            async function fetchPendingCoaches() {
-                const response = await fetch("/api/admin/coach/pending");
-                const coaches = await response.json();
-                const tableBody = document.getElementById(
-                    "pending-coaches-table-body",
-                );
-                tableBody.innerHTML = "";
-                if (coaches.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="6" class="text-center">未找到待处理教练。</td></tr>`;
-                } else {
-                    for (const coach of coaches) {
-                    const row = document.createElement("tr");
-                    const imagePath = coach.avatarPath.startsWith('./') ? coach.avatarPath.substring(1) : coach.avatarPath;
-                    row.innerHTML = `
+      async function fetchPendingCoaches() {
+        const response = await fetch("/api/admin/coach/pending");
+        const coaches = await response.json();
+        const tableBody = document.getElementById(
+          "pending-coaches-table-body",
+        );
+        tableBody.innerHTML = "";
+        if (coaches.length === 0) {
+          tableBody.innerHTML =
+            `<tr><td colspan="6" class="text-center">未找到待处理教练。</td></tr>`;
+        } else {
+          for (const coach of coaches) {
+            const row = document.createElement("tr");
+            const imagePath = coach.avatarPath.startsWith("./")
+              ? coach.avatarPath.substring(1)
+              : coach.avatarPath;
+            row.innerHTML = `
                     <td class="align-middle text-break">${coach.username}</td>
                     <td class="align-middle text-break">${coach.realName}</td>
                     <td class="align-middle">${coach.campusName}</td>
@@ -110,66 +138,80 @@
                         <button class="btn btn-success btn-sm" onclick="approveCoach(${coach.id})">批准</button>
                     </td>
                 `;
-                    tableBody.appendChild(row);
-                }
-              }
-            }
+            tableBody.appendChild(row);
+          }
+        }
+      }
 
-            async function approveCoach(coachId) {
-                const type = document.getElementById(
-                    `coach-type-${coachId}`,
-                ).value;
-                const response = await fetch("/api/admin/coach/approve", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        coachId: coachId,
-                        type: parseInt(type),
-                    }),
-                });
-                if (response.ok) {
-                    fetchPendingCoaches();
-                } else {
-                    const error = await response.json();
-                    alert(`批准教练失败: ${error.message}`);
-                }
-            }
+      async function approveCoach(coachId) {
+        const type = document.getElementById(
+          `coach-type-${coachId}`,
+        ).value;
+        const response = await fetch("/api/admin/coach/approve", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            coachId: coachId,
+            type: parseInt(type),
+          }),
+        });
+        if (response.ok) {
+          fetchPendingCoaches();
+        } else {
+          const error = await response.json();
+          alert(`批准教练失败: ${error.message}`);
+        }
+      }
 
-            fetchPendingCoaches();
+      fetchPendingCoaches();
 
-            const commentModal = document.getElementById('commentModal')
-            commentModal.addEventListener('show.bs.modal', function (event) {
-              const button = event.relatedTarget
-              const id = button.getAttribute('data-bs-id')
-              const avatarPath = button.getAttribute('data-bs-avatar')
-              const phone = button.getAttribute('data-bs-phone')
-              const email = button.getAttribute('data-bs-email')
-              const comment = button.getAttribute('data-bs-comment')
-              const sex = button.getAttribute('data-bs-sex')
-              const birthYear = button.getAttribute('data-bs-birthyear')
-              const modalIdText = commentModal.querySelector('#modal-id-text')
-              const modalAvatar = commentModal.querySelector('#modal-avatar')
-              const modalPhoneText = commentModal.querySelector('#modal-phone-text')
-              const modalEmailText = commentModal.querySelector('#modal-email-text')
-              const modalCommentText = commentModal.querySelector('#modal-comment-text')
-              const modalSexText = commentModal.querySelector('#modal-sex-text')
-              const modalBirthYearText = commentModal.querySelector('#modal-birthyear-text')
-              modalIdText.textContent = id
-              modalAvatar.src = avatarPath
-              modalPhoneText.textContent = phone || "未指定"
-              const displayEmail = (email === "null" || email === null) ? "未指定" : email;
-              modalEmailText.textContent = displayEmail;
-              modalCommentText.textContent = comment || "未指定"
-              modalSexText.textContent = getSexString(parseInt(sex))
-              modalBirthYearText.textContent = birthYear || "未指定"
-            })
-        </script>
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"
-        ></script>
-    </body>
+      const commentModal = document.getElementById("commentModal");
+      commentModal.addEventListener("show.bs.modal", function (event) {
+        const button = event.relatedTarget;
+        const id = button.getAttribute("data-bs-id");
+        const avatarPath = button.getAttribute("data-bs-avatar");
+        const phone = button.getAttribute("data-bs-phone");
+        const email = button.getAttribute("data-bs-email");
+        const comment = button.getAttribute("data-bs-comment");
+        const sex = button.getAttribute("data-bs-sex");
+        const birthYear = button.getAttribute("data-bs-birthyear");
+        const modalIdText = commentModal.querySelector(
+          "#modal-id-text",
+        );
+        const modalAvatar = commentModal.querySelector("#modal-avatar");
+        const modalPhoneText = commentModal.querySelector(
+          "#modal-phone-text",
+        );
+        const modalEmailText = commentModal.querySelector(
+          "#modal-email-text",
+        );
+        const modalCommentText = commentModal.querySelector(
+          "#modal-comment-text",
+        );
+        const modalSexText = commentModal.querySelector(
+          "#modal-sex-text",
+        );
+        const modalBirthYearText = commentModal.querySelector(
+          "#modal-birthyear-text",
+        );
+        modalIdText.textContent = id;
+        modalAvatar.src = avatarPath;
+        modalPhoneText.textContent = phone || "未指定";
+        const displayEmail = (email === "null" || email === null)
+          ? "未指定"
+          : email;
+        modalEmailText.textContent = displayEmail;
+        modalCommentText.textContent = comment || "未指定";
+        modalSexText.textContent = getSexString(parseInt(sex));
+        modalBirthYearText.textContent = birthYear || "未指定";
+      });
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

@@ -1,188 +1,213 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>我的扣费记录</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
-    <body class="bg-light">
-        <div class="container">
-            <div class="row justify-content-center mt-5">
-                <div class="col-md-10">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title text-center mb-4">
-                                我的扣费记录
-                            </h3>
-                            <div id="deductions-list">
-                                <!-- Deductions will be loaded here -->
-                            </div>
-                            <div class="d-grid gap-2 mt-3">
-                                <a
-                                    href="/student/home"
-                                    class="btn btn-secondary"
-                                    >返回主页</a
-                                >
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>我的扣费记录</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">
+                我的扣费记录
+              </h3>
+              <div id="deductions-list">
+                <!-- Deductions will be loaded here -->
+              </div>
+              <div class="d-grid gap-2 mt-3">
+                <a
+                  href="/student/home"
+                  class="btn btn-secondary"
+                >返回主页</a>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Details Modal -->
-        <div
-            class="modal fade"
-            id="detailsModal"
-            tabindex="-1"
-            aria-labelledby="detailsModalLabel"
-            aria-hidden="true"
-        >
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="detailsModalLabel">
-                            详情
-                        </h5>
-                        <button
-                            type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"
-                        ></button>
-                    </div>
-                    <div class="modal-body" id="detailsModalBody">
-                        <!-- Details will be loaded here -->
-                    </div>
-                    <div class="modal-footer">
-                        <button
-                            type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal"
-                        >
-                            关闭
-                        </button>
-                    </div>
-                </div>
-            </div>
+    <!-- Details Modal -->
+    <div
+      class="modal fade"
+      id="detailsModal"
+      tabindex="-1"
+      aria-labelledby="detailsModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="detailsModalLabel">
+              详情
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+            </button>
+          </div>
+          <div class="modal-body" id="detailsModalBody">
+            <!-- Details will be loaded here -->
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              关闭
+            </button>
+          </div>
         </div>
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"
-        ></script>
-        <script>
-            const deductionsListDiv =
-                document.getElementById("deductions-list");
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const deductionsListDiv = document.getElementById(
+        "deductions-list",
+      );
 
-            function getTypeString(type) {
-                switch (type) {
-                    case 0:
-                        return "预约";
-                    case 1:
-                        return "比赛报名";
-                    default:
-                        return "未知";
-                }
-            }
+      function getTypeString(type) {
+        switch (type) {
+          case 0:
+            return "预约";
+          case 1:
+            return "比赛报名";
+          default:
+            return "未知";
+        }
+      }
 
-            async function fetchDeductions() {
-                try {
-                    const response = await fetch("/api/student/deduction/all");
-                    const deductions = await response.json();
+      async function fetchDeductions() {
+        try {
+          const response = await fetch("/api/student/deduction/all");
+          const deductions = await response.json();
 
-                    if (response.ok) {
-                        if (deductions.length > 0) {
-                            let deductionsHtml =
-                                '<table class="table table-striped"><thead><tr><th>类型</th><th>金额</th><th>操作</th></tr></thead><tbody>';
-                            deductions.forEach((d) => {
-                                const contestNameData = d.contestName ? `data-contest-name="${d.contestName}"` : "";
-                                deductionsHtml += `<tr><td>${getTypeString(d.type)}</td><td>${d.amount}</td><td><button class="btn btn-primary btn-sm details-btn" data-deduction-id="${d.id}" data-related-id="${d.relatedId}" data-type="${d.type}" ${contestNameData}>详情</button></td></tr>`;
-                            });
-                            deductionsHtml += "</tbody></table>";
-                            deductionsListDiv.innerHTML = deductionsHtml;
+          if (response.ok) {
+            if (deductions.length > 0) {
+              let deductionsHtml =
+                '<table class="table table-striped"><thead><tr><th>类型</th><th>金额</th><th>操作</th></tr></thead><tbody>';
+              deductions.forEach((d) => {
+                const contestNameData = d.contestName
+                  ? `data-contest-name="${d.contestName}"`
+                  : "";
+                deductionsHtml += `<tr><td>${
+                  getTypeString(d.type)
+                }</td><td>${d.amount}</td><td><button class="btn btn-primary btn-sm details-btn" data-deduction-id="${d.id}" data-related-id="${d.relatedId}" data-type="${d.type}" ${contestNameData}>详情</button></td></tr>`;
+              });
+              deductionsHtml += "</tbody></table>";
+              deductionsListDiv.innerHTML = deductionsHtml;
 
-                            document
-                                .querySelectorAll(".details-btn")
-                                .forEach((button) => {
-                                    button.addEventListener(
-                                        "click",
-                                        async (event) => {
-                                            const relatedId =
-                                                event.currentTarget.dataset
-                                                    .relatedId;
-                                            const type = parseInt(
-                                                event.currentTarget.dataset
-                                                    .type,
-                                            );
-                                            const modalBody =
-                                                document.getElementById(
-                                                    "detailsModalBody",
-                                                );
-                                            const detailsModal = new bootstrap.Modal(document.getElementById("detailsModal"));
+              document
+                .querySelectorAll(".details-btn")
+                .forEach((button) => {
+                  button.addEventListener(
+                    "click",
+                    async (event) => {
+                      const relatedId = event.currentTarget.dataset
+                        .relatedId;
+                      const type = parseInt(
+                        event.currentTarget.dataset
+                          .type,
+                      );
+                      const modalBody = document.getElementById(
+                        "detailsModalBody",
+                      );
+                      const detailsModal = new bootstrap.Modal(
+                        document.getElementById("detailsModal"),
+                      );
 
-                                            if (type === 0) { // Appointment
-                                                const response = await fetch(
-                                                    `/api/student/appointment/${relatedId}`,
-                                                );
-                                                const appointment =
-                                                    await response.json();
+                      if (type === 0) { // Appointment
+                        const response = await fetch(
+                          `/api/student/appointment/${relatedId}`,
+                        );
+                        const appointment = await response.json();
 
-                                                if (response.ok) {
-                                                    modalBody.innerHTML = `
+                        if (response.ok) {
+                          modalBody.innerHTML = `
                                                 <p><strong>预约ID:</strong> ${appointment.id}</p>
                                                 <p><strong>教练:</strong> ${appointment.coachName}</p>
                                                 <p><strong>球台:</strong> ${appointment.tableName}</p>
-                                                <p><strong>时间:</strong> ${formatWeekday(appointment.weekday)}, ${formatTime(appointment.startHour, appointment.startMinute)} - ${formatTime(appointment.endHour, appointment.endMinute)}</p>
+                                                <p><strong>时间:</strong> ${
+                            formatWeekday(appointment.weekday)
+                          }, ${
+                            formatTime(
+                              appointment.startHour,
+                              appointment.startMinute,
+                            )
+                          } - ${
+                            formatTime(
+                              appointment.endHour,
+                              appointment.endMinute,
+                            )
+                          }</p>
                                             `;
-                                                } else {
-                                                    modalBody.innerHTML = `<p class="text-danger">${appointment.message || "获取预约详情失败。"}</p>`;
-                                                }
-                                            } else if (type === 1) { // Contest Registration
-                                                const contestName = event.currentTarget.dataset.contestName;
-                                                modalBody.innerHTML = `<p><strong>比赛:</strong> ${contestName}</p>`;
-                                            }
-                                            detailsModal.show();
-                                        },
-                                    );
-                                });
                         } else {
-                            deductionsListDiv.innerHTML =
-                                '<p class="text-center">未找到扣费记录。</p>';
+                          modalBody.innerHTML =
+                            `<p class="text-danger">${
+                              appointment.message ||
+                              "获取预约详情失败。"
+                            }</p>`;
                         }
-                    } else {
-                        deductionsListDiv.innerHTML = `<p class="text-center text-danger">${deductions.message || "获取记录失败。"}</p>`;
-                    }
-                } catch (error) {
-                    deductionsListDiv.innerHTML =
-                        '<p class="text-center text-danger">获取记录时发生意外错误。</p>';
-                }
+                      } else if (type === 1) { // Contest Registration
+                        const contestName =
+                          event.currentTarget.dataset.contestName;
+                        modalBody.innerHTML =
+                          `<p><strong>比赛:</strong> ${contestName}</p>`;
+                      }
+                      detailsModal.show();
+                    },
+                  );
+                });
+            } else {
+              deductionsListDiv.innerHTML =
+                '<p class="text-center">未找到扣费记录。</p>';
             }
+          } else {
+            deductionsListDiv.innerHTML =
+              `<p class="text-center text-danger">${
+                deductions.message || "获取记录失败。"
+              }</p>`;
+          }
+        } catch (error) {
+          deductionsListDiv.innerHTML =
+            '<p class="text-center text-danger">获取记录时发生意外错误。</p>';
+        }
+      }
 
-            function formatWeekday(weekday) {
-                const days = [
-                    "星期日",
-                    "星期一",
-                    "星期二",
-                    "星期三",
-                    "星期四",
-                    "星期五",
-                    "星期六",
-                ];
-                return days[weekday];
-            }
+      function formatWeekday(weekday) {
+        const days = [
+          "星期日",
+          "星期一",
+          "星期二",
+          "星期三",
+          "星期四",
+          "星期五",
+          "星期六",
+        ];
+        return days[weekday];
+      }
 
-            function formatTime(hour, minute) {
-                return `${hour}:${minute.toString().padStart(2, "0")}`;
-            }
+      function formatTime(hour, minute) {
+        return `${hour}:${minute.toString().padStart(2, "0")}`;
+      }
 
-            fetchDeductions();
-        </script>
-    </body>
+      fetchDeductions();
+    </script>
+  </body>
 </html>

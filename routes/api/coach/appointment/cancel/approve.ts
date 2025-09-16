@@ -40,8 +40,7 @@ export function useApiCoachApproveCancellation(app: Hono) {
 
       if (appointment.status !== AppointmentStatus.StudentCancelling) {
         return c.json({
-          message:
-            "此预约未处于学生取消待处理状态。",
+          message: "此预约未处于学生取消待处理状态。",
         }, 400);
       }
 
@@ -77,8 +76,7 @@ export function useApiCoachApproveCancellation(app: Hono) {
       addSystemLog({
         campusId: appointment.campusId,
         type: SystemLogType.CoachApproveCancel,
-        text:
-          `教练 ${coach.realName} 批准了预约 ID ${appointmentId} 的取消。`,
+        text: `教练 ${coach.realName} 批准了预约 ID ${appointmentId} 的取消。`,
         relatedId: appointment.id,
       });
 

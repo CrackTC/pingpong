@@ -82,8 +82,7 @@ export function useApiCoachMigrationApprove(app: Hono) {
           Date.now(),
         );
         return c.json({
-          message:
-            `迁移已被 ${coachDesc} 批准。等待进一步批准。`,
+          message: `迁移已被 ${coachDesc} 批准。等待进一步批准。`,
         });
       }
 

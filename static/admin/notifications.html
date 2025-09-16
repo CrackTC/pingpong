@@ -1,158 +1,167 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>管理员通知</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>管理员通知</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
 
-    <body class="bg-light">
-        <div class="container">
-            <div class="row justify-content-center mt-5">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title text-center mb-4">
-                                我的通知
-                            </h3>
-                            <div
-                                id="message"
-                                class="alert d-none"
-                                role="alert"
-                            ></div>
-                            <div class="list-group" id="notifications-list">
-                                <p class="text-center">
-                                    正在加载通知...
-                                </p>
-                            </div>
-                            <div
-                                class="d-grid gap-2 d-md-flex justify-content-md-end mt-3"
-                            >
-                                <a
-                                    href="/admin/home"
-                                    class="btn btn-secondary"
-                                    >返回主页</a
-                                >
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <body class="bg-light">
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">
+                我的通知
+              </h3>
+              <div
+                id="message"
+                class="alert d-none"
+                role="alert"
+              >
+              </div>
+              <div class="list-group" id="notifications-list">
+                <p class="text-center">
+                  正在加载通知...
+                </p>
+              </div>
+              <div
+                class="d-grid gap-2 d-md-flex justify-content-md-end mt-3"
+              >
+                <a
+                  href="/admin/home"
+                  class="btn btn-secondary"
+                >返回主页</a>
+              </div>
             </div>
+          </div>
         </div>
-        <script>
-            async function fetchNotifications() {
-                const response = await fetch("/api/admin/notifications");
-                const notifications = await response.json();
-                const notificationsList =
-                    document.getElementById("notifications-list");
-                notificationsList.innerHTML = "";
+      </div>
+    </div>
+    <script>
+      async function fetchNotifications() {
+        const response = await fetch("/api/admin/notifications");
+        const notifications = await response.json();
+        const notificationsList = document.getElementById(
+          "notifications-list",
+        );
+        notificationsList.innerHTML = "";
 
-                if (response.ok && notifications.length > 0) {
-                    notifications.forEach((notification) => {
-                        const notificationItem = document.createElement("div");
-                        notificationItem.classList.add(
-                            "list-group-item",
-                            "list-group-item-action",
-                        );
-                        if (!notification.isRead) {
-                            notificationItem.classList.add(
-                                "list-group-item-info",
-                            ); // Highlight unread
-                        }
-                        notificationItem.innerHTML = `
+        if (response.ok && notifications.length > 0) {
+          notifications.forEach((notification) => {
+            const notificationItem = document.createElement("div");
+            notificationItem.classList.add(
+              "list-group-item",
+              "list-group-item-action",
+            );
+            if (!notification.isRead) {
+              notificationItem.classList.add(
+                "list-group-item-info",
+              ); // Highlight unread
+            }
+            notificationItem.innerHTML = `
                         <div class="d-flex w-100 justify-content-between align-items-center">
                             <h5 class="mb-1">${notification.message}</h5>
-                            <small class="text-end">${new Date(notification.timestamp).toLocaleString()}</small>
+                            <small class="text-end">${
+              new Date(notification.timestamp).toLocaleString()
+            }</small>
                         </div>
                         <div class="mt-2">
-                            ${notification.link ? `<a href="${notification.link}" class="btn btn-sm btn-outline-primary">前往链接</a>` : ""}
-                            <button class="btn btn-sm btn-outline-secondary mark-read-btn" data-notification-id="${notification.id}" ${notification.isRead ? "disabled" : ""}>
-                                ${notification.isRead ? "已读" : "标记为已读"}
+                            ${
+              notification.link
+                ? `<a href="${notification.link}" class="btn btn-sm btn-outline-primary">前往链接</a>`
+                : ""
+            }
+                            <button class="btn btn-sm btn-outline-secondary mark-read-btn" data-notification-id="${notification.id}" ${
+              notification.isRead ? "disabled" : ""
+            }>
+                                ${
+              notification.isRead ? "已读" : "标记为已读"
+            }
                             </button>
                         </div>
                     `;
-                        notificationItem.dataset.notificationId =
-                            notification.id; // Add this line
-                        notificationsList.appendChild(notificationItem);
-                    });
-                } else if (response.ok && notifications.length === 0) {
-                    notificationsList.innerHTML = `<p class="text-center">没有通知。</p>`;
-                } else {
-                    const messageDiv = document.getElementById("message");
-                    messageDiv.textContent =
-                        notifications.message ||
-                        "加载通知时发生错误。";
-                    messageDiv.className = "alert alert-danger";
-                    messageDiv.classList.remove("d-none");
-                    notificationsList.innerHTML = `<p class="text-center">加载通知时出错。</p>`;
-                }
+            notificationItem.dataset.notificationId = notification.id; // Add this line
+            notificationsList.appendChild(notificationItem);
+          });
+        } else if (response.ok && notifications.length === 0) {
+          notificationsList.innerHTML =
+            `<p class="text-center">没有通知。</p>`;
+        } else {
+          const messageDiv = document.getElementById("message");
+          messageDiv.textContent = notifications.message ||
+            "加载通知时发生错误。";
+          messageDiv.className = "alert alert-danger";
+          messageDiv.classList.remove("d-none");
+          notificationsList.innerHTML =
+            `<p class="text-center">加载通知时出错。</p>`;
+        }
+      }
+
+      // Mark notification as read when clicked
+      document
+        .getElementById("notifications-list")
+        .addEventListener("click", async function (event) {
+          const target = event.target;
+
+          if (
+            target &&
+            target.classList.contains("mark-read-btn") &&
+            !target.disabled
+          ) {
+            event.stopPropagation();
+            const notificationId = target.dataset.notificationId;
+            const response = await fetch(
+              "/api/admin/notifications/mark-read",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  notificationId: parseInt(notificationId),
+                }),
+              },
+            );
+
+            if (response.ok) {
+              // Update button text and disable it
+              target.textContent = "已读";
+              target.disabled = true;
+              target.classList.remove("btn-outline-secondary");
+              target.classList.add("btn-success"); // Optional: change color to indicate success
+
+              // Find the parent notification item and remove highlight
+              let notificationItem = target.closest(".list-group-item");
+              if (notificationItem) {
+                notificationItem.classList.remove(
+                  "list-group-item-info",
+                );
+              }
+            } else {
+              const messageDiv = document.getElementById("message");
+              const data = await response.json();
+              messageDiv.textContent = data.message ||
+                "标记为已读失败。";
+              messageDiv.className = "alert alert-danger";
+              messageDiv.classList.remove("d-none");
             }
+          }
+        });
 
-            // Mark notification as read when clicked
-            document
-                .getElementById("notifications-list")
-                .addEventListener("click", async function (event) {
-                    const target = event.target;
-
-                    if (
-                        target &&
-                        target.classList.contains("mark-read-btn") &&
-                        !target.disabled
-                    ) {
-                        event.stopPropagation();
-                        const notificationId = target.dataset.notificationId;
-                        const response = await fetch(
-                            "/api/admin/notifications/mark-read",
-                            {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    notificationId: parseInt(notificationId),
-                                }),
-                            },
-                        );
-
-                        if (response.ok) {
-                            // Update button text and disable it
-                            target.textContent = "已读";
-                            target.disabled = true;
-                            target.classList.remove("btn-outline-secondary");
-                            target.classList.add("btn-success"); // Optional: change color to indicate success
-
-                            // Find the parent notification item and remove highlight
-                            let notificationItem =
-                                target.closest(".list-group-item");
-                            if (notificationItem) {
-                                notificationItem.classList.remove(
-                                    "list-group-item-info",
-                                );
-                            }
-                        } else {
-                            const messageDiv =
-                                document.getElementById("message");
-                            const data = await response.json();
-                            messageDiv.textContent =
-                                data.message || "标记为已读失败。";
-                            messageDiv.className = "alert alert-danger";
-                            messageDiv.classList.remove("d-none");
-                        }
-                    }
-                });
-
-            fetchNotifications();
-        </script>
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"
-        ></script>
-    </body>
+      fetchNotifications();
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

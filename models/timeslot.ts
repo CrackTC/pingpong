@@ -6,4 +6,4 @@ export type Timeslot = {
   endHour: number;
   endMinute: number;
   coachId: number;
-}
+};

@@ -1,111 +1,119 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>支付</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-</head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
 
-<body class="bg-light">
+  <body class="bg-light">
     <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title text-center mb-4">支付</h3>
-                        <div id="message" class="alert d-none" role="alert"></div>
-                        <div class="text-center">
-                            <p>订单号: <span id="orderNumber"></span></p>
-                            <p>金额: <span id="amount"></span></p>
-                        </div>
-                        <div class="d-grid gap-2 mt-3">
-                            <button id="pay-btn" class="btn btn-success">支付</button>
-                            <button id="cancel-btn" class="btn btn-danger">取消</button>
-                        </div>
-                    </div>
-                </div>
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">支付</h3>
+              <div id="message" class="alert d-none" role="alert"></div>
+              <div class="text-center">
+                <p>订单号: <span id="orderNumber"></span></p>
+                <p>金额: <span id="amount"></span></p>
+              </div>
+              <div class="d-grid gap-2 mt-3">
+                <button id="pay-btn" class="btn btn-success">支付</button>
+                <button id="cancel-btn" class="btn btn-danger">取消</button>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
     <script>
-        const orderNumberSpan = document.getElementById('orderNumber');
-        const amountSpan = document.getElementById('amount');
-        const payBtn = document.getElementById('pay-btn');
-        const cancelBtn = document.getElementById('cancel-btn');
-        const messageDiv = document.getElementById('message');
+      const orderNumberSpan = document.getElementById("orderNumber");
+      const amountSpan = document.getElementById("amount");
+      const payBtn = document.getElementById("pay-btn");
+      const cancelBtn = document.getElementById("cancel-btn");
+      const messageDiv = document.getElementById("message");
 
-        const orderNumber = window.location.pathname.split('/').pop();
-        orderNumberSpan.textContent = orderNumber;
+      const orderNumber = window.location.pathname.split("/").pop();
+      orderNumberSpan.textContent = orderNumber;
 
-        async function fetchOrderDetails() {
-            const response = await fetch(`/api/payment/order/${orderNumber}`);
-            const data = await response.json();
+      async function fetchOrderDetails() {
+        const response = await fetch(
+          `/api/payment/order/${orderNumber}`,
+        );
+        const data = await response.json();
 
-            if (response.ok) {
-                amountSpan.textContent = data.amount;
-            } else {
-                messageDiv.textContent = data.message || "获取订单详情失败。";
-                messageDiv.className = 'alert alert-danger';
-                messageDiv.classList.remove('d-none');
-                payBtn.disabled = true;
-                cancelBtn.disabled = true;
-            }
+        if (response.ok) {
+          amountSpan.textContent = data.amount;
+        } else {
+          messageDiv.textContent = data.message || "获取订单详情失败。";
+          messageDiv.className = "alert alert-danger";
+          messageDiv.classList.remove("d-none");
+          payBtn.disabled = true;
+          cancelBtn.disabled = true;
         }
+      }
 
-        payBtn.addEventListener('click', async () => {
-            const response = await fetch('/api/payment/pay', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ orderNumber })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                messageDiv.textContent = "支付成功！";
-                messageDiv.className = 'alert alert-success';
-                messageDiv.classList.remove('d-none');
-                payBtn.disabled = true;
-                cancelBtn.disabled = true;
-            } else {
-                messageDiv.textContent = data.message || "支付失败。";
-                messageDiv.className = 'alert alert-danger';
-                messageDiv.classList.remove('d-none');
-            }
+      payBtn.addEventListener("click", async () => {
+        const response = await fetch("/api/payment/pay", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ orderNumber }),
         });
 
-        cancelBtn.addEventListener('click', async () => {
-            const response = await fetch('/api/payment/cancel', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ orderNumber })
-            });
+        const data = await response.json();
 
-            const data = await response.json();
+        if (response.ok) {
+          messageDiv.textContent = "支付成功！";
+          messageDiv.className = "alert alert-success";
+          messageDiv.classList.remove("d-none");
+          payBtn.disabled = true;
+          cancelBtn.disabled = true;
+        } else {
+          messageDiv.textContent = data.message || "支付失败。";
+          messageDiv.className = "alert alert-danger";
+          messageDiv.classList.remove("d-none");
+        }
+      });
 
-            if (response.ok) {
-                messageDiv.textContent = "订单已取消。";
-                messageDiv.className = 'alert alert-info';
-                messageDiv.classList.remove('d-none');
-                payBtn.disabled = true;
-                cancelBtn.disabled = true;
-            } else {
-                messageDiv.textContent = data.message || "取消订单失败。";
-                messageDiv.className = 'alert alert-danger';
-                messageDiv.classList.remove('d-none');
-            }
+      cancelBtn.addEventListener("click", async () => {
+        const response = await fetch("/api/payment/cancel", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ orderNumber }),
         });
 
-        fetchOrderDetails();
+        const data = await response.json();
+
+        if (response.ok) {
+          messageDiv.textContent = "订单已取消。";
+          messageDiv.className = "alert alert-info";
+          messageDiv.classList.remove("d-none");
+          payBtn.disabled = true;
+          cancelBtn.disabled = true;
+        } else {
+          messageDiv.textContent = data.message || "取消订单失败。";
+          messageDiv.className = "alert alert-danger";
+          messageDiv.classList.remove("d-none");
+        }
+      });
+
+      fetchOrderDetails();
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-</body>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

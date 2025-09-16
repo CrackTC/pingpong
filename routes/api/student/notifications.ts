@@ -8,7 +8,10 @@ export function useApiStudentNotifications(app: Hono) {
     const claim = await getClaim(c);
 
     try {
-      const notifications = getNotificationsForUser(claim.id, NotificationTarget.Student);
+      const notifications = getNotificationsForUser(
+        claim.id,
+        NotificationTarget.Student,
+      );
       return c.json(notifications);
     } catch (error) {
       console.error("获取学生通知时出错：", error);

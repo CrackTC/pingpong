@@ -1,198 +1,192 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>添加我的时间段</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>添加我的时间段</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
 
-    <body class="bg-light">
-        <div class="container">
-            <div class="row justify-content-center mt-5">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title text-center mb-4">
-                                添加新时间段
-                            </h3>
-                            <div
-                                id="message-area"
-                                class="alert d-none"
-                                role="alert"
-                            ></div>
-                            <form id="add-timeslot-form">
-                                <div class="mb-3">
-                                    <label for="weekday" class="form-label"
-                                        >星期</label
-                                    >
-                                    <select
-                                        class="form-select"
-                                        id="weekday"
-                                        name="weekday"
-                                        required
-                                    >
-                                        <option value="0">星期日</option>
-                                        <option value="1">星期一</option>
-                                        <option value="2">星期二</option>
-                                        <option value="3">星期三</option>
-                                        <option value="4">星期四</option>
-                                        <option value="5">星期五</option>
-                                        <option value="6">星期六</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="startTime" class="form-label"
-                                        >开始时间</label
-                                    >
-                                    <input
-                                        type="time"
-                                        class="form-control"
-                                        id="startTime"
-                                        name="startTime"
-                                        required
-                                    />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="endTime" class="form-label"
-                                        >结束时间</label
-                                    >
-                                    <input
-                                        type="time"
-                                        class="form-control"
-                                        id="endTime"
-                                        name="endTime"
-                                        required
-                                    />
-                                </div>
-                                <button
-                                    type="submit"
-                                    class="btn btn-primary w-100"
-                                >
-                                    添加时间段
-                                </button>
-                            </form>
-                            <div class="d-grid gap-2 mt-3">
-                                <a
-                                    href="/coach/timeslot/all"
-                                    class="btn btn-secondary"
-                                    >返回我的时间段</a
-                                >
-                                <!-- Changed link -->
-                            </div>
-                        </div>
-                    </div>
+  <body class="bg-light">
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">
+                添加新时间段
+              </h3>
+              <div
+                id="message-area"
+                class="alert d-none"
+                role="alert"
+              >
+              </div>
+              <form id="add-timeslot-form">
+                <div class="mb-3">
+                  <label for="weekday" class="form-label">星期</label>
+                  <select
+                    class="form-select"
+                    id="weekday"
+                    name="weekday"
+                    required
+                  >
+                    <option value="0">星期日</option>
+                    <option value="1">星期一</option>
+                    <option value="2">星期二</option>
+                    <option value="3">星期三</option>
+                    <option value="4">星期四</option>
+                    <option value="5">星期五</option>
+                    <option value="6">星期六</option>
+                  </select>
                 </div>
+                <div class="mb-3">
+                  <label for="startTime" class="form-label">开始时间</label>
+                  <input
+                    type="time"
+                    class="form-control"
+                    id="startTime"
+                    name="startTime"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="endTime" class="form-label">结束时间</label>
+                  <input
+                    type="time"
+                    class="form-control"
+                    id="endTime"
+                    name="endTime"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  class="btn btn-primary w-100"
+                >
+                  添加时间段
+                </button>
+              </form>
+              <div class="d-grid gap-2 mt-3">
+                <a
+                  href="/coach/timeslot/all"
+                  class="btn btn-secondary"
+                >返回我的时间段</a>
+                <!-- Changed link -->
+              </div>
             </div>
+          </div>
         </div>
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"
-        ></script>
-        <script>
-            function displayMessage(message, type) {
-                const messageArea = document.getElementById("message-area");
-                messageArea.textContent = message;
-                messageArea.className = `alert alert-${type}`;
-                messageArea.classList.remove("d-none");
-            }
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      function displayMessage(message, type) {
+        const messageArea = document.getElementById("message-area");
+        messageArea.textContent = message;
+        messageArea.className = `alert alert-${type}`;
+        messageArea.classList.remove("d-none");
+      }
 
-            function timeToMinutes(hour, minute) {
-                return hour * 60 + minute;
-            }
+      function timeToMinutes(hour, minute) {
+        return hour * 60 + minute;
+      }
 
-            function validateTimeslot(timeslotData) {
-                // Check if hour/minute components are present and valid numbers
-                if (
-                    isNaN(timeslotData.startHour) ||
-                    isNaN(timeslotData.startMinute) ||
-                    isNaN(timeslotData.endHour) ||
-                    isNaN(timeslotData.endMinute)
-                ) {
-                    return "开始时间和结束时间必须是有效数字。";
-                }
+      function validateTimeslot(timeslotData) {
+        // Check if hour/minute components are present and valid numbers
+        if (
+          isNaN(timeslotData.startHour) ||
+          isNaN(timeslotData.startMinute) ||
+          isNaN(timeslotData.endHour) ||
+          isNaN(timeslotData.endMinute)
+        ) {
+          return "开始时间和结束时间必须是有效数字。";
+        }
 
-                const startTotalMinutes = timeToMinutes(
-                    timeslotData.startHour,
-                    timeslotData.startMinute,
-                );
-                const endTotalMinutes = timeToMinutes(
-                    timeslotData.endHour,
-                    timeslotData.endMinute,
-                );
+        const startTotalMinutes = timeToMinutes(
+          timeslotData.startHour,
+          timeslotData.startMinute,
+        );
+        const endTotalMinutes = timeToMinutes(
+          timeslotData.endHour,
+          timeslotData.endMinute,
+        );
 
-                if (startTotalMinutes >= endTotalMinutes) {
-                    return "结束时间必须在开始时间之后。";
-                }
-                return null; // No error
-            }
+        if (startTotalMinutes >= endTotalMinutes) {
+          return "结束时间必须在开始时间之后。";
+        }
+        return null; // No error
+      }
 
-            document
-                .getElementById("add-timeslot-form")
-                .addEventListener("submit", async function (event) {
-                    event.preventDefault();
-                    const messageArea = document.getElementById("message-area");
-                    messageArea.classList.add("d-none");
+      document
+        .getElementById("add-timeslot-form")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+          const messageArea = document.getElementById("message-area");
+          messageArea.classList.add("d-none");
 
-                    const formData = new FormData(this);
-                    const startTimeStr = formData.get("startTime");
-                    const endTimeStr = formData.get("endTime");
+          const formData = new FormData(this);
+          const startTimeStr = formData.get("startTime");
+          const endTimeStr = formData.get("endTime");
 
-                    // Parse HH:MM strings here
-                    const [startHour, startMinute] = startTimeStr
-                        .split(":")
-                        .map(Number);
-                    const [endHour, endMinute] = endTimeStr
-                        .split(":")
-                        .map(Number);
+          // Parse HH:MM strings here
+          const [startHour, startMinute] = startTimeStr
+            .split(":")
+            .map(Number);
+          const [endHour, endMinute] = endTimeStr
+            .split(":")
+            .map(Number);
 
-                    const timeslotData = {
-                        weekday: parseInt(formData.get("weekday")),
-                        startHour: startHour,
-                        startMinute: startMinute,
-                        endHour: endHour,
-                        endMinute: endMinute,
-                        // coachId will be set on the backend from the claim
-                    };
+          const timeslotData = {
+            weekday: parseInt(formData.get("weekday")),
+            startHour: startHour,
+            startMinute: startMinute,
+            endHour: endHour,
+            endMinute: endMinute,
+            // coachId will be set on the backend from the claim
+          };
 
-                    const validationError = validateTimeslot(timeslotData);
-                    if (validationError) {
-                        displayMessage(validationError, "danger");
-                        return;
-                    }
+          const validationError = validateTimeslot(timeslotData);
+          if (validationError) {
+            displayMessage(validationError, "danger");
+            return;
+          }
 
-                    const response = await fetch("/api/coach/timeslot/add", {
-                        // Changed API endpoint
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(timeslotData),
-                    });
+          const response = await fetch("/api/coach/timeslot/add", {
+            // Changed API endpoint
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(timeslotData),
+          });
 
-                    if (response.ok) {
-                        displayMessage(
-                            "时间段添加成功！正在重定向...",
-                            "success",
-                        );
-                        setTimeout(() => {
-                            window.location.href = "/coach/timeslot/all";
-                        }, 1000); // Redirect after 1 second
-                    } else {
-                        const errorData = await response.json();
-                        displayMessage(
-                            "添加时间段失败: " +
-                                (errorData.message || "未知错误"),
-                            "danger",
-                        );
-                    }
-                });
-        </script>
-    </body>
+          if (response.ok) {
+            displayMessage(
+              "时间段添加成功！正在重定向...",
+              "success",
+            );
+            setTimeout(() => {
+              window.location.href = "/coach/timeslot/all";
+            }, 1000); // Redirect after 1 second
+          } else {
+            const errorData = await response.json();
+            displayMessage(
+              "添加时间段失败: " +
+                (errorData.message || "未知错误"),
+              "danger",
+            );
+          }
+        });
+    </script>
+  </body>
 </html>

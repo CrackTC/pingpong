@@ -8,7 +8,10 @@ export function useApiCoachNotifications(app: Hono) {
     const claim = await getClaim(c);
 
     try {
-      const notifications = getNotificationsForUser(claim.id, NotificationTarget.Coach);
+      const notifications = getNotificationsForUser(
+        claim.id,
+        NotificationTarget.Coach,
+      );
       return c.json(notifications);
     } catch (error) {
       console.error("获取教练通知时出错：", error);

@@ -27,8 +27,7 @@ export function useApiAdminStudentAppointments(app: Hono) {
       if (admin.campus != student.campusId) {
         return c.json({
           success: false,
-          message:
-            "您无权查看此学生的预约。",
+          message: "您无权查看此学生的预约。",
         }, 403);
       }
     }

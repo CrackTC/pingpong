@@ -1,73 +1,70 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>管理员</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>管理员</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
 
-    <body class="bg-light">
-        <div class="container">
-            <div class="row justify-content-center mt-5">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title text-center mb-4">管理员</h3>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">ID</th>
-                                        <th scope="col">用户名</th>
-                                        <th scope="col">校区名称</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="admin-table-body"></tbody>
-                            </table>
-                            <div
-                                class="d-grid gap-2 d-md-flex justify-content-md-end"
-                            >
-                                <a
-                                    href="/root/admin/add"
-                                    class="btn btn-success me-md-2"
-                                    >添加管理员</a
-                                >
-                                <a href="/root/home" class="btn btn-primary"
-                                    >主页</a
-                                >
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <body class="bg-light">
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">管理员</h3>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">用户名</th>
+                    <th scope="col">校区名称</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-table-body"></tbody>
+              </table>
+              <div
+                class="d-grid gap-2 d-md-flex justify-content-md-end"
+              >
+                <a
+                  href="/root/admin/add"
+                  class="btn btn-success me-md-2"
+                >添加管理员</a>
+                <a href="/root/home" class="btn btn-primary">主页</a>
+              </div>
             </div>
+          </div>
         </div>
-        <script>
-            async function fetchAdmins() {
-                const response = await fetch("/api/root/admin/all");
-                const admins = await response.json();
-                const tableBody = document.getElementById("admin-table-body");
-                tableBody.innerHTML = "";
-                for (const admin of admins) {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
+      </div>
+    </div>
+    <script>
+      async function fetchAdmins() {
+        const response = await fetch("/api/root/admin/all");
+        const admins = await response.json();
+        const tableBody = document.getElementById("admin-table-body");
+        tableBody.innerHTML = "";
+        for (const admin of admins) {
+          const row = document.createElement("tr");
+          row.innerHTML = `
                         <td>${admin.id}</td>
                         <td>${admin.username}</td>
                         <td>${admin.campusName}</td>
                     `;
-                    tableBody.appendChild(row);
-                }
-            }
-            fetchAdmins();
-        </script>
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"
-        ></script>
-    </body>
+          tableBody.appendChild(row);
+        }
+      }
+      fetchAdmins();
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

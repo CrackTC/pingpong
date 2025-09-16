@@ -66,8 +66,7 @@ export function useApiAdminMigrationsApprove(app: Hono) {
       addSystemLog({
         campusId: migration.campusId,
         type: SystemLogType.MigrationApprove,
-        text:
-          `迁移ID ${migration.id} 已被校区管理员 ${claim.id} 批准。`,
+        text: `迁移ID ${migration.id} 已被校区管理员 ${claim.id} 批准。`,
         relatedId: migration.id,
       });
 
@@ -81,8 +80,7 @@ export function useApiAdminMigrationsApprove(app: Hono) {
           Date.now(),
         );
         return c.json({
-          message:
-            "迁移已获校区管理员批准。等待进一步批准。",
+          message: "迁移已获校区管理员批准。等待进一步批准。",
         });
       }
 

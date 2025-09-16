@@ -1,184 +1,237 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>教练查询</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-</head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
 
-<body class="bg-light">
+  <body class="bg-light">
     <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-10">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title text-center mb-4">
-                            教练查询
-                        </h3>
-                        <div id="message" class="alert d-none" role="alert"></div>
-                        <form id="coach-search-form" class="mb-4">
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <label for="realName" class="form-label">真实姓名</label>
-                                    <input type="text" class="form-control" id="realName" name="realName" />
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="sex" class="form-label">性别</label>
-                                    <select class="form-select" id="sex" name="sex">
-                                        <option value="0">未指定</option>
-                                        <option value="1">男</option>
-                                        <option value="2">女</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="age" class="form-label">年龄</label>
-                                    <input type="number" class="form-control" id="age" name="age" min="18" max="100" />
-                                </div>
-                            </div>
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                                <button type="submit" class="btn btn-primary">
-                                    搜索
-                                </button>
-                                <a href="/student/home" class="btn btn-secondary">返回首页</a>
-                            </div>
-                        </form>
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">
+                教练查询
+              </h3>
+              <div id="message" class="alert d-none" role="alert"></div>
+              <form id="coach-search-form" class="mb-4">
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label for="realName" class="form-label">真实姓名</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="realName"
+                      name="realName"
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label for="sex" class="form-label">性别</label>
+                    <select class="form-select" id="sex" name="sex">
+                      <option value="0">未指定</option>
+                      <option value="1">男</option>
+                      <option value="2">女</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="age" class="form-label">年龄</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="age"
+                      name="age"
+                      min="18"
+                      max="100"
+                    />
+                  </div>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                  <button type="submit" class="btn btn-primary">
+                    搜索
+                  </button>
+                  <a href="/student/home" class="btn btn-secondary">返回首页</a>
+                </div>
+              </form>
 
-                        <h4>搜索结果</h4>
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>头像</th>
-                                        <th>真实姓名</th>
-                                        <th>详情</th>
-                                        <th>操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="coach-results-body">
-                                    <tr>
-                                        <td colspan="9" class="text-center">
-                                            暂无教练。
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+              <h4>搜索结果</h4>
+              <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th>头像</th>
+                      <th>真实姓名</th>
+                      <th>详情</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="coach-results-body">
+                    <tr>
+                      <td colspan="9" class="text-center">
+                        暂无教练。
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="modal fade" id="coachDetailsModal" tabindex="-1" aria-labelledby="coachDetailsModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="coachDetailsModalLabel">
-                        教练详情
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p><strong>性别：</strong> <span id="modal-sex-text"></span></p>
-                    <p><strong>年龄：</strong> <span id="modal-age-text"></span></p>
-                    <p><strong>手机号：</strong> <span id="modal-phone-text"></span></p>
-                    <p><strong>邮箱：</strong> <span id="modal-email-text"></span></p>
-                    <p><strong>类型：</strong> <span id="modal-type-text"></span></p>
-                    <p><strong>备注：</strong> <span id="modal-comment-text"></span></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        关闭
-                    </button>
-                </div>
-            </div>
+    <div
+      class="modal fade"
+      id="coachDetailsModal"
+      tabindex="-1"
+      aria-labelledby="coachDetailsModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="coachDetailsModalLabel">
+              教练详情
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+            </button>
+          </div>
+          <div class="modal-body">
+            <p><strong>性别：</strong> <span id="modal-sex-text"></span></p>
+            <p><strong>年龄：</strong> <span id="modal-age-text"></span></p>
+            <p><strong>手机号：</strong> <span id="modal-phone-text"></span></p>
+            <p><strong>邮箱：</strong> <span id="modal-email-text"></span></p>
+            <p><strong>类型：</strong> <span id="modal-type-text"></span></p>
+            <p><strong>备注：</strong> <span id="modal-comment-text"></span></p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              关闭
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- Change Coach Modal -->
-    <div class="modal fade" id="changeCoachModal" tabindex="-1" aria-labelledby="changeCoachModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="changeCoachModalLabel">更换教练</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="change-coach-form">
-                        <input type="hidden" id="newCoachId">
-                        <div class="mb-3">
-                            <label for="oldCoachId" class="form-label">选择要替换的教练：</label>
-                            <select class="form-select" id="oldCoachId" required></select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">提交更换申请</button>
-                    </form>
-                    <div id="change-coach-message" class="alert d-none mt-3" role="alert"></div>
-                </div>
+    <div
+      class="modal fade"
+      id="changeCoachModal"
+      tabindex="-1"
+      aria-labelledby="changeCoachModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="changeCoachModalLabel">更换教练</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="change-coach-form">
+              <input type="hidden" id="newCoachId">
+              <div class="mb-3">
+                <label for="oldCoachId" class="form-label"
+                >选择要替换的教练：</label>
+                <select class="form-select" id="oldCoachId" required></select>
+              </div>
+              <button type="submit" class="btn btn-primary">
+                提交更换申请
+              </button>
+            </form>
+            <div
+              id="change-coach-message"
+              class="alert d-none mt-3"
+              role="alert"
+            >
             </div>
+          </div>
         </div>
+      </div>
     </div>
     <script>
-        function getSexString(sex) {
-            switch (sex) {
-                case 1:
-                    return "男";
-                case 2:
-                    return "女";
-                default:
-                    return "未指定";
-            }
+      function getSexString(sex) {
+        switch (sex) {
+          case 1:
+            return "男";
+          case 2:
+            return "女";
+          default:
+            return "未指定";
         }
+      }
 
-        function getCoachTypeString(type) {
-            switch (type) {
-                case 1:
-                    return "待审核";
-                case 2:
-                    return "初级";
-                case 3:
-                    return "中级";
-                case 4:
-                    return "高级";
-                default:
-                    return "未知";
-            }
+      function getCoachTypeString(type) {
+        switch (type) {
+          case 1:
+            return "待审核";
+          case 2:
+            return "初级";
+          case 3:
+            return "中级";
+          case 4:
+            return "高级";
+          default:
+            return "未知";
         }
+      }
 
-        document
-            .getElementById("coach-search-form")
-            .addEventListener("submit", async function (event) {
-                event.preventDefault();
+      document
+        .getElementById("coach-search-form")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
 
-                const realName = document.getElementById("realName").value;
-                const sex = document.getElementById("sex").value;
-                const age = document.getElementById("age").value;
-                const messageDiv = document.getElementById("message");
-                const resultsBody =
-                    document.getElementById("coach-results-body");
+          const realName = document.getElementById("realName").value;
+          const sex = document.getElementById("sex").value;
+          const age = document.getElementById("age").value;
+          const messageDiv = document.getElementById("message");
+          const resultsBody = document.getElementById(
+            "coach-results-body",
+          );
 
-                const queryParams = new URLSearchParams();
-                if (realName) queryParams.append("realName", realName);
-                if (sex) queryParams.append("sex", sex);
-                if (age) queryParams.append("age", age);
+          const queryParams = new URLSearchParams();
+          if (realName) queryParams.append("realName", realName);
+          if (sex) queryParams.append("sex", sex);
+          if (age) queryParams.append("age", age);
 
-                const response = await fetch(
-                    `/api/student/coach/search?${queryParams.toString()}`,
-                );
-                const data = await response.json();
+          const response = await fetch(
+            `/api/student/coach/search?${queryParams.toString()}`,
+          );
+          const data = await response.json();
 
-                resultsBody.innerHTML = ""; // Clear previous results
+          resultsBody.innerHTML = ""; // Clear previous results
 
-                if (response.ok && data.length > 0) {
-                    data.forEach((coach) => {
-                        const row = resultsBody.insertRow();
-                        row.innerHTML = `
+          if (response.ok && data.length > 0) {
+            data.forEach((coach) => {
+              const row = resultsBody.insertRow();
+              row.innerHTML = `
                         <td class="align-middle"><img src="${coach.avatarPath}" alt="头像" width="50" height="50"></td>
                         <td class="align-middle">${coach.realName}</td>
                         <td class="align-middle">
-                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#coachDetailsModal" data-bs-sex="${coach.sex}" data-bs-birthyear="${coach.birthYear}" data-bs-phone="${coach.phone}" data-bs-email="${coach.email}" data-bs-type="${coach.type}" data-bs-comment="${coach.comment || "暂无备注"}">
+                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#coachDetailsModal" data-bs-sex="${coach.sex}" data-bs-birthyear="${coach.birthYear}" data-bs-phone="${coach.phone}" data-bs-email="${coach.email}" data-bs-type="${coach.type}" data-bs-comment="${
+                coach.comment || "暂无备注"
+              }">
                                 详情
                             </button>
                         </td>
@@ -187,140 +240,184 @@
                             <button type="button" class="btn btn-warning btn-sm change-coach-btn" data-coach-id="${coach.id}">更换</button>
                         </td>
                     `;
-                    });
-                } else if (response.ok && data.length === 0) {
-                    resultsBody.innerHTML = `<tr><td colspan="4" class="text-center">没有符合条件的教练。</td></tr>`;
-                } else {
-                    messageDiv.textContent =
-                        data.message || "搜索时发生错误。";
-                    messageDiv.className = "alert alert-danger";
-                    messageDiv.classList.remove("d-none");
-                    resultsBody.innerHTML = `<tr><td colspan="10" class="text-center">教练加载错误。</td></tr>`;
-                }
             });
-
-        // 页面加载时的初始搜索（列出校区内所有教练）
-        document
-            .getElementById("coach-search-form")
-            .dispatchEvent(new Event("submit"));
-
-        const coachDetailsModal = document.getElementById("coachDetailsModal");
-        coachDetailsModal.addEventListener("show.bs.modal", function (event) {
-            const button = event.relatedTarget;
-            const sex = button.getAttribute("data-bs-sex");
-            const birthYear = button.getAttribute("data-bs-birthyear");
-            const phone = button.getAttribute("data-bs-phone");
-            const email = button.getAttribute("data-bs-email");
-            const type = button.getAttribute("data-bs-type");
-            const comment = button.getAttribute("data-bs-comment");
-
-            const modalSexText = coachDetailsModal.querySelector("#modal-sex-text");
-            const modalAgeText = coachDetailsModal.querySelector("#modal-age-text");
-            const modalPhoneText = coachDetailsModal.querySelector("#modal-phone-text");
-            const modalEmailText = coachDetailsModal.querySelector("#modal-email-text");
-            const modalTypeText = coachDetailsModal.querySelector("#modal-type-text");
-            const modalCommentText = coachDetailsModal.querySelector("#modal-comment-text");
-
-            modalSexText.textContent = getSexString(parseInt(sex));
-            modalAgeText.textContent = (new Date().getFullYear() - parseInt(birthYear)) || "未填写";
-            modalPhoneText.textContent = phone || "未填写";
-            const displayEmail = (email === "null" || email === null) ? "未填写" : email;
-            modalEmailText.textContent = displayEmail;
-            modalTypeText.textContent = getCoachTypeString(parseInt(type));
-            modalCommentText.textContent = comment || "未填写";
+          } else if (response.ok && data.length === 0) {
+            resultsBody.innerHTML =
+              `<tr><td colspan="4" class="text-center">没有符合条件的教练。</td></tr>`;
+          } else {
+            messageDiv.textContent = data.message || "搜索时发生错误。";
+            messageDiv.className = "alert alert-danger";
+            messageDiv.classList.remove("d-none");
+            resultsBody.innerHTML =
+              `<tr><td colspan="10" class="text-center">教练加载错误。</td></tr>`;
+          }
         });
 
-        document
-            .getElementById("coach-results-body")
-            .addEventListener("click", async function (event) {
-                if (event.target.classList.contains("select-coach-btn")) {
-                    const coachId = event.target.dataset.coachId;
-                    const response = await fetch(
-                        "/api/student/coach/select",
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                                coachId: parseInt(coachId),
-                            }),
-                        },
-                    );
-                    const data = await response.json();
-                    const messageDiv = document.getElementById("message");
-                    if (response.ok) {
-                        messageDiv.textContent = data.message;
-                        messageDiv.className = "alert alert-success";
-                        messageDiv.classList.remove("d-none");
-                        // Optionally disable the button or update UI
-                        event.target.disabled = true;
-                    } else {
-                        messageDiv.textContent = data.message;
-                        messageDiv.className = "alert alert-danger";
-                        messageDiv.classList.remove("d-none");
-                    }
-                } else if (event.target.classList.contains("change-coach-btn")) {
-                    const newCoachId = event.target.dataset.coachId;
-                    document.getElementById('newCoachId').value = newCoachId;
+      // 页面加载时的初始搜索（列出校区内所有教练）
+      document
+        .getElementById("coach-search-form")
+        .dispatchEvent(new Event("submit"));
 
-                    // Fetch student's current coaches
-                    const response = await fetch('/api/student/me/coaches');
-                    const coaches = await response.json();
-                    const oldCoachSelect = document.getElementById('oldCoachId');
-                    oldCoachSelect.innerHTML = '';
-                    coaches.forEach(coach => {
-                        const option = document.createElement('option');
-                        option.value = coach.coachId;
-                        option.textContent = coach.coachRealName;
-                        oldCoachSelect.appendChild(option);
-                    });
+      const coachDetailsModal = document.getElementById(
+        "coachDetailsModal",
+      );
+      coachDetailsModal.addEventListener(
+        "show.bs.modal",
+        function (event) {
+          const button = event.relatedTarget;
+          const sex = button.getAttribute("data-bs-sex");
+          const birthYear = button.getAttribute("data-bs-birthyear");
+          const phone = button.getAttribute("data-bs-phone");
+          const email = button.getAttribute("data-bs-email");
+          const type = button.getAttribute("data-bs-type");
+          const comment = button.getAttribute("data-bs-comment");
 
-                    const changeCoachModal = new bootstrap.Modal(document.getElementById('changeCoachModal'));
-                    changeCoachModal.show();
-                }
-            });
+          const modalSexText = coachDetailsModal.querySelector(
+            "#modal-sex-text",
+          );
+          const modalAgeText = coachDetailsModal.querySelector(
+            "#modal-age-text",
+          );
+          const modalPhoneText = coachDetailsModal.querySelector(
+            "#modal-phone-text",
+          );
+          const modalEmailText = coachDetailsModal.querySelector(
+            "#modal-email-text",
+          );
+          const modalTypeText = coachDetailsModal.querySelector(
+            "#modal-type-text",
+          );
+          const modalCommentText = coachDetailsModal.querySelector(
+            "#modal-comment-text",
+          );
 
-        document.getElementById('change-coach-form').addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const newCoachId = document.getElementById('newCoachId').value;
-            const oldCoachId = document.getElementById('oldCoachId').value;
-            const messageDiv = document.getElementById('change-coach-message');
+          modalSexText.textContent = getSexString(parseInt(sex));
+          modalAgeText.textContent =
+            (new Date().getFullYear() - parseInt(birthYear)) ||
+            "未填写";
+          modalPhoneText.textContent = phone || "未填写";
+          const displayEmail = (email === "null" || email === null)
+            ? "未填写"
+            : email;
+          modalEmailText.textContent = displayEmail;
+          modalTypeText.textContent = getCoachTypeString(
+            parseInt(type),
+          );
+          modalCommentText.textContent = comment || "未填写";
+        },
+      );
 
-            try {
-                const response = await fetch('/api/student/coach/change', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ oldCoachId: parseInt(oldCoachId), newCoachId: parseInt(newCoachId) })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    messageDiv.textContent = "更换申请已提交！";
-                    messageDiv.className = 'alert alert-success';
-                    messageDiv.classList.remove('d-none');
-                    setTimeout(() => {
-                        const changeCoachModal = bootstrap.Modal.getInstance(document.getElementById('changeCoachModal'));
-                        changeCoachModal.hide();
-                    }, 2000);
-                } else {
-                    messageDiv.textContent = data.message || "提交更换申请失败。";
-                    messageDiv.className = 'alert alert-danger';
-                    messageDiv.classList.remove('d-none');
-                }
-            } catch (error) {
-                messageDiv.textContent = "发生未知错误。";
-                messageDiv.className = 'alert alert-danger';
-                messageDiv.classList.remove('d-none');
+      document
+        .getElementById("coach-results-body")
+        .addEventListener("click", async function (event) {
+          if (event.target.classList.contains("select-coach-btn")) {
+            const coachId = event.target.dataset.coachId;
+            const response = await fetch(
+              "/api/student/coach/select",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  coachId: parseInt(coachId),
+                }),
+              },
+            );
+            const data = await response.json();
+            const messageDiv = document.getElementById("message");
+            if (response.ok) {
+              messageDiv.textContent = data.message;
+              messageDiv.className = "alert alert-success";
+              messageDiv.classList.remove("d-none");
+              // Optionally disable the button or update UI
+              event.target.disabled = true;
+            } else {
+              messageDiv.textContent = data.message;
+              messageDiv.className = "alert alert-danger";
+              messageDiv.classList.remove("d-none");
             }
-        });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-</body>
+          } else if (
+            event.target.classList.contains("change-coach-btn")
+          ) {
+            const newCoachId = event.target.dataset.coachId;
+            document.getElementById("newCoachId").value = newCoachId;
 
+            // Fetch student's current coaches
+            const response = await fetch("/api/student/me/coaches");
+            const coaches = await response.json();
+            const oldCoachSelect = document.getElementById(
+              "oldCoachId",
+            );
+            oldCoachSelect.innerHTML = "";
+            coaches.forEach((coach) => {
+              const option = document.createElement("option");
+              option.value = coach.coachId;
+              option.textContent = coach.coachRealName;
+              oldCoachSelect.appendChild(option);
+            });
+
+            const changeCoachModal = new bootstrap.Modal(
+              document.getElementById("changeCoachModal"),
+            );
+            changeCoachModal.show();
+          }
+        });
+
+      document.getElementById("change-coach-form").addEventListener(
+        "submit",
+        async function (event) {
+          event.preventDefault();
+          const newCoachId =
+            document.getElementById("newCoachId").value;
+          const oldCoachId =
+            document.getElementById("oldCoachId").value;
+          const messageDiv = document.getElementById(
+            "change-coach-message",
+          );
+
+          try {
+            const response = await fetch("/api/student/coach/change", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                oldCoachId: parseInt(oldCoachId),
+                newCoachId: parseInt(newCoachId),
+              }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              messageDiv.textContent = "更换申请已提交！";
+              messageDiv.className = "alert alert-success";
+              messageDiv.classList.remove("d-none");
+              setTimeout(() => {
+                const changeCoachModal = bootstrap.Modal.getInstance(
+                  document.getElementById("changeCoachModal"),
+                );
+                changeCoachModal.hide();
+              }, 2000);
+            } else {
+              messageDiv.textContent = data.message ||
+                "提交更换申请失败。";
+              messageDiv.className = "alert alert-danger";
+              messageDiv.classList.remove("d-none");
+            }
+          } catch (error) {
+            messageDiv.textContent = "发生未知错误。";
+            messageDiv.className = "alert alert-danger";
+            messageDiv.classList.remove("d-none");
+          }
+        },
+      );
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

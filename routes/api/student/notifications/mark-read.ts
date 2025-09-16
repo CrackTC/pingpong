@@ -1,6 +1,9 @@
 import { Hono } from "hono";
 import { getClaim } from "../../../../auth/claim.ts";
-import { markNotificationAsRead, getNotificationById } from "../../../../data/notificationDao.ts";
+import {
+  getNotificationById,
+  markNotificationAsRead,
+} from "../../../../data/notificationDao.ts";
 import { NotificationTarget } from "../../../../models/notification.ts";
 
 export function useApiStudentNotificationsMarkRead(app: Hono) {
@@ -15,7 +18,10 @@ export function useApiStudentNotificationsMarkRead(app: Hono) {
     }
 
     // Check if the notification belongs to the authenticated student
-    if (notification.targetId !== claim.id || notification.target !== NotificationTarget.Student) {
+    if (
+      notification.targetId !== claim.id ||
+      notification.target !== NotificationTarget.Student
+    ) {
       return c.json({ message: "无权将此通知标记为已读" }, 403);
     }
 

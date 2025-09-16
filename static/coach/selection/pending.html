@@ -1,83 +1,116 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>待处理选择</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-</head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
 
-<body class="bg-light">
+  <body class="bg-light">
     <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-10">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title text-center mb-4">待处理学生选择</h3>
-                        <div id="message" class="alert d-none" role="alert"></div>
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>学生姓名</th>
-                                        <th>详情</th>
-                                        <th>操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="pending-selections-table-body">
-                                    <tr>
-                                        <td colspan="6" class="text-center">未找到待处理选择。</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="/coach/home" class="btn btn-primary">主页</a>
-                        </div>
-                    </div>
-                </div>
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">待处理学生选择</h3>
+              <div id="message" class="alert d-none" role="alert"></div>
+              <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th>学生姓名</th>
+                      <th>详情</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pending-selections-table-body">
+                    <tr>
+                      <td colspan="6" class="text-center">
+                        未找到待处理选择。
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="/coach/home" class="btn btn-primary">主页</a>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="modal fade" id="studentDetailsModal" tabindex="-1" aria-labelledby="studentDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="studentDetailsModalLabel">学生详情</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p><strong>性别:</strong> <span id="modal-sex-text"></span></p>
-                    <p><strong>出生年份:</strong> <span id="modal-birthyear-text"></span></p>
-                    <p><strong>电话:</strong> <span id="modal-phone-text"></span></p>
-                    <p><strong>电子邮件:</strong> <span id="modal-email-text"></span></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                </div>
-            </div>
+    <div
+      class="modal fade"
+      id="studentDetailsModal"
+      tabindex="-1"
+      aria-labelledby="studentDetailsModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="studentDetailsModalLabel">学生详情</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+            </button>
+          </div>
+          <div class="modal-body">
+            <p><strong>性别:</strong> <span id="modal-sex-text"></span></p>
+            <p>
+              <strong>出生年份:</strong> <span id="modal-birthyear-text"></span>
+            </p>
+            <p><strong>电话:</strong> <span id="modal-phone-text"></span></p>
+            <p>
+              <strong>电子邮件:</strong> <span id="modal-email-text"></span>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              关闭
+            </button>
+          </div>
         </div>
+      </div>
     </div>
     <script>
-        function getSexString(sex) {
-            switch (sex) {
-                case 1: return "男";
-                case 2: return "女";
-                default: return "未指定";
-            }
+      function getSexString(sex) {
+        switch (sex) {
+          case 1:
+            return "男";
+          case 2:
+            return "女";
+          default:
+            return "未指定";
         }
+      }
 
-        async function fetchPendingSelections() {
-            const response = await fetch('/api/coach/selection/pending');
-            const selections = await response.json();
-            const tableBody = document.getElementById('pending-selections-table-body');
-            tableBody.innerHTML = '';
+      async function fetchPendingSelections() {
+        const response = await fetch("/api/coach/selection/pending");
+        const selections = await response.json();
+        const tableBody = document.getElementById(
+          "pending-selections-table-body",
+        );
+        tableBody.innerHTML = "";
 
-            if (response.ok && selections.length > 0) {
-                selections.forEach(selection => {
-                    const row = tableBody.insertRow();
-                    row.innerHTML = `
+        if (response.ok && selections.length > 0) {
+          selections.forEach((selection) => {
+            const row = tableBody.insertRow();
+            row.innerHTML = `
                         <td class="align-middle">${selection.studentRealName}</td>
                         <td class="align-middle">
                             <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#studentDetailsModal" data-bs-sex="${selection.studentSex}" data-bs-birthyear="${selection.studentBirthYear}" data-bs-phone="${selection.studentPhone}" data-bs-email="${selection.studentEmail}">
@@ -89,75 +122,101 @@
                             <button type="button" class="btn btn-danger btn-sm reject-btn" data-selection-id="${selection.id}">拒绝</button>
                         </td>
                     `;
-                });
-            } else if (response.ok && selections.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="6" class="text-center">未找到待处理选择。</td></tr>`;
-            } else {
-                const messageDiv = document.getElementById('message');
-                messageDiv.textContent = selections.message || '加载选择时发生错误。';
-                messageDiv.className = 'alert alert-danger';
-                messageDiv.classList.remove('d-none');
-                tableBody.innerHTML = `<tr><td colspan="6" class="text-center">加载选择时出错。</td></tr>`;
-            }
+          });
+        } else if (response.ok && selections.length === 0) {
+          tableBody.innerHTML =
+            `<tr><td colspan="6" class="text-center">未找到待处理选择。</td></tr>`;
+        } else {
+          const messageDiv = document.getElementById("message");
+          messageDiv.textContent = selections.message ||
+            "加载选择时发生错误。";
+          messageDiv.className = "alert alert-danger";
+          messageDiv.classList.remove("d-none");
+          tableBody.innerHTML =
+            `<tr><td colspan="6" class="text-center">加载选择时出错。</td></tr>`;
         }
+      }
 
-        document.getElementById('pending-selections-table-body').addEventListener('click', async function(event) {
-            const messageDiv = document.getElementById('message');
-            let action = '';
-            if (event.target.classList.contains('approve-btn')) {
-                action = 'approve';
-            } else if (event.target.classList.contains('reject-btn')) {
-                action = 'reject';
+      document.getElementById("pending-selections-table-body")
+        .addEventListener("click", async function (event) {
+          const messageDiv = document.getElementById("message");
+          let action = "";
+          if (event.target.classList.contains("approve-btn")) {
+            action = "approve";
+          } else if (event.target.classList.contains("reject-btn")) {
+            action = "reject";
+          }
+
+          if (action) {
+            const selectionId = event.target.dataset.selectionId;
+            const response = await fetch(
+              `/api/coach/selection/${action}`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  selectionId: parseInt(selectionId),
+                }),
+              },
+            );
+            const data = await response.json();
+
+            if (response.ok) {
+              messageDiv.textContent = data.message;
+              messageDiv.className = "alert alert-success";
+              messageDiv.classList.remove("d-none");
+              fetchPendingSelections(); // Reload selections
+            } else {
+              messageDiv.textContent = data.message;
+              messageDiv.className = "alert alert-danger";
+              messageDiv.classList.remove("d-none");
             }
-
-            if (action) {
-                const selectionId = event.target.dataset.selectionId;
-                const response = await fetch(`/api/coach/selection/${action}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ selectionId: parseInt(selectionId) })
-                });
-                const data = await response.json();
-
-                if (response.ok) {
-                    messageDiv.textContent = data.message;
-                    messageDiv.className = 'alert alert-success';
-                    messageDiv.classList.remove('d-none');
-                    fetchPendingSelections(); // Reload selections
-                } else {
-                    messageDiv.textContent = data.message;
-                    messageDiv.className = 'alert alert-danger';
-                    messageDiv.classList.remove('d-none');
-                }
-            }
+          }
         });
 
-        fetchPendingSelections();
+      fetchPendingSelections();
 
-        const studentDetailsModal = document.getElementById('studentDetailsModal');
-        studentDetailsModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
-            const sex = button.getAttribute('data-bs-sex');
-            const birthYear = button.getAttribute('data-bs-birthyear');
-            const phone = button.getAttribute('data-bs-phone');
-            const email = button.getAttribute('data-bs-email');
+      const studentDetailsModal = document.getElementById(
+        "studentDetailsModal",
+      );
+      studentDetailsModal.addEventListener(
+        "show.bs.modal",
+        function (event) {
+          const button = event.relatedTarget;
+          const sex = button.getAttribute("data-bs-sex");
+          const birthYear = button.getAttribute("data-bs-birthyear");
+          const phone = button.getAttribute("data-bs-phone");
+          const email = button.getAttribute("data-bs-email");
 
-            const modalSexText = studentDetailsModal.querySelector('#modal-sex-text');
-            const modalBirthYearText = studentDetailsModal.querySelector('#modal-birthyear-text');
-            const modalPhoneText = studentDetailsModal.querySelector('#modal-phone-text');
-            const modalEmailText = studentDetailsModal.querySelector('#modal-email-text');
+          const modalSexText = studentDetailsModal.querySelector(
+            "#modal-sex-text",
+          );
+          const modalBirthYearText = studentDetailsModal.querySelector(
+            "#modal-birthyear-text",
+          );
+          const modalPhoneText = studentDetailsModal.querySelector(
+            "#modal-phone-text",
+          );
+          const modalEmailText = studentDetailsModal.querySelector(
+            "#modal-email-text",
+          );
 
-            modalSexText.textContent = getSexString(parseInt(sex));
-            modalBirthYearText.textContent = birthYear || "未指定";
-            modalPhoneText.textContent = phone || "未指定";
-            const displayEmail = (email === "null" || email === null) ? "未指定" : email;
-            modalEmailText.textContent = displayEmail;
-        });
+          modalSexText.textContent = getSexString(parseInt(sex));
+          modalBirthYearText.textContent = birthYear || "未指定";
+          modalPhoneText.textContent = phone || "未指定";
+          const displayEmail = (email === "null" || email === null)
+            ? "未指定"
+            : email;
+          modalEmailText.textContent = displayEmail;
+        },
+      );
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-</body>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

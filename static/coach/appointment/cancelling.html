@@ -1,199 +1,198 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>待处理取消</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-        <style>
-            .table td,
-            .table th {
-                vertical-align: middle;
-            }
-        </style>
-    </head>
-    <body class="bg-light">
-        <div class="container">
-            <div class="row justify-content-center mt-5">
-                <div class="col-md-10">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title text-center mb-4">
-                                待处理取消
-                            </h3>
-                            <div
-                                id="message-area"
-                                class="alert d-none"
-                                role="alert"
-                            ></div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>待处理取消</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <style>
+      .table td,
+      .table th {
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">
+                待处理取消
+              </h3>
+              <div
+                id="message-area"
+                class="alert d-none"
+                role="alert"
+              >
+              </div>
 
-                            <div
-                                id="appointments-list"
-                                class="mt-4"
-                                style="overflow-x: auto"
-                            >
-                                <!-- Appointments will be loaded here -->
-                            </div>
+              <div
+                id="appointments-list"
+                class="mt-4"
+                style="overflow-x: auto"
+              >
+                <!-- Appointments will be loaded here -->
+              </div>
 
-                            <div class="d-grid gap-2 mt-3">
-                                <a href="/coach/home" class="btn btn-secondary"
-                                    >返回主页</a
-                                >
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              <div class="d-grid gap-2 mt-3">
+                <a href="/coach/home" class="btn btn-secondary">返回主页</a>
+              </div>
             </div>
+          </div>
         </div>
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"
-        ></script>
-        <script>
-            const messageArea = document.getElementById("message-area");
-            const appointmentsListDiv =
-                document.getElementById("appointments-list");
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const messageArea = document.getElementById("message-area");
+      const appointmentsListDiv = document.getElementById(
+        "appointments-list",
+      );
 
-            function displayMessage(message, type) {
-                messageArea.textContent = message;
-                messageArea.className = `alert alert-${type}`;
-                messageArea.classList.remove("d-none");
-            }
+      function displayMessage(message, type) {
+        messageArea.textContent = message;
+        messageArea.className = `alert alert-${type}`;
+        messageArea.classList.remove("d-none");
+      }
 
-            function getWeekdayString(weekday) {
-                const weekdays = [
-                    "星期日",
-                    "星期一",
-                    "星期二",
-                    "星期三",
-                    "星期四",
-                    "星期五",
-                    "星期六",
-                ];
-                return weekdays[weekday];
-            }
+      function getWeekdayString(weekday) {
+        const weekdays = [
+          "星期日",
+          "星期一",
+          "星期二",
+          "星期三",
+          "星期四",
+          "星期五",
+          "星期六",
+        ];
+        return weekdays[weekday];
+      }
 
-            async function fetchCancellingAppointments() {
-                try {
-                    const response = await fetch(
-                        "/api/coach/appointment/cancelling",
-                    );
-                    const appointments = await response.json();
+      async function fetchCancellingAppointments() {
+        try {
+          const response = await fetch(
+            "/api/coach/appointment/cancelling",
+          );
+          const appointments = await response.json();
 
-                    if (response.ok) {
-                        if (appointments.length > 0) {
-                            let appointmentsHtml =
-                                '<table class="table table-striped"><thead><tr><th>时间</th><th>学生</th><th>球台</th><th>星期</th><th></th></tr></thead><tbody>';
-                            appointments.forEach((a) => {
-                                const startTime =
-                                    String(a.startHour).padStart(2, "0") +
-                                    ":" +
-                                    String(a.startMinute).padStart(2, "0");
-                                const endTime =
-                                    String(a.endHour).padStart(2, "0") +
-                                    ":" +
-                                    String(a.endMinute).padStart(2, "0");
+          if (response.ok) {
+            if (appointments.length > 0) {
+              let appointmentsHtml =
+                '<table class="table table-striped"><thead><tr><th>时间</th><th>学生</th><th>球台</th><th>星期</th><th></th></tr></thead><tbody>';
+              appointments.forEach((a) => {
+                const startTime = String(a.startHour).padStart(2, "0") +
+                  ":" +
+                  String(a.startMinute).padStart(2, "0");
+                const endTime = String(a.endHour).padStart(2, "0") +
+                  ":" +
+                  String(a.endMinute).padStart(2, "0");
 
-                                const now = new Date(a.createdAt);
-                                const appointmentDate = new Date(now);
-                                appointmentDate.setHours(
-                                    a.startHour,
-                                    a.startMinute,
-                                    0,
-                                    0,
-                                );
+                const now = new Date(a.createdAt);
+                const appointmentDate = new Date(now);
+                appointmentDate.setHours(
+                  a.startHour,
+                  a.startMinute,
+                  0,
+                  0,
+                );
 
-                                let diff = a.weekday - now.getDay();
-                                if (
-                                    diff < 0 ||
-                                    (diff === 0 &&
-                                        appointmentDate.getTime() <
-                                            now.getTime())
-                                ) {
-                                    diff += 7;
-                                }
-                                appointmentDate.setDate(now.getDate() + diff);
-
-                                const appointmentDateStr =
-                                    appointmentDate.toLocaleDateString();
-                                const timeStr = `${appointmentDateStr} ${startTime} - ${endTime}`;
-
-                                const approveButton = `<button class="btn btn-success btn-sm approve-btn" data-appointment-id="${a.id}">批准</button>`;
-                                appointmentsHtml += `<tr><td>${timeStr}</td><td>${a.studentName}</td><td>${a.tableName}</td><td>${getWeekdayString(a.weekday)}</td><td>${approveButton}</td></tr>`;
-                            });
-                            appointmentsHtml += "</tbody></table>";
-                            appointmentsListDiv.innerHTML = appointmentsHtml;
-
-                            document
-                                .querySelectorAll(".approve-btn")
-                                .forEach((button) => {
-                                    button.addEventListener(
-                                        "click",
-                                        async (event) => {
-                                            const appointmentId =
-                                                event.target.dataset
-                                                    .appointmentId;
-                                            const response = await fetch(
-                                                "/api/coach/appointment/cancel/approve",
-                                                {
-                                                    method: "POST",
-                                                    headers: {
-                                                        "Content-Type":
-                                                            "application/json",
-                                                    },
-                                                    body: JSON.stringify({
-                                                        appointmentId:
-                                                            parseInt(
-                                                                appointmentId,
-                                                            ),
-                                                    }),
-                                                },
-                                            );
-
-                                            if (response.ok) {
-                                                displayMessage(
-                                                    "取消已批准。",
-                                                    "success",
-                                                );
-                                                fetchCancellingAppointments();
-                                            } else {
-                                                const error =
-                                                    await response.json();
-                                                displayMessage(
-                                                    error.message ||
-                                                        "批准取消失败。",
-                                                    "danger",
-                                                );
-                                            }
-                                        },
-                                    );
-                                });
-                        } else {
-                            appointmentsListDiv.innerHTML =
-                                '<p class="text-center">未找到待处理取消。</p>';
-                        }
-                    } else {
-                        displayMessage(
-                            appointments.message ||
-                                "获取待处理取消失败。",
-                            "danger",
-                        );
-                    }
-                } catch (error) {
-                    displayMessage(
-                        "获取待处理取消时发生意外错误。",
-                        "danger",
-                    );
+                let diff = a.weekday - now.getDay();
+                if (
+                  diff < 0 ||
+                  (diff === 0 &&
+                    appointmentDate.getTime() <
+                      now.getTime())
+                ) {
+                  diff += 7;
                 }
-            }
+                appointmentDate.setDate(now.getDate() + diff);
 
-            fetchCancellingAppointments();
-        </script>
-    </body>
+                const appointmentDateStr = appointmentDate
+                  .toLocaleDateString();
+                const timeStr =
+                  `${appointmentDateStr} ${startTime} - ${endTime}`;
+
+                const approveButton =
+                  `<button class="btn btn-success btn-sm approve-btn" data-appointment-id="${a.id}">批准</button>`;
+                appointmentsHtml +=
+                  `<tr><td>${timeStr}</td><td>${a.studentName}</td><td>${a.tableName}</td><td>${
+                    getWeekdayString(a.weekday)
+                  }</td><td>${approveButton}</td></tr>`;
+              });
+              appointmentsHtml += "</tbody></table>";
+              appointmentsListDiv.innerHTML = appointmentsHtml;
+
+              document
+                .querySelectorAll(".approve-btn")
+                .forEach((button) => {
+                  button.addEventListener(
+                    "click",
+                    async (event) => {
+                      const appointmentId = event.target.dataset
+                        .appointmentId;
+                      const response = await fetch(
+                        "/api/coach/appointment/cancel/approve",
+                        {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            appointmentId: parseInt(
+                              appointmentId,
+                            ),
+                          }),
+                        },
+                      );
+
+                      if (response.ok) {
+                        displayMessage(
+                          "取消已批准。",
+                          "success",
+                        );
+                        fetchCancellingAppointments();
+                      } else {
+                        const error = await response.json();
+                        displayMessage(
+                          error.message ||
+                            "批准取消失败。",
+                          "danger",
+                        );
+                      }
+                    },
+                  );
+                });
+            } else {
+              appointmentsListDiv.innerHTML =
+                '<p class="text-center">未找到待处理取消。</p>';
+            }
+          } else {
+            displayMessage(
+              appointments.message ||
+                "获取待处理取消失败。",
+              "danger",
+            );
+          }
+        } catch (error) {
+          displayMessage(
+            "获取待处理取消时发生意外错误。",
+            "danger",
+          );
+        }
+      }
+
+      fetchCancellingAppointments();
+    </script>
+  </body>
 </html>

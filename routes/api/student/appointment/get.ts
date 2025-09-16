@@ -18,7 +18,7 @@ export function useApiStudentAppointmentGet(app: Hono) {
 
     // Authorization check
     if (appointment.studentId !== claim.id) {
-        return c.json({ success: false, message: "未授权" }, 401);
+      return c.json({ success: false, message: "未授权" }, 401);
     }
 
     return c.json(appointment);

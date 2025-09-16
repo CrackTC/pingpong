@@ -44,8 +44,7 @@ export function useApiPayment(app: Hono) {
       addSystemLog({
         campusId: student.campusId,
         type: SystemLogType.PaymentComplete,
-        text:
-          `学生ID ${order.studentId} 完成了 ${order.amount} 元的充值。`,
+        text: `学生ID ${order.studentId} 完成了 ${order.amount} 元的充值。`,
         relatedId: order.id,
       });
       return c.json({ message: "支付成功。" });
@@ -77,8 +76,7 @@ export function useApiPayment(app: Hono) {
       addSystemLog({
         campusId: student.campusId,
         type: SystemLogType.PaymentCancel,
-        text:
-          `学生ID ${order.studentId} 取消了 ${order.amount} 元的充值。`,
+        text: `学生ID ${order.studentId} 取消了 ${order.amount} 元的充值。`,
         relatedId: order.id,
       });
       return c.json({ message: "订单已取消。" });

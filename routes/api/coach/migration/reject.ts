@@ -38,8 +38,7 @@ export function useApiCoachMigrationReject(app: Hono) {
       if (migration.destCoachId === claim.id) {
         if ((migration.status & MigrationStatus.DestCoachApproved) !== 0) {
           return c.json({
-            message:
-              "无法拒绝已被目标教练批准的迁移。",
+            message: "无法拒绝已被目标教练批准的迁移。",
           }, 400);
         }
         updateMigrationStatus(migrationId, MigrationStatus.Rejected);
@@ -65,8 +64,7 @@ export function useApiCoachMigrationReject(app: Hono) {
         }
         if ((migration.status & MigrationStatus.OriginCoachApproved) !== 0) {
           return c.json({
-            message:
-              "无法拒绝已被原始教练批准的迁移。",
+            message: "无法拒绝已被原始教练批准的迁移。",
           }, 400);
         }
         updateMigrationStatus(migrationId, MigrationStatus.Rejected);

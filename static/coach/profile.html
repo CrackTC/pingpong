@@ -1,76 +1,105 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>教练资料</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-</head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
 
-<body class="bg-light">
+  <body class="bg-light">
     <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title text-center mb-4">教练资料</h3>
-                        <div id="profile-data"></div>
-                        <div class="d-flex flex-column gap-2">
-                            <a href="/coach/home" class="btn btn-primary">主页</a>
-                            <a href="/coach/password" class="btn btn-secondary">更改密码</a>
-                            <a href="/coach/avatar" class="btn btn-secondary">更改头像</a>
-                            <a href="/coach/edit" class="btn btn-secondary">编辑资料</a>
-                        </div>
-                    </div>
-                </div>
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">教练资料</h3>
+              <div id="profile-data"></div>
+              <div class="d-flex flex-column gap-2">
+                <a href="/coach/home" class="btn btn-primary">主页</a>
+                <a href="/coach/password" class="btn btn-secondary">更改密码</a>
+                <a href="/coach/avatar" class="btn btn-secondary">更改头像</a>
+                <a href="/coach/edit" class="btn btn-secondary">编辑资料</a>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
     <script>
-        function getSexString(sex) {
-            switch (sex) {
-                case 1: return "男";
-                case 2: return "女";
-                default: return "未指定";
-            }
+      function getSexString(sex) {
+        switch (sex) {
+          case 1:
+            return "男";
+          case 2:
+            return "女";
+          default:
+            return "未指定";
         }
+      }
 
-        function getCoachTypeString(type) {
-            switch (type) {
-                case 1: return "待批准";
-                case 2: return "初级";
-                case 3: return "中级";
-                case 4: return "高级";
-                default: return "未知";
-            }
+      function getCoachTypeString(type) {
+        switch (type) {
+          case 1:
+            return "待批准";
+          case 2:
+            return "初级";
+          case 3:
+            return "中级";
+          case 4:
+            return "高级";
+          default:
+            return "未知";
         }
+      }
 
-        fetch('/api/coach/me')
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    document.getElementById('profile-data').innerText = data.error;
-                } else {
-                    const imagePath = data.avatarPath.startsWith('./') ? data.avatarPath.substring(1) : data.avatarPath;
-                    document.getElementById('profile-data').innerHTML = `
+      fetch("/api/coach/me")
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            document.getElementById("profile-data").innerText =
+              data.error;
+          } else {
+            const imagePath = data.avatarPath.startsWith("./")
+              ? data.avatarPath.substring(1)
+              : data.avatarPath;
+            document.getElementById("profile-data").innerHTML = `
                         <p class="text-center"><img src="${imagePath}" alt="头像" width="100" height="100"></p>
                         <p><strong>用户名:</strong> ${data.username}</p>
                         <p><strong>真实姓名:</strong> ${data.realName}</p>
-                        <p><strong>性别:</strong> ${getSexString(data.sex)}</p>
-                        <p><strong>出生年份:</strong> ${data.birthYear || "未指定"}</p>
+                        <p><strong>性别:</strong> ${
+              getSexString(data.sex)
+            }</p>
+                        <p><strong>出生年份:</strong> ${
+              data.birthYear || "未指定"
+            }</p>
                         <p><strong>校区:</strong> ${data.campusName}</p>
                         <p><strong>电话:</strong> ${data.phone}</p>
-                        <p><strong>电子邮件:</strong> ${data.email || "未指定"}</p>
-                        <p><strong>身份证号码:</strong> ${data.idCardNumber || "未指定"}</p>
-                        <p><strong>类型:</strong> ${getCoachTypeString(data.type)}</p>
-                        <p><strong>评论:</strong> ${data.comment || "未指定"}</p>
+                        <p><strong>电子邮件:</strong> ${
+              data.email || "未指定"
+            }</p>
+                        <p><strong>身份证号码:</strong> ${
+              data.idCardNumber || "未指定"
+            }</p>
+                        <p><strong>类型:</strong> ${
+              getCoachTypeString(data.type)
+            }</p>
+                        <p><strong>评论:</strong> ${
+              data.comment || "未指定"
+            }</p>
                     `;
-                }
-            });
+          }
+        });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-</body>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

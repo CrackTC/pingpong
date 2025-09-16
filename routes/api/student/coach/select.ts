@@ -34,8 +34,7 @@ export function useApiStudentSelectCoach(app: Hono) {
 
     if (coach.type === CoachType.Pending) {
       return c.json({
-        message:
-          "此教练目前待批准，无法选择。",
+        message: "此教练目前待批准，无法选择。",
       }, 400);
     }
 
@@ -54,8 +53,7 @@ export function useApiStudentSelectCoach(app: Hono) {
     const activeSelectionCount = getActiveSelectionCountForStudent(student.id);
     if (activeSelectionCount >= 2) {
       return c.json({
-        message:
-          "您已有2个待处理或已批准的教练选择。您不能选择更多教练。",
+        message: "您已有2个待处理或已批准的教练选择。您不能选择更多教练。",
       }, 400);
     }
 
@@ -89,8 +87,7 @@ export function useApiStudentSelectCoach(app: Hono) {
         relatedId: id,
       });
       return c.json({
-        message:
-          "教练选择请求已成功发送。等待教练批准。",
+        message: "教练选择请求已成功发送。等待教练批准。",
       });
     } catch (error) {
       console.error("选择教练时出错：", error);

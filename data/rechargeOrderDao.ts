@@ -47,7 +47,10 @@ export function getRechargeOrdersByStudentId(
     ORDER BY
       ro.id DESC
   `);
-  return stmt.all(SystemLogType.StudentRecharge, studentId) as (RechargeOrder & { createdAt: number })[];
+  return stmt.all(
+    SystemLogType.StudentRecharge,
+    studentId,
+  ) as (RechargeOrder & { createdAt: number })[];
 }
 
 export function deleteRechargeOrdersByStudentId(studentId: number) {

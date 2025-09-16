@@ -19,12 +19,17 @@ export function useApiStudentMatchAll(app: Hono) {
 
       const matches = getMatchesByStudentId(studentId);
 
-      const enrichedMatches = matches.map(match => {
+      const enrichedMatches = matches.map((match) => {
         let opponentName = "N/A";
         if (match.opponentSeq !== null) {
-          const opponentContestant = getContestantByContestIdAndSeq(match.contestId, match.opponentSeq);
+          const opponentContestant = getContestantByContestIdAndSeq(
+            match.contestId,
+            match.opponentSeq,
+          );
           if (opponentContestant) {
-            const opponentStudent = getStudentById(opponentContestant.studentId);
+            const opponentStudent = getStudentById(
+              opponentContestant.studentId,
+            );
             if (opponentStudent) {
               opponentName = opponentStudent.realName;
             }

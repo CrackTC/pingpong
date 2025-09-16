@@ -11,9 +11,11 @@ export function useApiStudentAppointmentAll(app: Hono) {
 
     try {
       const appointments = getAppointmentsByStudentId(studentId);
-      const appointmentsWithReviewStatus = appointments.map(appointment => {
+      const appointmentsWithReviewStatus = appointments.map((appointment) => {
         const reviews = getReviewsByAppointmentId(appointment.id);
-        const hasReview = reviews.some(r => r.type === ReviewType.StudentToCoach);
+        const hasReview = reviews.some((r) =>
+          r.type === ReviewType.StudentToCoach
+        );
         return {
           ...appointment,
           hasReview,

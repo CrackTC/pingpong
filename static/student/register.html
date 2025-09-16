@@ -1,160 +1,215 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>学生注册</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>学生注册</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
 
-    <body class="bg-light">
-        <div class="container">
-            <div class="row justify-content-center mt-5">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title text-center mb-4">学生注册</h3>
-                            <div id="message-area" class="alert d-none" role="alert"></div>
-                            <form id="register-form">
-                                <div class="mb-3">
-                                    <label for="username" class="form-label">用户名</label>
-                                    <input type="text" class="form-control" id="username" name="username" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">密码</label>
-                                    <input type="password" class="form-control" id="password" name="password" required>
-                                    <small id="passwordHelp" class="form-text text-muted">
-                                        密码需为 8-16 位，且至少包含一个字母、一个数字和一个特殊符号。
-                                    </small>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="realName" class="form-label">真实姓名</label>
-                                    <input type="text" class="form-control" id="realName" name="realName" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="sex" class="form-label">性别</label>
-                                    <select class="form-select" id="sex" name="sex">
-                                        <option value="0">未指定</option>
-                                        <option value="1">男</option>
-                                        <option value="2">女</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="birthYear" class="form-label">出生年份</label>
-                                    <input type="number" class="form-control" id="birthYear" name="birthYear" min="1900" max="2024">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="campusId" class="form-label">校区</label>
-                                    <select class="form-select" id="campusId" name="campusId" required></select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="phone" class="form-label">手机号</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">邮箱（可选）</label>
-                                    <input type="email" class="form-control" id="email" name="email">
-                                </div>
-                                <button type="submit" class="btn btn-success w-100">注册</button>
-                            </form>
-                            <div class="d-grid gap-2 mt-3">
-                                <a href="/student/login" class="btn btn-secondary">返回登录</a>
-                            </div>
-                        </div>
-                    </div>
+  <body class="bg-light">
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">学生注册</h3>
+              <div id="message-area" class="alert d-none" role="alert"></div>
+              <form id="register-form">
+                <div class="mb-3">
+                  <label for="username" class="form-label">用户名</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="username"
+                    name="username"
+                    required
+                  >
                 </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">密码</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    required
+                  >
+                  <small id="passwordHelp" class="form-text text-muted">
+                    密码需为 8-16
+                    位，且至少包含一个字母、一个数字和一个特殊符号。
+                  </small>
+                </div>
+                <div class="mb-3">
+                  <label for="realName" class="form-label">真实姓名</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="realName"
+                    name="realName"
+                    required
+                  >
+                </div>
+                <div class="mb-3">
+                  <label for="sex" class="form-label">性别</label>
+                  <select class="form-select" id="sex" name="sex">
+                    <option value="0">未指定</option>
+                    <option value="1">男</option>
+                    <option value="2">女</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="birthYear" class="form-label">出生年份</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="birthYear"
+                    name="birthYear"
+                    min="1900"
+                    max="2024"
+                  >
+                </div>
+                <div class="mb-3">
+                  <label for="campusId" class="form-label">校区</label>
+                  <select
+                    class="form-select"
+                    id="campusId"
+                    name="campusId"
+                    required
+                  >
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="phone" class="form-label">手机号</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="phone"
+                    name="phone"
+                    required
+                  >
+                </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label">邮箱（可选）</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                  >
+                </div>
+                <button type="submit" class="btn btn-success w-100">
+                  注册
+                </button>
+              </form>
+              <div class="d-grid gap-2 mt-3">
+                <a href="/student/login" class="btn btn-secondary">返回登录</a>
+              </div>
             </div>
+          </div>
         </div>
-        <script>
-            const messageArea = document.getElementById('message-area');
-            const passwordInput = document.getElementById('password');
+      </div>
+    </div>
+    <script>
+      const messageArea = document.getElementById("message-area");
+      const passwordInput = document.getElementById("password");
 
-            function displayMessage(message, type) {
-                messageArea.textContent = message;
-                messageArea.className = `alert alert-${type}`;
-                messageArea.classList.remove('d-none');
-            }
+      function displayMessage(message, type) {
+        messageArea.textContent = message;
+        messageArea.className = `alert alert-${type}`;
+        messageArea.classList.remove("d-none");
+      }
 
-            // 客户端密码校验（与 utils.ts 保持一致）
-            function validatePassword(password) {
-                if (password.length < 8 || password.length > 16) {
-                    return "密码长度须在 8 到 16 位之间。";
-                }
-                if (!/[a-zA-Z]/.test(password)) {
-                    return "密码至少包含一个字母。";
-                }
-                if (!/\d/.test(password)) {
-                    return "密码至少包含一个数字。";
-                }
-                if (!/[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]/.test(password)) {
-                    return "密码至少包含一个特殊符号。";
-                }
-                return null; // Password is valid
-            }
+      // 客户端密码校验（与 utils.ts 保持一致）
+      function validatePassword(password) {
+        if (password.length < 8 || password.length > 16) {
+          return "密码长度须在 8 到 16 位之间。";
+        }
+        if (!/[a-zA-Z]/.test(password)) {
+          return "密码至少包含一个字母。";
+        }
+        if (!/\d/.test(password)) {
+          return "密码至少包含一个数字。";
+        }
+        if (!/[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]/.test(password)) {
+          return "密码至少包含一个特殊符号。";
+        }
+        return null; // Password is valid
+      }
 
-            async function fetchCampuses() {
-                const response = await fetch("/api/campus/all");
-                const campuses = await response.json();
-                const campusSelect = document.getElementById("campusId");
-                for (const campus of campuses) {
-                    const option = document.createElement("option");
-                    option.value = campus.id;
-                    option.textContent = campus.name;
-                    campusSelect.appendChild(option);
-                }
-            }
+      async function fetchCampuses() {
+        const response = await fetch("/api/campus/all");
+        const campuses = await response.json();
+        const campusSelect = document.getElementById("campusId");
+        for (const campus of campuses) {
+          const option = document.createElement("option");
+          option.value = campus.id;
+          option.textContent = campus.name;
+          campusSelect.appendChild(option);
+        }
+      }
 
-            document.getElementById('register-form').addEventListener('submit', async function(event) {
-                event.preventDefault();
-                messageArea.classList.add('d-none'); // Hide message on new submission
+      document.getElementById("register-form").addEventListener(
+        "submit",
+        async function (event) {
+          event.preventDefault();
+          messageArea.classList.add("d-none"); // Hide message on new submission
 
-                const password = passwordInput.value;
-                const passwordError = validatePassword(password);
-                if (passwordError) {
-                    displayMessage(passwordError, 'danger');
-                    return; // Stop form submission
-                }
+          const password = passwordInput.value;
+          const passwordError = validatePassword(password);
+          if (passwordError) {
+            displayMessage(passwordError, "danger");
+            return; // Stop form submission
+          }
 
-                const formData = new FormData(this);
-                const studentData = Object.fromEntries(formData.entries());
+          const formData = new FormData(this);
+          const studentData = Object.fromEntries(formData.entries());
 
-                // Convert numeric fields, handle optionality
-                studentData.sex = studentData.sex ? parseInt(studentData.sex) : null;
-                studentData.birthYear = studentData.birthYear ? parseInt(studentData.birthYear) : null;
-                studentData.campusId = parseInt(studentData.campusId); // Campus is still required
-                studentData.email = studentData.email || null; // Store null if email is empty
+          // Convert numeric fields, handle optionality
+          studentData.sex = studentData.sex
+            ? parseInt(studentData.sex)
+            : null;
+          studentData.birthYear = studentData.birthYear
+            ? parseInt(studentData.birthYear)
+            : null;
+          studentData.campusId = parseInt(studentData.campusId); // Campus is still required
+          studentData.email = studentData.email || null; // Store null if email is empty
 
-                const response = await fetch('/api/student/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(studentData)
-                });
+          const response = await fetch("/api/student/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(studentData),
+          });
 
-                if (response.ok) {
-                    displayMessage('注册成功！现在可以登录了。', 'success');
-                    this.reset(); // Clear the form
-                    setTimeout(() => {
-                        window.location.href = '/student/login'; // Redirect to login page
-                    }, 2000); // Redirect after 2 seconds
-                } else {
-                    const errorData = await response.json();
-                    displayMessage('注册失败：' + (errorData.message || '未知错误'), 'danger');
-                }
-            });
+          if (response.ok) {
+            displayMessage("注册成功！现在可以登录了。", "success");
+            this.reset(); // Clear the form
+            setTimeout(() => {
+              window.location.href = "/student/login"; // Redirect to login page
+            }, 2000); // Redirect after 2 seconds
+          } else {
+            const errorData = await response.json();
+            displayMessage(
+              "注册失败：" + (errorData.message || "未知错误"),
+              "danger",
+            );
+          }
+        },
+      );
 
-            fetchCampuses();
-        </script>
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"
-        ></script>
-    </body>
+      fetchCampuses();
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

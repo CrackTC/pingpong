@@ -1,61 +1,82 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>学生信息</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-</head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
 
-<body class="bg-light">
+  <body class="bg-light">
     <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title text-center mb-4">学生信息</h3>
-                        <div id="profile-data"></div>
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="/student/home" class="btn btn-primary">首页</a>
-                            <a href="/student/password" class="btn btn-secondary">修改密码</a>
-                            <a href="/student/edit" class="btn btn-secondary">编辑资料</a>
-                        </div>
-                    </div>
-                </div>
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title text-center mb-4">学生信息</h3>
+              <div id="profile-data"></div>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="/student/home" class="btn btn-primary">首页</a>
+                <a href="/student/password" class="btn btn-secondary"
+                >修改密码</a>
+                <a href="/student/edit" class="btn btn-secondary">编辑资料</a>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
     <script>
-        function getSexString(sex) {
-            switch (sex) {
-                case 1: return "男";
-                case 2: return "女";
-                default: return "未指定";
-            }
+      function getSexString(sex) {
+        switch (sex) {
+          case 1:
+            return "男";
+          case 2:
+            return "女";
+          default:
+            return "未指定";
         }
+      }
 
-        fetch('/api/student/me')
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    document.getElementById('profile-data').innerText = data.error;
-                } else {
-                    document.getElementById('profile-data').innerHTML = `
+      fetch("/api/student/me")
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            document.getElementById("profile-data").innerText =
+              data.error;
+          } else {
+            document.getElementById("profile-data").innerHTML = `
                         <p><strong>用户名：</strong> ${data.username}</p>
                         <p><strong>真实姓名：</strong> ${data.realName}</p>
-                        <p><strong>性别：</strong> ${getSexString(data.sex)}</p>
-                        <p><strong>出生年份：</strong> ${data.birthYear || "未填写"}</p>
+                        <p><strong>性别：</strong> ${
+              getSexString(data.sex)
+            }</p>
+                        <p><strong>出生年份：</strong> ${
+              data.birthYear || "未填写"
+            }</p>
                         <p><strong>校区：</strong> ${data.campusName}</p>
                         <p><strong>手机号：</strong> ${data.phone}</p>
-                        <p><strong>邮箱：</strong> ${data.email || "未填写"}</p>
-                        <p><strong>余额：</strong> ${data.balance !== null && data.balance !== undefined ? data.balance.toFixed(2) : "0.00"}</p>
+                        <p><strong>邮箱：</strong> ${
+              data.email || "未填写"
+            }</p>
+                        <p><strong>余额：</strong> ${
+              data.balance !== null && data.balance !== undefined
+                ? data.balance.toFixed(2)
+                : "0.00"
+            }</p>
                     `;
-                }
-            });
+          }
+        });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-</body>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>
