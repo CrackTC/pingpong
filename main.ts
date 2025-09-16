@@ -2,7 +2,6 @@ import { Hono } from "hono";
 import { serveStatic } from "hono/deno";
 import { useSession } from "npm:@hono/session";
 
-import { getClaim } from "./auth/claim.ts";
 import { rootAuth } from "./auth/root.ts";
 import { userAuth } from "./auth/user.ts";
 import { adminAuth } from "./auth/admin.ts";

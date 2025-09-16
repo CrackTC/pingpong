@@ -40,7 +40,7 @@ export function deleteDeductionsByStudentId(studentId: number) {
 
 export function getEnrichedDeductionsByStudentId(
   studentId: number,
-): (Deduction & { contestName?: string; appointmentDetails?: any })[] {
+): (Deduction & { contestName?: string; appointmentDetails?: unknown })[] {
   const stmt = db.prepare(`
     SELECT
       d.*,
@@ -59,5 +59,5 @@ export function getEnrichedDeductionsByStudentId(
     DeductionType.ContestRegistration,
     DeductionType.Appointment,
     studentId,
-  ) as (Deduction & { contestName?: string; appointmentDetails?: any })[];
+  ) as (Deduction & { contestName?: string; appointmentDetails?: unknown })[];
 }
