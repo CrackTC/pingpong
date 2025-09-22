@@ -34,7 +34,6 @@ export function useApiAdminRoutes(app: Hono) {
   useApiAdminTableAll(app);
   useApiAdminAppointmentCancel(app);
   useApiAdminSystemLogs(app);
-  useApiAdminCoachEdit(app);
   useApiAdminCoachAdd(app);
   useApiAdminCoachSearch(app);
   useApiAdminCoachDelete(app);
@@ -50,4 +49,5 @@ export function useApiAdminRoutes(app: Hono) {
   useApiAdminMigrations(app);
   useApiAdminMigrationsApprove(app);
   useApiAdminMigrationsReject(app);
+  useApiAdminCoachEdit(app);
 }
