@@ -64,7 +64,7 @@ export function getPendingMigrations(
 
   const params = [status, MigrationStatus.Rejected];
   if (campusId !== undefined) {
-    query += " AND campusId = ?";
+    query += " AND m.campusId = ?";
     params.push(campusId);
   }
 
