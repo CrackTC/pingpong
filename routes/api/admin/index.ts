@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 
+import { useApiApproveCoach } from "./coach/approve.ts";
 import { useApiAdminLogin } from "./login.ts";
 import { useApiAdminHome } from "./home.ts";
 import { useApiAdminNotifications } from "./notifications.ts";
@@ -26,6 +27,7 @@ import { useApiAdminMigrationsApprove } from "./migrations/approve.ts";
 import { useApiAdminMigrationsReject } from "./migrations/reject.ts";
 
 export function useApiAdminRoutes(app: Hono) {
+  useApiApproveCoach(app);
   useApiAdminLogin(app);
   useApiAdminHome(app);
   useApiAdminNotifications(app);
