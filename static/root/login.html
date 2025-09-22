@@ -3,108 +3,717 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>登录</title>
+    <title>Root 管理员登录</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
+    <style>
+      /* 全局重置和基础样式 */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* 渐变背景 */
+      body {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-attachment: fixed;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* 装饰性背景元素 */
+      body::before,
+      body::after {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        opacity: 0.3;
+        z-index: 0;
+      }
+
+      body::before {
+        background: rgba(255, 255, 255, 0.4);
+        top: -150px;
+        left: -150px;
+      }
+
+      body::after {
+        background: rgba(255, 255, 255, 0.2);
+        bottom: -150px;
+        right: -150px;
+      }
+
+      /* 浮动装饰元素 */
+      .floating-element {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 0;
+      }
+
+      .floating-element-1 {
+        width: 80px;
+        height: 80px;
+        top: 20%;
+        right: 15%;
+        animation: float 8s ease-in-out infinite;
+      }
+
+      .floating-element-2 {
+        width: 120px;
+        height: 120px;
+        bottom: 15%;
+        left: 10%;
+        animation: float 10s ease-in-out infinite 2s;
+      }
+
+      .floating-element-3 {
+        width: 60px;
+        height: 60px;
+        top: 40%;
+        left: 20%;
+        animation: float 7s ease-in-out infinite 1s;
+      }
+
+      /* 浮动动画 */
+      @keyframes float {
+        0%, 100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-20px) rotate(10deg);
+        }
+      }
+
+      /* 淡入和上移动画 */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* 登录容器 */
+      .login-container {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 0 20px;
+        animation: fadeInUp 0.8s ease-out;
+      }
+
+      /* 登录卡片 */
+      .login-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(15px);
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        min-height: 550px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .card-body {
+        padding: 2.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .login-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.18);
+      }
+
+      /* Logo 容器 */
+      .logo-container {
+        text-align: center;
+        margin-top: -40px;
+        margin-bottom: 35px;
+      }
+
+      .logo-circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+      }
+
+      .logo-circle:hover {
+        transform: scale(1.05) rotate(5deg);
+        box-shadow: 0 15px 25px rgba(102, 126, 234, 0.5);
+      }
+
+      .logo-icon {
+        font-size: 2.5rem;
+        color: white;
+      }
+
+      /* 登录标题与副标题 */
+      .login-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2d3748;
+        text-align: center;
+        margin-bottom: 1rem;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .login-subtitle {
+        font-size: 1.1rem;
+        color: #718096;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-weight: 400;
+      }
+
+      /* 表单样式 */
+      .form-group {
+        margin-bottom: 2.5rem;
+        position: relative;
+      }
+
+      .form-label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 0.5rem;
+        display: block;
+        transition: all 0.3s ease;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        background-color: white;
+        transition: all 0.3s ease;
+        height: 55px;
+      }
+
+      .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+        transform: translateY(-2px);
+      }
+
+      .form-control::placeholder {
+        color: #a0aec0;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus::placeholder {
+        opacity: 0.6;
+        transform: translateX(4px);
+      }
+
+      /* 输入框图标 */
+      .input-icon {
+        position: absolute;
+        left: 16px;
+        top: 60%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        z-index: 1;
+      }
+
+      .form-control:focus + .input-icon {
+        color: #667eea;
+        transform: translateY(-50%) scale(1.1);
+      }
+
+      .form-control.plaintext {
+        padding-left: 45px;
+        background-color: transparent;
+      }
+
+      /* 密码容器 */
+      .password-container {
+        position: relative;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 1;
+      }
+
+      .toggle-password:hover {
+        color: #667eea;
+        transform: translateY(-50%) scale(1.1);
+      }
+
+      /* 按钮样式 */
+      .btn {
+        font-weight: 600;
+        padding: 12px 24px;
+        border-radius: 12px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        border: none;
+        font-size: 1rem;
+        height: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: all 0.6s ease;
+        z-index: -1;
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+      }
+
+      .btn-primary:active {
+        transform: translateY(0);
+        box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-outline-primary {
+        background: transparent;
+        color: #667eea;
+        border: 2px solid #667eea;
+        transition: all 0.3s ease;
+      }
+
+      .btn-outline-primary:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      /* 消息提示 */
+      .alert {
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        border: none;
+        position: relative;
+        overflow: hidden;
+        animation: fadeIn 0.4s ease-out;
+      }
+
+      .alert-success {
+        background: rgba(52, 211, 153, 0.1);
+        color: #10b981;
+        border-left: 4px solid #10b981;
+      }
+
+      .alert-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border-left: 4px solid #ef4444;
+      }
+
+      /* 底部链接 */
+      .bottom-links {
+        text-align: center;
+        margin-top: auto;
+        color: #718096;
+        font-size: 0.9rem;
+      }
+
+      .bottom-links a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        padding: 0 2px;
+      }
+
+      .bottom-links a::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #667eea;
+        transition: all 0.3s ease;
+      }
+
+      .bottom-links a:hover {
+        color: #764ba2;
+      }
+
+      .bottom-links a:hover::after {
+        width: 100%;
+      }
+
+      /* 加载动画 */
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .loading-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid #e2e8f0;
+        border-top-color: #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* 响应式设计 */
+      @media (max-width: 576px) {
+        .login-card {
+          margin: 0;
+        }
+
+        .card-body {
+          padding: 1.5rem;
+        }
+
+        .login-title {
+          font-size: 1.5rem;
+        }
+
+        .back-to-home {
+          position: static;
+          margin-bottom: 1.5rem;
+          display: inline-flex;
+        }
+
+        .login-container {
+          text-align: center;
+        }
+      }
+    </style>
   </head>
 
-  <body class="bg-light">
-    <div class="container">
-      <div class="row justify-content-center mt-5">
-        <div class="col-md-6 col-lg-4">
-          <div class="card">
-            <div class="card-body">
-              <h3 class="card-title text-center mb-4">登录</h3>
-              <div id="message-area" class="alert d-none" role="alert"></div>
-              <form id="loginForm">
-                <div class="mb-3">
-                  <label for="username" class="form-label">用户名</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="username"
-                    name="username"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="password" class="form-label">密码</label>
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="password"
-                    name="password"
-                    required
-                  />
-                </div>
-                <div class="d-grid">
-                  <button
-                    type="submit"
-                    class="btn btn-primary"
-                  >
-                    登录
-                  </button>
-                </div>
-              </form>
+  <body>
+    <!-- 浮动装饰元素 -->
+    <div class="floating-element floating-element-1"></div>
+    <div class="floating-element floating-element-2"></div>
+    <div class="floating-element floating-element-3"></div>
+
+    <!-- 返回首页按钮 -->
+    <a
+      href="/"
+      class="back-to-home"
+      style="position: absolute; top: 20px; left: 20px; color: white; text-decoration: none; font-size: 1.2rem; display: flex; align-items: center; gap: 5px; z-index: 10"
+    >
+      <i class="fas fa-home"></i>
+      <span>首页</span>
+    </a>
+
+    <!-- 加载动画 -->
+    <div id="loadingOverlay" class="loading-overlay">
+      <div class="loading-spinner"></div>
+    </div>
+
+    <!-- 登录容器 -->
+    <div class="login-container">
+      <div class="login-card">
+        <!-- Logo -->
+        <div class="logo-container">
+          <div class="logo-circle">
+            <i class="fas fa-user-shield logo-icon"></i>
+          </div>
+        </div>
+
+        <!-- 登录卡片内容 -->
+        <div class="card-body">
+          <h1 class="login-title">Root 管理员登录</h1>
+          <p class="login-subtitle">请输入您的管理员账号信息</p>
+
+          <!-- 消息区域 -->
+          <div id="message-area" class="alert d-none" role="alert"></div>
+
+          <!-- 登录表单 -->
+          <form id="loginForm">
+            <!-- 用户名输入 -->
+            <div class="form-group">
+              <label for="username" class="form-label">用户名</label>
+              <input
+                type="text"
+                class="form-control plaintext"
+                id="username"
+                name="username"
+                placeholder="请输入用户名"
+                required
+              />
+              <i class="fas fa-user input-icon"></i>
             </div>
+
+            <!-- 密码输入 -->
+            <div class="form-group">
+              <label for="password" class="form-label">密码</label>
+              <div class="password-container">
+                <input
+                  type="password"
+                  class="form-control plaintext"
+                  id="password"
+                  name="password"
+                  placeholder="请输入密码"
+                  required
+                />
+                <i class="fas fa-user-lock input-icon"></i>
+                <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+              </div>
+            </div>
+
+            <!-- 登录按钮 -->
+            <div class="d-grid gap-3">
+              <button
+                type="submit"
+                class="btn btn-primary"
+              >
+                <i class="fas fa-sign-in-alt mr-2"></i>登录
+              </button>
+
+              <!-- 返回首页按钮 -->
+              <a href="/" class="btn btn-outline-primary mt-1">
+                <i class="fas fa-home mr-2"></i>返回首页
+              </a>
+            </div>
+          </form>
+
+          <!-- 底部链接 -->
+          <div class="bottom-links mt-6">
+            <p>&copy;乒乓球管理系统</p>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- 脚本 -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
       crossorigin="anonymous"
     ></script>
     <script>
+      // 页面加载动画
+      window.addEventListener("load", () => {
+        const loadingOverlay = document.getElementById(
+          "loadingOverlay",
+        );
+        setTimeout(() => {
+          loadingOverlay.classList.remove("active");
+        }, 500);
+      });
+
+      // 密码显示/隐藏功能
+      const togglePassword = document.getElementById("togglePassword");
+      const password = document.getElementById("password");
+
+      togglePassword.addEventListener("click", () => {
+        const type = password.getAttribute("type") === "password"
+          ? "text"
+          : "password";
+        password.setAttribute("type", type);
+        togglePassword.classList.toggle("fa-eye");
+        togglePassword.classList.toggle("fa-eye-slash");
+      });
+
+      // 消息显示功能
       const messageArea = document.getElementById("message-area");
 
       function displayMessage(message, type) {
         messageArea.textContent = message;
         messageArea.className = `alert alert-${type}`;
         messageArea.classList.remove("d-none");
+
+        // 3秒后自动隐藏消息（成功消息）
+        if (type === "success") {
+          setTimeout(() => {
+            messageArea.classList.add("d-none");
+          }, 3000);
+        }
       }
 
+      // 表单提交处理
       document.getElementById("loginForm").addEventListener(
         "submit",
         async (event) => {
           event.preventDefault();
-          messageArea.classList.add("d-none"); // Hide message on new submission
+          messageArea.classList.add("d-none"); // 提交时隐藏消息
+
+          const loadingOverlay = document.getElementById(
+            "loadingOverlay",
+          );
+          loadingOverlay.classList.add("active"); // 显示加载动画
 
           const username = document.getElementById("username").value;
           const password = document.getElementById("password").value;
 
-          const response = await fetch("/api/root/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username, password }),
-          });
+          try {
+            const response = await fetch("/api/root/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ username, password }),
+            });
 
-          if (response.ok) {
-            const data = await response.json();
-            if (data.success && data.redirect) {
-              displayMessage("登录成功！", "success");
-              setTimeout(() => {
-                window.location.href = data.redirect;
-              }, 1000); // Redirect after 1 second
+            loadingOverlay.classList.remove("active"); // 隐藏加载动画
+
+            if (response.ok) {
+              const data = await response.json();
+              if (data.success && data.redirect) {
+                displayMessage("登录成功！正在跳转...", "success");
+                setTimeout(() => {
+                  window.location.href = data.redirect;
+                }, 1000); // 1秒后跳转
+              } else {
+                displayMessage(data.message || "登录失败。", "danger");
+              }
             } else {
-              displayMessage(data.message || "登录失败。", "danger");
+              const errorData = await response.json();
+              displayMessage(
+                errorData.message || "发生意外错误。",
+                "danger",
+              );
             }
-          } else {
-            const errorData = await response.json();
-            displayMessage(
-              errorData.message || "发生意外错误。",
-              "danger",
-            );
+          } catch (error) {
+            loadingOverlay.classList.remove("active");
+            displayMessage("网络错误，请稍后重试。", "danger");
           }
         },
       );
+
+      // 输入框聚焦效果
+      const inputs = document.querySelectorAll(".form-control");
+      inputs.forEach((input) => {
+        input.addEventListener("focus", () => {
+          const formGroup = input.closest(".form-group");
+          const label = formGroup.querySelector(".form-label");
+          if (label) {
+            label.style.transform = "translateY(-10px)";
+            label.style.color = "#667eea";
+            label.style.fontSize = "0.85rem";
+          }
+        });
+
+        input.addEventListener("blur", () => {
+          if (!input.value.trim()) {
+            const formGroup = input.closest(".form-group");
+            const label = formGroup.querySelector(".form-label");
+            if (label) {
+              label.style.transform = "translateY(0)";
+              label.style.color = "";
+              label.style.fontSize = "";
+            }
+          }
+        });
+
+        // 初始化已填写的输入框
+        if (input.value.trim()) {
+          const formGroup = input.closest(".form-group");
+          const label = formGroup.querySelector(".form-label");
+          if (label) {
+            label.style.transform = "translateY(-10px)";
+            label.style.color = "#667eea";
+            label.style.fontSize = "0.85rem";
+          }
+        }
+      });
     </script>
   </body>
 </html>

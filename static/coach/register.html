@@ -3,173 +3,769 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>教练注册</title>
+    <title>教练注册 - 乒乓球管理系统</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
+
+    <!-- 导入现代字体 -->
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      :root {
+        --primary-color: #6c5ce7;
+        --primary-light: #a29bfe;
+        --secondary-color: #0984e3;
+        --success-color: #00b894;
+        --warning-color: #fdcb6e;
+        --danger-color: #d63031;
+        --info-color: #636e72;
+        --light-bg: #f8f9fa;
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.15);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow-x: hidden;
+        position: relative;
+        color: #2d3436;
+      }
+
+      /* 装饰性元素 - 乒乓球背景 */
+      body::before,
+      body::after {
+        content: "🏓";
+        position: absolute;
+        font-size: 15rem;
+        opacity: 0.05;
+        z-index: 0;
+        animation: float 15s ease-in-out infinite;
+      }
+
+      body::before {
+        top: -5%;
+        left: -5%;
+        transform: rotate(-15deg);
+      }
+
+      body::after {
+        bottom: -5%;
+        right: -5%;
+        transform: rotate(15deg);
+        animation-delay: 3s;
+      }
+
+      /* 浮动动画 */
+      @keyframes float {
+        0%, 100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        25% {
+          transform: translateY(-30px) rotate(5deg);
+        }
+        50% {
+          transform: translateY(0) rotate(-5deg);
+        }
+        75% {
+          transform: translateY(30px) rotate(5deg);
+        }
+      }
+
+      /* 主容器 */
+      .container {
+        position: relative;
+        z-index: 1;
+        max-width: 600px;
+        width: 100%;
+      }
+
+      /* 页头样式 */
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+        animation: fadeInDown 0.6s ease-out;
+      }
+
+      .header h1 {
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 0.5rem;
+        font-size: 2.5rem;
+        letter-spacing: -1px;
+      }
+
+      .header p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.1rem;
+        font-weight: 400;
+      }
+
+      /* 注册卡片 */
+      .register-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 2.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .register-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+      }
+
+      /* 标题样式 */
+      .register-title {
+        text-align: center;
+        font-weight: 600;
+        color: #2d3436;
+        margin-bottom: 2rem;
+        font-size: 1.8rem;
+        position: relative;
+      }
+
+      /* 头像上传区域 */
+      .avatar-upload-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 2rem;
+        opacity: 0;
+        animation: fadeInUp 0.4s ease-out 0.25s both;
+      }
+
+      .avatar-preview-container {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px dashed #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .avatar-preview-container:hover {
+        border-color: var(--primary-color);
+        background-color: rgba(108, 92, 231, 0.05);
+      }
+
+      #avatar-preview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        display: none;
+      }
+
+      .avatar-placeholder {
+        text-align: center;
+        color: #b2bec3;
+      }
+
+      .avatar-placeholder i {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .avatar-placeholder p {
+        font-size: 0.9rem;
+        margin: 0;
+      }
+
+      .avatar-upload-btn {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-light)
+        );
+        border: none;
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border-radius: 30px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: inherit;
+      }
+
+      .avatar-upload-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(108, 92, 231, 0.3);
+      }
+
+      .avatar-upload-btn:active {
+        transform: translateY(0);
+      }
+
+      #avatar {
+        display: none;
+      }
+
+      /* 表单样式 */
+      .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+        opacity: 0;
+        animation: fadeInUp 0.4s ease-out forwards;
+      }
+
+      /* 为表单项添加延迟动画 */
+      .form-group:nth-child(1) {
+        animation-delay: 0.3s;
+      }
+      .form-group:nth-child(2) {
+        animation-delay: 0.35s;
+      }
+      .form-group:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      .form-group:nth-child(4) {
+        animation-delay: 0.45s;
+      }
+      .form-group:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+      .form-group:nth-child(6) {
+        animation-delay: 0.55s;
+      }
+      .form-group:nth-child(7) {
+        animation-delay: 0.6s;
+      }
+      .form-group:nth-child(8) {
+        animation-delay: 0.65s;
+      }
+      .form-group:nth-child(9) {
+        animation-delay: 0.7s;
+      }
+      .form-group:nth-child(10) {
+        animation-delay: 0.75s;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #2d3436;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-control,
+      .form-select {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 3rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        transition: all 0.3s ease;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        transform: translateY(-1px);
+      }
+
+      .form-control::placeholder {
+        color: #b2bec3;
+      }
+
+      textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+        padding-top: 0.8rem;
+      }
+
+      /* 输入框图标 */
+      .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 2.5rem;
+        color: #b2bec3;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+      }
+
+      textarea.form-control + .input-icon {
+        top: 2.3rem;
+      }
+
+      .form-control:focus + .input-icon,
+      .form-select:focus + .input-icon {
+        color: var(--primary-color);
+        transform: translateY(-1px);
+      }
+
+      /* 密码帮助文本 */
+      .password-help {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        color: #636e72;
+        line-height: 1.4;
+      }
+
+      /* 按钮样式 */
+      .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        font-family: inherit;
+        margin-top: 1rem;
+        opacity: 0;
+        animation: fadeInUp 0.4s ease-out 0.8s both;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-light)
+        );
+      }
+
+      .btn-secondary {
+        background: linear-gradient(135deg, var(--info-color), #b2bec3);
+        margin-top: 0.75rem;
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, var(--success-color), #55efc4);
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      /* 按钮光效动画 */
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: all 0.6s ease;
+        z-index: -1;
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      /* 消息区域 */
+      #message-area {
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+        border-radius: 10px;
+        padding: 1rem;
+        font-weight: 500;
+      }
+
+      #message-area:not(.d-none) {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* 返回首页按钮 */
+      .back-to-landing {
+        position: fixed;
+        top: 1.5rem;
+        left: 1.5rem;
+        color: white;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        z-index: 100;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        opacity: 0;
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+      }
+
+      .back-to-landing:hover {
+        color: white;
+        transform: translateX(-5px);
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      /* 动画 */
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* 响应式设计 */
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .register-card {
+          padding: 2rem;
+        }
+
+        .register-title {
+          font-size: 1.5rem;
+        }
+
+        body::before,
+        body::after {
+          font-size: 10rem;
+        }
+
+        .back-to-landing {
+          top: 1rem;
+          left: 1rem;
+          font-size: 1rem;
+          padding: 0.4rem 0.8rem;
+        }
+      }
+
+      @media (max-width: 576px) {
+        body {
+          padding: 15px;
+        }
+
+        .header h1 {
+          font-size: 1.8rem;
+        }
+
+        .header p {
+          font-size: 1rem;
+        }
+
+        .register-card {
+          padding: 1.5rem;
+        }
+
+        .avatar-preview-container {
+          width: 120px;
+          height: 120px;
+        }
+
+        .avatar-placeholder i {
+          font-size: 2.5rem;
+        }
+
+        .form-control,
+        .form-select {
+          padding: 0.75rem 0.9rem 0.75rem 2.5rem;
+          font-size: 0.9rem;
+        }
+
+        .input-icon {
+          font-size: 1rem;
+          top: 2.3rem;
+        }
+
+        body::before,
+        body::after {
+          display: none;
+        }
+      }
+    </style>
   </head>
 
-  <body class="bg-light">
+  <body>
+    <a href="/" class="back-to-landing">
+      <i class="fas fa-home"></i>
+      <span>返回首页</span>
+    </a>
+
     <div class="container">
-      <div class="row justify-content-center mt-5">
-        <div class="col-md-8">
-          <div class="card">
-            <div class="card-body">
-              <h3 class="card-title text-center mb-4">教练注册</h3>
-              <div id="message-area" class="alert d-none" role="alert"></div>
-              <form id="register-form" enctype="multipart/form-data">
-                <div class="mb-3 text-center">
-                  <img
-                    id="avatar-preview"
-                    src=""
-                    alt="头像预览"
-                    class="d-none"
-                    style="width: 150px; height: 150px; object-fit: fill; border: 1px solid #dee2e6"
-                  >
-                  <div class="mt-2">
-                    <label for="avatar" class="btn btn-primary">选择头像</label>
-                    <input
-                      type="file"
-                      class="form-control d-none"
-                      id="avatar"
-                      name="avatar"
-                      accept="image/*"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <label for="username" class="form-label">用户名</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="username"
-                    name="username"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="password" class="form-label">密码</label>
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="password"
-                    name="password"
-                    required
-                  />
-                  <small id="passwordHelp" class="form-text text-muted">
-                    密码必须为8-16个字符， 包含至少一个字母、一个数字、
-                    和一个特殊符号。
-                  </small>
-                </div>
-                <div class="mb-3">
-                  <label for="realName" class="form-label">真实姓名</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="realName"
-                    name="realName"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="sex" class="form-label">性别</label>
-                  <select class="form-select" id="sex" name="sex">
-                    <option value="0">未指定</option>
-                    <option value="1">男</option>
-                    <option value="2">女</option>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="birthYear" class="form-label">出生年份</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="birthYear"
-                    name="birthYear"
-                    min="1900"
-                    max="2024"
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="campusId" class="form-label">校区</label>
-                  <select
-                    class="form-select"
-                    id="campusId"
-                    name="campusId"
-                    required
-                  >
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="phone" class="form-label">电话</label>
-                  <input
-                    type="tel"
-                    class="form-control"
-                    id="phone"
-                    name="phone"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="email" class="form-label">电子邮件</label>
-                  <input
-                    type="email"
-                    class="form-control"
-                    id="email"
-                    name="email"
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="idCardNumber" class="form-label"
-                  >身份证号码</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="idCardNumber"
-                    name="idCardNumber"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="comment" class="form-label">评论</label>
-                  <textarea
-                    class="form-control"
-                    id="comment"
-                    name="comment"
-                    rows="3"
-                    required
-                  ></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">
-                  注册
-                </button>
-              </form>
-              <div class="d-grid gap-2 mt-3">
-                <a href="/coach/login" class="btn btn-secondary"
-                >已有账号？登录</a>
+      <div class="header">
+        <h1>🏓 乒乓球管理系统</h1>
+        <p>创建您的教练账号</p>
+      </div>
+
+      <div class="register-card">
+        <h2 class="register-title">教练注册</h2>
+        <div id="message-area" class="alert d-none" role="alert"></div>
+
+        <form id="register-form" enctype="multipart/form-data">
+          <!-- 头像上传区域 -->
+          <div class="avatar-upload-area">
+            <div class="avatar-preview-container">
+              <img id="avatar-preview" src="" alt="头像预览" />
+              <div class="avatar-placeholder">
+                <i class="fas fa-user-circle"></i>
+                <p>上传头像</p>
               </div>
             </div>
+            <label for="avatar" class="avatar-upload-btn">
+              <i class="fas fa-upload"></i>
+              <span>选择头像</span>
+            </label>
+            <input
+              type="file"
+              id="avatar"
+              name="avatar"
+              accept="image/*"
+              required
+            />
           </div>
-        </div>
+
+          <div class="form-group">
+            <label for="username" class="form-label">用户名</label>
+            <input
+              type="text"
+              class="form-control"
+              id="username"
+              name="username"
+              placeholder="请输入您的用户名"
+              required
+            >
+            <i class="fas fa-user input-icon"></i>
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">密码</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              placeholder="请设置您的密码"
+              required
+            >
+            <i class="fas fa-lock input-icon"></i>
+            <small id="passwordHelp" class="password-help">
+              密码必须为8-16个字符，包含至少一个字母、一个数字和一个特殊符号
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="realName" class="form-label">真实姓名</label>
+            <input
+              type="text"
+              class="form-control"
+              id="realName"
+              name="realName"
+              placeholder="请输入您的真实姓名"
+              required
+            >
+            <i class="fas fa-id-card input-icon"></i>
+          </div>
+
+          <div class="form-group">
+            <label for="sex" class="form-label">性别</label>
+            <select class="form-select" id="sex" name="sex">
+              <option value="0">未指定</option>
+              <option value="1">男</option>
+              <option value="2">女</option>
+            </select>
+            <i class="fas fa-venus-mars input-icon"></i>
+          </div>
+
+          <div class="form-group">
+            <label for="birthYear" class="form-label">出生年份</label>
+            <input
+              type="number"
+              class="form-control"
+              id="birthYear"
+              name="birthYear"
+              min="1900"
+              max="2024"
+              placeholder="请输入您的出生年份"
+            >
+            <i class="fas fa-calendar input-icon"></i>
+          </div>
+
+          <div class="form-group">
+            <label for="campusId" class="form-label">校区</label>
+            <select
+              class="form-select"
+              id="campusId"
+              name="campusId"
+              required
+            >
+            </select>
+            <i class="fas fa-university input-icon"></i>
+          </div>
+
+          <div class="form-group">
+            <label for="phone" class="form-label">电话</label>
+            <input
+              type="tel"
+              class="form-control"
+              id="phone"
+              name="phone"
+              placeholder="请输入您的电话号码"
+              required
+            >
+            <i class="fas fa-mobile-alt input-icon"></i>
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">电子邮件</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              name="email"
+              placeholder="请输入您的邮箱地址"
+            >
+            <i class="fas fa-envelope input-icon"></i>
+          </div>
+
+          <div class="form-group">
+            <label for="idCardNumber" class="form-label">身份证号码</label>
+            <input
+              type="text"
+              class="form-control"
+              id="idCardNumber"
+              name="idCardNumber"
+              placeholder="请输入您的身份证号码"
+              required
+            >
+            <i class="fas fa-id-card-alt input-icon"></i>
+          </div>
+
+          <div class="form-group">
+            <label for="comment" class="form-label">个人简介</label>
+            <textarea
+              class="form-control"
+              id="comment"
+              name="comment"
+              rows="3"
+              placeholder="请简要介绍您的乒乓球教学经验和专长"
+              required
+            ></textarea>
+            <i class="fas fa-comment-alt input-icon"></i>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i>
+            注册
+          </button>
+
+          <div class="d-grid gap-2 mt-3">
+            <a href="/coach/login" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i>
+              已有账号？登录
+            </a>
+          </div>
+        </form>
       </div>
     </div>
+
     <script>
       const messageArea = document.getElementById("message-area");
       const passwordInput = document.getElementById("password");
       const avatarInput = document.getElementById("avatar");
       const avatarPreview = document.getElementById("avatar-preview");
+      const avatarPlaceholder = document.querySelector(
+        ".avatar-placeholder",
+      );
 
-      // Preview selected avatar
+      // 预览选中的头像
       avatarInput.addEventListener("change", function () {
         if (this.files && this.files[0]) {
           const reader = new FileReader();
           reader.onload = function (e) {
             avatarPreview.src = e.target.result;
-            avatarPreview.classList.remove("d-none");
+            avatarPreview.style.display = "block";
+            avatarPlaceholder.style.display = "none";
           };
           reader.readAsDataURL(this.files[0]);
         }
@@ -179,9 +775,16 @@
         messageArea.textContent = message;
         messageArea.className = `alert alert-${type}`;
         messageArea.classList.remove("d-none");
+
+        // 自动隐藏消息（成功消息）
+        if (type === "success") {
+          setTimeout(() => {
+            messageArea.classList.add("d-none");
+          }, 5000);
+        }
       }
 
-      // Client-side password validation function (same as in utils.ts)
+      // 客户端密码校验
       function validatePassword(password) {
         if (password.length < 8 || password.length > 16) {
           return "密码长度必须在8到16个字符之间。";
@@ -195,18 +798,33 @@
         if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
           return "密码必须包含至少一个特殊符号。";
         }
-        return null; // Password is valid
+        return null; // 密码有效
       }
 
       async function fetchCampuses() {
-        const response = await fetch("/api/campus/all");
-        const campuses = await response.json();
-        const campusSelect = document.getElementById("campusId");
-        for (const campus of campuses) {
-          const option = document.createElement("option");
-          option.value = campus.id;
-          option.textContent = campus.name;
-          campusSelect.appendChild(option);
+        try {
+          const response = await fetch("/api/campus/all");
+          const campuses = await response.json();
+          const campusSelect = document.getElementById("campusId");
+
+          // 添加默认选项
+          const defaultOption = document.createElement("option");
+          defaultOption.value = "";
+          defaultOption.textContent = "请选择校区";
+          defaultOption.disabled = true;
+          defaultOption.selected = true;
+          campusSelect.appendChild(defaultOption);
+
+          // 添加校区选项
+          for (const campus of campuses) {
+            const option = document.createElement("option");
+            option.value = campus.id;
+            option.textContent = campus.name;
+            campusSelect.appendChild(option);
+          }
+        } catch (error) {
+          displayMessage("获取校区信息失败，请稍后重试。", "danger");
+          console.error("获取校区信息错误：", error);
         }
       }
 
@@ -214,18 +832,18 @@
         .getElementById("register-form")
         .addEventListener("submit", async function (event) {
           event.preventDefault();
-          messageArea.classList.add("d-none"); // Hide message on new submission
+          messageArea.classList.add("d-none"); // 隐藏之前的消息
 
           const password = passwordInput.value;
           const passwordError = validatePassword(password);
           if (passwordError) {
             displayMessage(passwordError, "danger");
-            return; // Stop form submission
+            return; // 停止表单提交
           }
 
           const formData = new FormData(this);
 
-          // Convert numeric fields before sending, handle optionality
+          // 转换数字字段
           const sexValue = formData.get("sex");
           formData.set("sex", sexValue ? parseInt(sexValue) : null);
 
@@ -238,38 +856,86 @@
           formData.set(
             "campusId",
             parseInt(formData.get("campusId")),
-          ); // Campus is still required
+          ); // 校区仍然是必需的
 
-          // Handle optional email and comment
+          // 处理可选字段
           formData.set("email", formData.get("email") || null);
           formData.set("comment", formData.get("comment") || null);
 
-          const response = await fetch("/api/coach/register", {
-            method: "POST",
-            body: formData, // Send FormData directly
-          });
+          // 添加加载状态
+          const submitButton = this.querySelector(
+            'button[type="submit"]',
+          );
+          const originalButtonText = submitButton.innerHTML;
+          submitButton.disabled = true;
+          submitButton.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> 注册中...';
 
-          if (response.ok) {
-            displayMessage(
-              "注册成功！等待管理员批准。",
-              "success",
-            );
-            this.reset(); // Clear the form
-            setTimeout(() => {
-              window.location.href = "/coach/login"; // Redirect to login page
-            }, 2000); // Redirect after 2 seconds
-          } else {
-            const errorData = await response.json();
-            displayMessage(
-              "注册失败: " +
-                (errorData.message || "未知错误"),
-              "danger",
-            );
+          try {
+            const response = await fetch("/api/coach/register", {
+              method: "POST",
+              body: formData, // 直接发送FormData
+            });
+
+            // 恢复按钮状态
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+
+            if (response.ok) {
+              displayMessage(
+                "注册成功！等待管理员批准。",
+                "success",
+              );
+              this.reset(); // 清空表单
+
+              // 重置头像预览
+              avatarPreview.style.display = "none";
+              avatarPlaceholder.style.display = "block";
+
+              setTimeout(() => {
+                window.location.href = "/coach/login"; // 重定向到登录页面
+              }, 2000); // 2秒后重定向
+            } else {
+              const errorData = await response.json();
+              displayMessage(
+                "注册失败: " +
+                  (errorData.message || "未知错误"),
+                "danger",
+              );
+            }
+          } catch (error) {
+            // 恢复按钮状态
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+
+            displayMessage("网络错误，请稍后重试。", "danger");
+            console.error("注册请求错误：", error);
           }
         });
 
+      // 为输入框添加交互效果
+      document.querySelectorAll(".form-control, .form-select").forEach(
+        (input) => {
+          input.addEventListener("focus", function () {
+            const label = this.parentNode.querySelector(".form-label");
+            if (label) {
+              label.style.color = "var(--primary-color)";
+            }
+          });
+
+          input.addEventListener("blur", function () {
+            const label = this.parentNode.querySelector(".form-label");
+            if (label) {
+              label.style.color = "";
+            }
+          });
+        },
+      );
+
+      // 初始化页面
       fetchCampuses();
     </script>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"

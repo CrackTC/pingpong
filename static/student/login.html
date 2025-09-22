@@ -3,109 +3,531 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>学生登录</title>
+    <title>学生登录 - 乒乓球管理系统</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
+
+    <!-- 自定义样式 -->
+    <style>
+      /* 导入现代字体 */
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      /* 全局样式 */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #74b9ff, #0984e3);
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* 装饰性元素 - 乒乓球背景 */
+      body::before,
+      body::after {
+        content: "🏓";
+        position: absolute;
+        font-size: 12rem;
+        opacity: 0.05;
+        z-index: 0;
+        animation: float 15s ease-in-out infinite;
+      }
+
+      body::before {
+        top: 10%;
+        left: 5%;
+        transform: rotate(-15deg);
+      }
+
+      body::after {
+        bottom: 10%;
+        right: 5%;
+        transform: rotate(15deg);
+        animation-delay: 2s;
+      }
+
+      /* 浮动动画 */
+      @keyframes float {
+        0%, 100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        25% {
+          transform: translateY(-20px) rotate(5deg);
+        }
+        50% {
+          transform: translateY(0) rotate(-5deg);
+        }
+        75% {
+          transform: translateY(20px) rotate(5deg);
+        }
+      }
+
+      /* 登录容器 */
+      .login-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        padding: 2.5rem;
+        max-width: 450px;
+        width: 100%;
+        position: relative;
+        z-index: 1;
+        transition: all 0.5s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      /* 系统Logo */
+      .logo-container {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .logo {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #0984e3;
+        margin-bottom: 0.5rem;
+        letter-spacing: -1px;
+        text-shadow: 0 2px 10px rgba(9, 132, 227, 0.2);
+        display: inline-block;
+      }
+
+      /* 登录标题 */
+      .login-title {
+        text-align: center;
+        font-weight: 600;
+        margin: 1.5rem 0 2rem;
+        color: #2d3436;
+        font-size: 1.6rem;
+        letter-spacing: 0.5px;
+        position: relative;
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+      }
+
+      /* 表单样式 */
+      .form-group {
+        margin-bottom: 1.5rem;
+        animation: fadeInUp 0.6s ease-out 0.3s both;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #2d3436;
+        font-size: 0.95rem;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid rgba(9, 132, 227, 0.2);
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.7);
+        font-family: inherit;
+      }
+
+      .form-control:focus {
+        outline: none;
+        border-color: #0984e3;
+        box-shadow: 0 0 0 4px rgba(9, 132, 227, 0.1);
+        background: white;
+      }
+
+      /* 密码可见性切换 */
+      .password-toggle {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #6c757d;
+        transition: color 0.3s ease;
+      }
+
+      .password-toggle:hover {
+        color: #0984e3;
+      }
+
+      .password-container {
+        position: relative;
+      }
+
+      /* 按钮样式 */
+      .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 0.9rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        font-family: inherit;
+        animation: fadeInUp 0.6s ease-out 0.4s both;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #0984e3, #74b9ff);
+      }
+
+      .btn-secondary {
+        background: linear-gradient(135deg, #6c757d, #adb5bd);
+      }
+
+      .btn-outline-primary {
+        background: transparent;
+        border: 2px solid #0984e3;
+        color: #0984e3;
+      }
+
+      .btn-outline-primary:hover {
+        background: linear-gradient(135deg, #0984e3, #74b9ff);
+        color: white;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      /* 按钮光效动画 */
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: all 0.6s ease;
+        z-index: -1;
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      /* 消息区域 */
+      .message-area {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding: 0.8rem;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        animation: fadeInUp 0.4s ease-out;
+      }
+
+      /* 返回首页链接 */
+      .back-to-home {
+        position: absolute;
+        top: 1.5rem;
+        left: 1.5rem;
+        color: #6c757d;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        z-index: 2;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .back-to-home:hover {
+        color: #0984e3;
+        transform: translateX(-5px);
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      /* 页面载入动画 */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* 响应式设计 */
+      @media (max-width: 768px) {
+        .login-container {
+          padding: 2rem 1.5rem;
+          margin: 0 10px;
+        }
+
+        .logo {
+          font-size: 1.8rem;
+        }
+
+        .login-title {
+          font-size: 1.4rem;
+        }
+
+        body::before,
+        body::after {
+          font-size: 8rem;
+        }
+
+        .back-to-home {
+          top: 1rem;
+          left: 1rem;
+          font-size: 1rem;
+          padding: 0.4rem 0.8rem;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .login-container {
+          padding: 1.5rem 1rem;
+        }
+
+        .logo {
+          font-size: 1.6rem;
+        }
+
+        .login-title {
+          font-size: 1.3rem;
+        }
+
+        body::before,
+        body::after {
+          display: none;
+        }
+      }
+    </style>
   </head>
 
-  <body class="bg-light">
-    <div class="container">
-      <div class="row justify-content-center mt-5">
-        <div class="col-md-6 col-lg-4">
-          <div class="card">
-            <div class="card-body">
-              <h3 class="card-title text-center mb-4">学生登录</h3>
-              <div id="message-area" class="alert d-none" role="alert"></div>
-              <form id="loginForm">
-                <div class="mb-3">
-                  <label for="username" class="form-label">用户名</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="username"
-                    name="username"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="password" class="form-label">密码</label>
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="password"
-                    name="password"
-                    required
-                  />
-                </div>
-                <div class="d-grid">
-                  <button
-                    type="submit"
-                    class="btn btn-primary mb-2"
-                  >
-                    登录
-                  </button>
-                  <a href="/student/register" class="btn btn-secondary">注册</a>
-                </div>
-              </form>
-            </div>
+  <body>
+    <a href="/" class="back-to-home">
+      <i class="fas fa-arrow-left"></i>
+      <span>返回首页</span>
+    </a>
+
+    <div class="login-container">
+      <div class="logo-container">
+        <div class="logo">🏓 乒乓球管理系统</div>
+      </div>
+
+      <h3 class="login-title">学生登录</h3>
+
+      <div id="message-area" class="message-area d-none" role="alert"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username" class="form-label">
+            <i class="fas fa-user-circle mr-2"></i>用户名
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            name="username"
+            placeholder="请输入用户名"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">
+            <i class="fas fa-lock mr-2"></i>密码
+          </label>
+          <div class="password-container">
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              placeholder="请输入密码"
+              required
+            />
+            <span class="password-toggle" id="togglePassword">
+              <i class="fas fa-eye-slash"></i>
+            </span>
           </div>
         </div>
-      </div>
+
+        <div class="form-group">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            id="loginButton"
+          >
+            <i class="fas fa-sign-in-alt"></i>
+            登录
+          </button>
+        </div>
+
+        <div class="form-group">
+          <a href="/student/register" class="btn btn-secondary">
+            <i class="fas fa-user-plus"></i>
+            注册账号
+          </a>
+        </div>
+
+        <div class="form-group">
+          <a href="/" class="btn btn-outline-primary">
+            <i class="fas fa-home"></i>
+            返回首页
+          </a>
+        </div>
+      </form>
     </div>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
       crossorigin="anonymous"
     ></script>
+
     <script>
       const messageArea = document.getElementById("message-area");
+      const togglePassword = document.getElementById("togglePassword");
+      const passwordInput = document.getElementById("password");
+      const loginButton = document.getElementById("loginButton");
 
+      // 密码可见性切换
+      togglePassword.addEventListener("click", function () {
+        const type = passwordInput.getAttribute("type") === "password"
+          ? "text"
+          : "password";
+        passwordInput.setAttribute("type", type);
+        this.querySelector("i").classList.toggle("fa-eye");
+        this.querySelector("i").classList.toggle("fa-eye-slash");
+      });
+
+      // 显示消息函数
       function displayMessage(message, type) {
         messageArea.textContent = message;
-        messageArea.className = `alert alert-${type}`;
+        messageArea.className = `message-area alert-${type}`;
         messageArea.classList.remove("d-none");
+
+        // 设置不同类型消息的背景色
+        if (type === "success") {
+          messageArea.style.background = "rgba(40, 167, 69, 0.1)";
+          messageArea.style.color = "#28a745";
+          messageArea.style.border = "1px solid rgba(40, 167, 69, 0.3)";
+        } else if (type === "danger") {
+          messageArea.style.background = "rgba(220, 53, 69, 0.1)";
+          messageArea.style.color = "#dc3545";
+          messageArea.style.border = "1px solid rgba(220, 53, 69, 0.3)";
+        }
       }
 
+      // 登录表单提交
       document.getElementById("loginForm").addEventListener(
         "submit",
         async (event) => {
           event.preventDefault();
-          messageArea.classList.add("d-none"); // Hide message on new submission
+          messageArea.classList.add("d-none"); // 隐藏之前的消息
+
+          // 禁用按钮防止重复提交
+          loginButton.disabled = true;
+          loginButton.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> 登录中...';
 
           const username = document.getElementById("username").value;
           const password = document.getElementById("password").value;
 
-          const response = await fetch("/api/student/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username, password }),
-          });
+          try {
+            const response = await fetch("/api/student/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ username, password }),
+            });
 
-          if (response.ok) {
-            const data = await response.json();
-            if (data.success && data.redirect) {
-              displayMessage("登录成功！", "success");
-              setTimeout(() => {
-                window.location.href = data.redirect;
-              }, 1000); // Redirect after 1 second
+            // 恢复按钮状态
+            loginButton.disabled = false;
+            loginButton.innerHTML =
+              '<i class="fas fa-sign-in-alt"></i> 登录';
+
+            if (response.ok) {
+              const data = await response.json();
+              if (data.success && data.redirect) {
+                displayMessage("登录成功！正在跳转...", "success");
+                setTimeout(() => {
+                  window.location.href = data.redirect;
+                }, 1000); // 1秒后跳转
+              } else {
+                displayMessage(data.message || "登录失败。", "danger");
+              }
             } else {
-              displayMessage(data.message || "登录失败。", "danger");
+              const errorData = await response.json();
+              displayMessage(
+                errorData.message || "发生未知错误。",
+                "danger",
+              );
             }
-          } else {
-            const errorData = await response.json();
-            displayMessage(
-              errorData.message || "发生未知错误。",
-              "danger",
-            );
+          } catch (error) {
+            // 恢复按钮状态
+            loginButton.disabled = false;
+            loginButton.innerHTML =
+              '<i class="fas fa-sign-in-alt"></i> 登录';
+            displayMessage("网络错误，请稍后重试。", "danger");
           }
         },
       );
+
+      // 添加输入动画效果
+      document.querySelectorAll(".form-control").forEach((input) => {
+        input.addEventListener("focus", function () {
+          this.parentElement.classList.add("focused");
+        });
+
+        input.addEventListener("blur", function () {
+          this.parentElement.classList.remove("focused");
+        });
+      });
     </script>
   </body>
 </html>

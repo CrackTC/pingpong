@@ -3,108 +3,694 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>管理员登录</title>
+    <title>管理员登录 - 乒乓球管理系统</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <style>
+      /* 全局样式重置 */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* 渐变背景 - 管理员主题 */
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #36d1dc, #5b86e5);
+        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        position: relative;
+        overflow-x: hidden;
+        padding: 20px;
+      }
+
+      /* 装饰性背景元素 - 参考教练页面 */
+      body::before,
+      body::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 0;
+        animation: float 8s ease-in-out infinite;
+      }
+
+      body::before {
+        width: 400px;
+        height: 400px;
+        top: -200px;
+        right: -100px;
+        animation-delay: 0s;
+      }
+
+      body::after {
+        width: 300px;
+        height: 300px;
+        bottom: -150px;
+        left: -50px;
+        animation-delay: 2s;
+      }
+
+      /* 浮动动画 */
+      @keyframes float {
+        0% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        50% {
+          transform: translate(20px, 20px) rotate(5deg);
+        }
+        100% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+      }
+
+      /* 返回首页按钮 - 参考教练和学生页面 */
+      .back-to-home {
+        position: absolute;
+        top: 1.5rem;
+        left: 1.5rem;
+        color: white;
+        font-size: 1.2rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 2;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        font-weight: 500;
+      }
+
+      .back-to-home:hover {
+        color: white;
+        transform: translateX(-5px);
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
+      }
+
+      /* 登录卡片容器 - 整合教练和学生页面风格 */
+      .login-container {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 0 20px;
+        animation: fadeInUp 0.8s ease-out;
+      }
+
+      /* 登录卡片 */
+      .login-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(15px);
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        min-height: 550px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .card-body {
+        padding: 2.5rem;
+      }
+
+      .login-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.18);
+      }
+
+      /* Logo 容器 - 参考教练页面 */
+      .logo-container {
+        text-align: center;
+        margin-top: -40px;
+        margin-bottom: 35px;
+      }
+
+      .logo-circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #36d1dc, #5b86e5);
+        border-radius: 50%;
+        box-shadow: 0 10px 20px rgba(54, 209, 220, 0.4);
+        color: white;
+        font-size: 2.5rem;
+        transition: all 0.3s ease;
+        animation: bounceIn 0.6s ease-out;
+      }
+
+      .logo-circle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 12px 25px rgba(54, 209, 220, 0.5);
+      }
+
+      /* 登录标题 - 参考教练页面 */
+      .login-title {
+        text-align: center;
+        font-weight: 700;
+        color: #2c3e50;
+        font-size: 1.8rem;
+        letter-spacing: 0.5px;
+        margin: 0 0 1.5rem !important;
+        position: relative;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+      }
+
+      .login-title::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, #36d1dc, #5b86e5);
+        border-radius: 3px;
+      }
+
+      /* 副标题 - 参考教练页面 */
+      .login-subtitle {
+        text-align: center;
+        color: #6c757d;
+        font-size: 1rem;
+        margin-bottom: 2.5rem;
+        opacity: 0.8;
+        animation: fadeInUp 0.6s ease-out 0.3s both;
+      }
+
+      /* 表单样式 - 整合教练和学生页面风格 */
+      .form-label {
+        font-weight: 500;
+        color: #34495e;
+        margin-bottom: 8px;
+        display: block;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .form-group {
+        position: relative;
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.6s ease-out 0.4s both;
+      }
+
+      .form-control {
+        border: 2px solid rgba(54, 209, 220, 0.2);
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-size: 16px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background-color: white;
+        width: 100%;
+        height: 50px;
+        box-sizing: border-box;
+      }
+
+      .form-control:focus {
+        border-color: #36d1dc;
+        box-shadow: 0 0 0 4px rgba(54, 209, 220, 0.15);
+        outline: none;
+        transform: translateY(-1px);
+      }
+
+      .form-control::placeholder {
+        color: #adb5bd;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus::placeholder {
+        color: #ced4da;
+        transform: translateX(5px);
+      }
+
+      /* 标签前的图标 */
+      .label-icon {
+        color: #6c757d;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+
+      /* 表单组聚焦状态下标签图标的颜色变化 */
+      .form-group:focus-within .label-icon {
+        color: #36d1dc;
+      }
+
+      /* 边距工具类 */
+      .mr-2 {
+        margin-right: 0.5rem;
+      }
+
+      /* 密码容器 - 参考教练页面 */
+      .password-container {
+        position: relative;
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 16px;
+        top: calc(60% - -6px);
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #6c757d;
+        transition: all 0.3s ease;
+        font-size: 16px;
+        padding: 5px;
+        border-radius: 50%;
+        z-index: 10;
+      }
+
+      .password-toggle:hover {
+        color: #36d1dc;
+        background-color: rgba(54, 209, 220, 0.1);
+      }
+
+      /* 按钮样式 - 整合教练和学生页面风格 */
+      .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 0.9rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        font-family: inherit;
+        animation: fadeInUp 0.6s ease-out 0.5s both;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #36d1dc, #5b86e5);
+      }
+
+      .btn-outline-primary {
+        background: white;
+        color: #36d1dc;
+        border: 2px solid #36d1dc;
+      }
+
+      .btn-outline-primary:hover {
+        background: #36d1dc;
+        color: white;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      /* 按钮光效动画 - 参考学生页面 */
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: all 0.6s ease;
+        z-index: -1;
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      /* 消息提示样式 */
+      .message-area {
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        padding: 12px 16px;
+        animation: slideIn 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-align: center;
+        font-weight: 500;
+      }
+
+      /* 底部链接 - 参考学生页面 */
+      .bottom-links {
+        text-align: center;
+        margin-top: 1.5rem;
+        animation: fadeInUp 0.6s ease-out 0.6s both;
+      }
+
+      .bottom-links a {
+        color: #36d1dc;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        padding-bottom: 2px;
+      }
+
+      .bottom-links a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: #36d1dc;
+        transition: width 0.3s ease;
+      }
+
+      .bottom-links a:hover {
+        color: #2ba9b3;
+      }
+
+      .bottom-links a:hover::after {
+        width: 100%;
+      }
+
+      /* 动画效果 */
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes bounceIn {
+        0%, 20%, 40%, 60%, 80%, 100% {
+          transform: scale(1);
+        }
+        40% {
+          transform: scale(1.1);
+        }
+        80% {
+          transform: scale(0.95);
+        }
+      }
+
+      .animate-fade-in {
+        animation: fadeIn 0.6s ease forwards;
+        opacity: 0;
+      }
+
+      /* 响应式设计 */
+      @media (max-width: 576px) {
+        .login-card {
+          margin: 0;
+        }
+
+        .card-body {
+          padding: 1.5rem;
+        }
+
+        .login-title {
+          font-size: 1.5rem;
+        }
+
+        .back-to-home {
+          position: static;
+          margin-bottom: 1.5rem;
+          display: inline-flex;
+        }
+
+        .login-container {
+          text-align: center;
+        }
+      }
+    </style>
   </head>
 
-  <body class="bg-light">
-    <div class="container">
-      <div class="row justify-content-center mt-5">
-        <div class="col-md-6 col-lg-4">
-          <div class="card">
-            <div class="card-body">
-              <h3 class="card-title text-center mb-4">管理员登录</h3>
-              <div id="message-area" class="alert d-none" role="alert"></div>
-              <form id="loginForm">
-                <div class="mb-3">
-                  <label for="username" class="form-label">用户名</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="username"
-                    name="username"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="password" class="form-label">密码</label>
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="password"
-                    name="password"
-                    required
-                  />
-                </div>
-                <div class="d-grid">
-                  <button
-                    type="submit"
-                    class="btn btn-primary"
-                  >
-                    登录
-                  </button>
-                </div>
-              </form>
+  <body>
+    <!-- 返回首页按钮 -->
+    <a href="/" class="back-to-home">
+      <i class="fas fa-home"></i>
+      <span>返回首页</span>
+    </a>
+
+    <!-- 登录容器 -->
+    <div class="login-container">
+      <div class="login-card">
+        <!-- Logo -->
+        <div class="logo-container">
+          <div class="logo-circle">
+            <i class="fas fa-user-shield"></i>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <!-- 标题和副标题 -->
+          <h3 class="login-title">管理员登录</h3>
+          <p class="login-subtitle">欢迎使用乒乓球管理系统</p>
+
+          <!-- 消息区域 -->
+          <div id="message-area" class="d-none message-area" role="alert"></div>
+
+          <!-- 登录表单 -->
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="username" class="form-label"><i
+                  class="fas fa-user label-icon"
+                ></i>用户名</label>
+              <input
+                type="text"
+                class="form-control"
+                id="username"
+                name="username"
+                required
+                placeholder="请输入用户名"
+              />
             </div>
+            <div class="form-group password-container">
+              <label for="password" class="form-label"><i
+                  class="fas fa-lock label-icon"
+                ></i>密码</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                required
+                placeholder="请输入密码"
+              />
+              <i
+                class="fas fa-eye-slash password-toggle"
+                id="togglePassword"
+              ></i>
+            </div>
+            <div class="d-grid">
+              <button
+                type="submit"
+                class="btn btn-primary"
+              >
+                <i class="fas fa-sign-in-alt mr-1"></i>
+                登录
+              </button>
+            </div>
+            <!-- 返回首页按钮 -->
+            <div class="d-grid mt-4">
+              <a href="/" class="btn btn-outline-primary">
+                <i class="fas fa-home mr-1"></i>
+                返回首页
+              </a>
+            </div>
+          </form>
+
+          <!-- 底部链接 -->
+          <div class="bottom-links">
+            <span class="text-muted">如有问题，请联系系统管理员</span>
           </div>
         </div>
       </div>
     </div>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
       crossorigin="anonymous"
     ></script>
     <script>
-      const messageArea = document.getElementById("message-area");
-
-      function displayMessage(message, type) {
-        messageArea.textContent = message;
-        messageArea.className = `alert alert-${type}`;
-        messageArea.classList.remove("d-none");
-      }
-
-      document.getElementById("loginForm").addEventListener(
-        "submit",
-        async (event) => {
-          event.preventDefault();
-          messageArea.classList.add("d-none"); // Hide message on new submission
-
-          const username = document.getElementById("username").value;
-          const password = document.getElementById("password").value;
-
-          const response = await fetch("/api/admin/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username, password }),
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            if (data.success && data.redirect) {
-              displayMessage("登录成功！", "success");
-              setTimeout(() => {
-                window.location.href = data.redirect;
-              }, 1000); // Redirect after 1 second
-            } else {
-              displayMessage(data.message || "登录失败。", "danger");
-            }
-          } else {
-            const errorData = await response.json();
-            displayMessage(
-              errorData.message || "发生意外错误。",
-              "danger",
-            );
+      document.addEventListener("DOMContentLoaded", function () {
+        // 页面加载动画
+        const animatedElements = document.querySelectorAll(
+          ".login-card *",
+        );
+        animatedElements.forEach((element) => {
+          if (element.style.animation) {
+            element.style.opacity = "1";
+            element.style.transform = "translateY(0)";
           }
-        },
-      );
+        });
+
+        const messageArea = document.getElementById("message-area");
+
+        // 密码显示/隐藏功能
+        const togglePassword = document.getElementById(
+          "togglePassword",
+        );
+        const passwordInput = document.getElementById("password");
+
+        togglePassword.addEventListener("click", function () {
+          const type = passwordInput.getAttribute("type") === "password"
+            ? "text"
+            : "password";
+          passwordInput.setAttribute("type", type);
+
+          // 切换图标
+          this.classList.toggle("fa-eye");
+          this.classList.toggle("fa-eye-slash");
+        });
+
+        function displayMessage(message, type) {
+          // 添加图标
+          const iconMap = {
+            success: "fas fa-check-circle",
+            danger: "fas fa-exclamation-circle",
+            warning: "fas fa-exclamation-triangle",
+            info: "fas fa-info-circle",
+          };
+
+          messageArea.innerHTML = `<i class="${
+            iconMap[type] || "fas fa-info-circle"
+          }"></i> ${message}`;
+          messageArea.className = `message-area alert alert-${type}`;
+          messageArea.classList.remove("d-none");
+
+          // 自动隐藏消息
+          setTimeout(() => {
+            messageArea.classList.add("d-none");
+          }, 5000);
+        }
+
+        document.getElementById("loginForm").addEventListener(
+          "submit",
+          async (event) => {
+            event.preventDefault();
+            messageArea.classList.add("d-none"); // 隐藏之前的消息
+
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            // 添加表单验证
+            if (!username.trim()) {
+              displayMessage("请输入用户名", "danger");
+              return;
+            }
+
+            if (!password.trim()) {
+              displayMessage("请输入密码", "danger");
+              return;
+            }
+
+            try {
+              const response = await fetch("/api/admin/login", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username, password }),
+              });
+
+              if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.redirect) {
+                  displayMessage("登录成功！正在跳转...", "success");
+                  setTimeout(() => {
+                    window.location.href = data.redirect;
+                  }, 1000); // 1秒后跳转
+                } else {
+                  displayMessage(
+                    data.message || "登录失败。",
+                    "danger",
+                  );
+                }
+              } else {
+                const errorData = await response.json();
+                displayMessage(
+                  errorData.message || "发生意外错误。",
+                  "danger",
+                );
+              }
+            } catch (error) {
+              displayMessage("网络错误，请稍后重试。", "danger");
+              console.error("登录请求失败：", error);
+            }
+          },
+        );
+      });
     </script>
   </body>
 </html>

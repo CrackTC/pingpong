@@ -3,78 +3,1037 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>学生主页</title>
+    <title>学生主页 - 乒乓球管理系统</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
+
+    <!-- 导入现代字体 -->
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      :root {
+        --primary-color: #0984e3;
+        --primary-light: #74b9ff;
+        --secondary-color: #6c5ce7;
+        --success-color: #00b894;
+        --warning-color: #fdcb6e;
+        --danger-color: #d63031;
+        --info-color: #636e72;
+        --light-bg: #f8f9fa;
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.15);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #74b9ff, #0984e3);
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        padding: 20px;
+        overflow-x: hidden;
+        position: relative;
+        color: #2d3436;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* 装饰性元素 - 乒乓球背景 */
+      body::before, body::after {
+        content: "🏓";
+        position: absolute;
+        font-size: 15rem;
+        opacity: 0.05;
+        z-index: 0;
+        animation: float 15s ease-in-out infinite;
+      }
+
+      body::before {
+        top: -5%;
+        left: -5%;
+        transform: rotate(-15deg);
+      }
+
+      body::after {
+        bottom: -5%;
+        right: -5%;
+        transform: rotate(15deg);
+        animation-delay: 3s;
+      }
+
+      /* 浮动动画 */
+      @keyframes float {
+        0%, 100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        25% {
+          transform: translateY(-30px) rotate(5deg);
+        }
+        50% {
+          transform: translateY(0) rotate(-5deg);
+        }
+        75% {
+          transform: translateY(30px) rotate(5deg);
+        }
+      }
+
+      /* 主容器 */
+      .container {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding-top: 70px; /* 为顶部固定按钮留出空间 */
+      }
+
+      /* 页头样式 */
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+        animation: fadeInDown 0.6s ease-out;
+        padding: 1rem 0;
+      }
+
+      .header h1 {
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 0.5rem;
+        font-size: 2.5rem;
+        letter-spacing: -1px;
+      }
+
+      .header p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.1rem;
+        font-weight: 400;
+        margin: 0;
+      }
+
+      /* 用户信息卡片 */
+      .user-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* 用户卡片装饰条 */
+      .user-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+      }
+
+      .user-card:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-5px);
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        position: relative;
+      }
+
+      .user-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+      }
+
+      .user-card:hover .user-avatar {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .user-details h3 {
+        margin: 0;
+        font-weight: 600;
+        color: #2d3436;
+        font-size: 1.5rem;
+      }
+
+      .user-details p {
+        margin: 0.25rem 0 0;
+        color: #636e72;
+        font-size: 1rem;
+      }
+
+      /* 快速数据卡片区域 */
+      .quick-stats-section {
+        margin-bottom: 2rem;
+        animation: fadeInUp 0.6s ease-out 0.4s both;
+      }
+
+      .section-title {
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-left: 0.5rem;
+        position: relative;
+      }
+
+      .section-title::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 4px;
+        background: var(--primary-light);
+        border-radius: 2px;
+      }
+
+      /* 卡片网格布局 */
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      /* 迷你数据卡片 */
+      .mini-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+        opacity: 0;
+        animation: fadeInUp 0.6s ease-out forwards;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+      }
+
+      .mini-card::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+      }
+
+      .mini-card:nth-child(1) {
+        animation-delay: 0.4s;
+      }
+      .mini-card:nth-child(2) {
+        animation-delay: 0.45s;
+      }
+      .mini-card:nth-child(3) {
+        animation-delay: 0.5s;
+      }
+
+      .mini-card:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-5px);
+      }
+
+      .mini-card-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+        transition: all 0.3s ease;
+      }
+
+      .mini-card:hover .mini-card-icon {
+        transform: scale(1.1) rotate(5deg);
+        color: var(--secondary-color);
+      }
+
+      .mini-card-title {
+        font-weight: 600;
+        color: #2d3436;
+        margin-bottom: 0.5rem;
+      }
+
+      .mini-card-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-color);
+      }
+
+      /* 功能区域 */
+      .features-section {
+        margin-bottom: 2rem;
+        animation: fadeInUp 0.6s ease-out 0.5s both;
+      }
+
+      /* 功能卡片组 */
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+
+      /* 功能卡片 */
+      .feature-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        animation: fadeInUp 0.6s ease-out 0.6s both;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* 功能卡片装饰条 */
+      .feature-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--secondary-color),
+          var(--primary-color)
+        );
+      }
+
+      .feature-card:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-5px);
+      }
+
+      .card-title {
+        font-weight: 600;
+        color: #2d3436;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.5rem;
+        text-align: center;
+        font-size: 1.3rem;
+      }
+
+      .card-title::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        border-radius: 3px;
+      }
+
+      /* 按钮样式 */
+      .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 0.85rem 1.25rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        font-family: inherit;
+        margin-bottom: 0.75rem;
+        opacity: 0;
+        animation: fadeInUp 0.4s ease-out forwards;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid transparent;
+      }
+
+      /* 为按钮添加延迟动画 */
+      .feature-card:nth-child(1) .btn:nth-child(1) {
+        animation-delay: 0.7s;
+      }
+      .feature-card:nth-child(1) .btn:nth-child(2) {
+        animation-delay: 0.75s;
+      }
+      .feature-card:nth-child(1) .btn:nth-child(3) {
+        animation-delay: 0.8s;
+      }
+
+      .feature-card:nth-child(2) .btn:nth-child(1) {
+        animation-delay: 0.85s;
+      }
+      .feature-card:nth-child(2) .btn:nth-child(2) {
+        animation-delay: 0.9s;
+      }
+      .feature-card:nth-child(2) .btn:nth-child(3) {
+        animation-delay: 0.95s;
+      }
+
+      .feature-card:nth-child(3) .btn:nth-child(1) {
+        animation-delay: 1s;
+      }
+      .feature-card:nth-child(3) .btn:nth-child(2) {
+        animation-delay: 1.05s;
+      }
+      .feature-card:nth-child(3) .btn:nth-child(3) {
+        animation-delay: 1.1s;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-light)
+        );
+      }
+
+      .btn-secondary {
+        background: linear-gradient(135deg, var(--info-color), #b2bec3);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, var(--success-color), #55efc4);
+      }
+
+      .btn-warning {
+        background: linear-gradient(135deg, #e17055, #fab1a0);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, var(--danger-color), #ff7675);
+      }
+
+      .btn-info {
+        background: linear-gradient(135deg, #fdcb6e, #ffeaa7);
+        color: #2d3436;
+      }
+
+      /* 增强按钮悬停效果 */
+      .btn:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .btn:active {
+        transform: translateY(0) scale(0.98);
+      }
+
+      /* 按钮光效动画 */
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        transition: all 0.6s ease;
+        z-index: -1;
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      /* 按钮图标动画 */
+      .btn i {
+        transition: transform 0.3s ease;
+      }
+
+      .btn:hover i {
+        transform: translateY(-2px) rotate(5deg);
+      }
+
+      /* 动画 */
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* 通知徽章增强 */
+      .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: var(--danger-color);
+        color: white;
+        border-radius: 50%;
+        padding: 4px 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        animation: pulse 2s infinite;
+        box-shadow: 0 4px 10px rgba(214, 48, 49, 0.3);
+        border: 2px solid white;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 4px 10px rgba(214, 48, 49, 0.3);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 6px 15px rgba(214, 48, 49, 0.5);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 4px 10px rgba(214, 48, 49, 0.3);
+        }
+      }
+
+      /* 返回首页按钮 */
+      .back-to-landing {
+        position: fixed;
+        top: 1.5rem;
+        left: 1.5rem;
+        color: white;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        z-index: 100;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        opacity: 0;
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .back-to-landing:hover {
+        color: white;
+        transform: translateX(-5px);
+        background: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      /* 导航栏 */
+      .nav-bar {
+        position: fixed;
+        top: 1.5rem;
+        right: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        z-index: 100;
+      }
+
+      .nav-btn {
+        color: white;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        padding: 0.6rem;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+        opacity: 0;
+        animation: fadeInUp 0.6s ease-out 0.3s both;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+      }
+
+      .nav-btn:hover {
+        color: white;
+        transform: translateY(-3px);
+        background: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      /* 页面底部 */
+      .footer {
+        text-align: center;
+        padding: 2rem 0 1rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        opacity: 0;
+        animation: fadeInUp 0.6s ease-out 1.2s both;
+      }
+
+      /* 响应式设计 */
+      @media (max-width: 1024px) {
+        .card-grid,
+        .features-grid {
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+      }
+
+      @media (max-width: 768px) {
+        .user-info {
+          flex-direction: column;
+          text-align: center;
+          gap: 1rem;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .btn {
+          font-size: 0.9rem;
+          padding: 0.75rem 1rem;
+          gap: 0.5rem;
+        }
+
+        body::before,
+        body::after {
+          font-size: 10rem;
+        }
+
+        .back-to-landing {
+          top: 1rem;
+          left: 1rem;
+          font-size: 1rem;
+          padding: 0.5rem 1rem;
+        }
+
+        .nav-bar {
+          top: 1rem;
+          right: 1rem;
+        }
+
+        .user-avatar {
+          width: 80px;
+          height: 80px;
+          font-size: 2.5rem;
+        }
+
+        .container {
+          padding-top: 60px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        body {
+          padding: 15px;
+        }
+
+        .feature-card {
+          padding: 1.5rem;
+        }
+
+        .header h1 {
+          font-size: 1.8rem;
+        }
+
+        .header p {
+          font-size: 1rem;
+        }
+
+        body::before,
+        body::after {
+          display: none;
+        }
+
+        .mini-card {
+          padding: 1.25rem;
+        }
+
+        .card-grid,
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .nav-btn {
+          width: 40px;
+          height: 40px;
+          padding: 0.5rem;
+        }
+      }
+    </style>
   </head>
 
-  <body class="bg-light">
+  <body>
+    <a href="/" class="back-to-landing">
+      <i class="fas fa-home"></i>
+      <span>返回首页</span>
+    </a>
+
+    <div class="nav-bar">
+      <a href="/student/notifications" class="nav-btn" id="notifications-icon">
+        <i class="fas fa-bell"></i>
+      </a>
+      <a href="/student/profile" class="nav-btn">
+        <i class="fas fa-user-cog"></i>
+      </a>
+    </div>
+
     <div class="container">
-      <div class="row justify-content-center mt-5">
-        <div class="col-md-8">
-          <div class="card">
-            <div class="card-body">
-              <h3 class="card-title text-center mb-4">学生仪表盘</h3>
-              <div class="d-grid gap-2">
-                <a href="/student/profile" class="btn btn-primary">我的资料</a>
-                <a href="/student/coach/search" class="btn btn-primary"
-                >搜索教练</a>
-                <a href="/student/selection/all" class="btn btn-primary"
-                >我的选择</a>
-                <a href="/student/appointment/search" class="btn btn-primary"
-                >搜索教练时间段</a>
-                <a href="/student/appointment/all" class="btn btn-primary"
-                >我的所有预约</a>
-                <a
-                  href="/student/appointment/cancelling"
-                  class="btn btn-primary"
-                >待处理取消</a>
-                <a href="/student/recharge" class="btn btn-success">充值</a>
-                <a href="/student/recharge/all" class="btn btn-info"
-                >我的充值订单</a>
-                <a href="/student/deduction/all" class="btn btn-info"
-                >我的扣费记录</a>
-                <a href="/student/contest/all" class="btn btn-primary">比赛</a>
-                <a href="/student/match/all" class="btn btn-primary"
-                >我的比赛</a>
-                <a href="/student/migration/all" class="btn btn-info"
-                >我的迁移</a>
-                <a
-                  href="/student/notifications"
-                  id="notifications-btn"
-                  class="btn btn-secondary"
-                >通知</a>
-                <a href="/student/logout" class="btn btn-danger">登出</a>
-              </div>
+      <div class="header">
+        <h1>🏓 乒乓球管理系统</h1>
+        <p>欢迎使用学生控制面板</p>
+      </div>
+
+      <!-- 用户信息卡片 -->
+      <div class="user-card">
+        <div class="user-info">
+          <div class="user-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="user-details">
+            <h3>学生用户</h3>
+            <p>欢迎访问您的个人仪表盘</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 快速数据卡片 -->
+      <div class="quick-stats-section">
+        <h2 class="section-title">快速概览</h2>
+        <div class="card-grid">
+          <div class="mini-card">
+            <div class="mini-card-icon">
+              <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="mini-card-title">待完成预约</div>
+            <div class="mini-card-value" id="upcoming-appointments">0</div>
+          </div>
+
+          <div class="mini-card">
+            <div class="mini-card-icon">
+              <i class="fas fa-trophy"></i>
+            </div>
+            <div class="mini-card-title">参加的比赛</div>
+            <div class="mini-card-value" id="joined-contests">0</div>
+          </div>
+
+          <div class="mini-card">
+            <div class="mini-card-icon">
+              <i class="fas fa-wallet"></i>
+            </div>
+            <div class="mini-card-title">账户余额</div>
+            <div class="mini-card-value" id="account-balance">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 功能导航区域 -->
+      <div class="features-section">
+        <h2 class="section-title">功能导航</h2>
+        <div class="features-grid">
+          <!-- 个人与预约 -->
+          <div class="feature-card">
+            <h3 class="card-title">个人与预约</h3>
+            <div class="d-grid gap-2">
+              <a href="/student/profile" class="btn btn-primary">
+                <i class="fas fa-user-cog"></i>
+                我的资料
+              </a>
+              <a href="/student/coach/search" class="btn btn-primary">
+                <i class="fas fa-search"></i>
+                搜索教练
+              </a>
+              <a href="/student/appointment/all" class="btn btn-primary">
+                <i class="fas fa-calendar-check"></i>
+                我的所有预约
+              </a>
+            </div>
+          </div>
+
+          <!-- 预约与选择 -->
+          <div class="feature-card">
+            <h3 class="card-title">预约管理</h3>
+            <div class="d-grid gap-2">
+              <a href="/student/selection/all" class="btn btn-primary">
+                <i class="fas fa-list-check"></i>
+                我的选择
+              </a>
+              <a href="/student/appointment/search" class="btn btn-primary">
+                <i class="fas fa-calendar-days"></i>
+                搜索时间段
+              </a>
+              <a href="/student/appointment/cancelling" class="btn btn-primary">
+                <i class="fas fa-calendar-xmark"></i>
+                待处理取消
+              </a>
+            </div>
+          </div>
+
+          <!-- 财务管理 -->
+          <div class="feature-card">
+            <h3 class="card-title">财务管理</h3>
+            <div class="d-grid gap-2">
+              <a href="/student/recharge" class="btn btn-success">
+                <i class="fas fa-wallet"></i>
+                充值
+              </a>
+              <a href="/student/recharge/all" class="btn btn-info">
+                <i class="fas fa-credit-card"></i>
+                充值订单
+              </a>
+              <a href="/student/deduction/all" class="btn btn-info">
+                <i class="fas fa-receipt"></i>
+                扣费记录
+              </a>
+            </div>
+          </div>
+
+          <!-- 比赛与活动 -->
+          <div class="feature-card">
+            <h3 class="card-title">比赛与活动</h3>
+            <div class="d-grid gap-2">
+              <a href="/student/contest/all" class="btn btn-primary">
+                <i class="fas fa-trophy"></i>
+                比赛
+              </a>
+              <a href="/student/match/all" class="btn btn-primary">
+                <i class="fas fa-table-tennis-paddle-ball"></i>
+                我的比赛
+              </a>
+              <a href="/student/migration/all" class="btn btn-info">
+                <i class="fas fa-location-arrow"></i>
+                我的迁移
+              </a>
+            </div>
+          </div>
+
+          <!-- 系统与通知 -->
+          <div class="feature-card">
+            <h3 class="card-title">系统与通知</h3>
+            <div class="d-grid gap-2">
+              <a
+                href="/student/notifications"
+                id="notifications-btn"
+                class="btn btn-secondary"
+              >
+                <i class="fas fa-bell"></i>
+                通知
+              </a>
+              <a href="/student/logout" class="btn btn-danger">
+                <i class="fas fa-sign-out-alt"></i>
+                登出
+              </a>
             </div>
           </div>
         </div>
       </div>
+
+      <div class="footer">
+        <p>©乒乓球管理系统 - 学生控制面板</p>
+      </div>
     </div>
+
     <script>
+      // 获取通知信息和用户数据
       fetch("/api/student/home")
         .then((response) => response.json())
         .then((data) => {
+          // 更新通知按钮状态
           const notificationsBtn = document.getElementById(
             "notifications-btn",
           );
+          const notificationsIcon = document.getElementById(
+            "notifications-icon",
+          );
+
           if (data.unreadNotificationCount > 0) {
+            // 更新主按钮
             notificationsBtn.classList.remove("btn-secondary");
             notificationsBtn.classList.add("btn-warning");
-            notificationsBtn.textContent =
-              `通知 (${data.unreadNotificationCount})`;
-          } else {
-            notificationsBtn.textContent = `通知`;
+            notificationsBtn.innerHTML =
+              '<i class="fas fa-bell"></i>\n              通知';
+
+            // 添加通知徽章
+            const badge = document.createElement("span");
+            badge.className = "notification-badge";
+            badge.textContent = data.unreadNotificationCount;
+            notificationsBtn.style.position = "relative";
+            notificationsBtn.appendChild(badge);
+
+            // 更新导航栏图标
+            const iconBadge = document.createElement("span");
+            iconBadge.className = "notification-badge";
+            iconBadge.textContent = data.unreadNotificationCount;
+            notificationsIcon.style.position = "relative";
+            notificationsIcon.appendChild(iconBadge);
+          }
+
+          // 更新快速数据卡片
+          if (data.upcomingAppointments) {
+            document.getElementById("upcoming-appointments")
+              .textContent = data.upcomingAppointments;
+          }
+
+          if (data.joinedContests) {
+            document.getElementById("joined-contests").textContent =
+              data.joinedContests;
+          }
+
+          if (data.balance !== undefined) {
+            document.getElementById("account-balance").textContent =
+              `¥${data.balance.toFixed(2)}`;
+          }
+
+          // 更新用户信息
+          if (data.student && data.student.username) {
+            document.querySelector(".user-details h3").textContent =
+              data.student.username;
           }
         })
-        .catch((error) =>
-          console.error("获取学生主页数据时出错：", error)
-        );
+        .catch((error) => {
+          console.error("获取学生主页数据时出错：", error);
+          // 即使出错也继续显示页面，使用默认值
+        });
+
+      // 添加滚动动画效果
+      document.addEventListener("DOMContentLoaded", function () {
+        // 为卡片添加滚动动画
+        const animateOnScroll = function () {
+          const elements = document.querySelectorAll(
+            ".feature-card, .mini-card",
+          );
+
+          elements.forEach((element) => {
+            const elementPosition = element.getBoundingClientRect().top;
+            const screenPosition = window.innerHeight / 1.3;
+
+            if (elementPosition < screenPosition) {
+              element.style.opacity = "1";
+              element.style.transform = "translateY(0)";
+            }
+          });
+        };
+
+        // 初始检查
+        animateOnScroll();
+
+        // 滚动时检查
+        window.addEventListener("scroll", animateOnScroll);
+
+        // 增强的按钮交互效果
+        document.querySelectorAll(".btn").forEach((btn) => {
+          btn.addEventListener("mouseenter", function () {
+            this.style.transform = "translateY(-3px) scale(1.02)";
+            this.style.boxShadow = "0 8px 20px rgba(0, 0, 0, 0.15)";
+          });
+
+          btn.addEventListener("mouseleave", function () {
+            this.style.transform = "translateY(0) scale(1)";
+            this.style.boxShadow = "0 4px 10px rgba(0, 0, 0, 0.05)";
+          });
+
+          btn.addEventListener("mousedown", function () {
+            this.style.transform = "translateY(0) scale(0.98)";
+          });
+
+          btn.addEventListener("mouseup", function () {
+            this.style.transform = "translateY(-3px) scale(1.02)";
+          });
+        });
+
+        // 为卡片添加悬停效果
+        document.querySelectorAll(
+          ".user-card, .feature-card, .mini-card",
+        ).forEach((card) => {
+          card.addEventListener("mouseenter", function () {
+            this.style.transform = "translateY(-5px)";
+            this.style.boxShadow = "var(--shadow-hover)";
+          });
+
+          card.addEventListener("mouseleave", function () {
+            this.style.transform = "translateY(0)";
+            this.style.boxShadow = "var(--shadow)";
+          });
+        });
+      });
     </script>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"

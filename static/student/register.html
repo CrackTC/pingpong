@@ -3,118 +3,593 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>学生注册</title>
+    <title>学生注册 - 乒乓球管理系统</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
+
+    <!-- 导入现代字体 -->
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      :root {
+        --primary-color: #0984e3;
+        --primary-light: #74b9ff;
+        --secondary-color: #6c5ce7;
+        --success-color: #00b894;
+        --warning-color: #fdcb6e;
+        --danger-color: #d63031;
+        --info-color: #636e72;
+        --light-bg: #f8f9fa;
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.15);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #74b9ff, #0984e3);
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow-x: hidden;
+        position: relative;
+        color: #2d3436;
+      }
+
+      /* 装饰性元素 - 乒乓球背景 */
+      body::before,
+      body::after {
+        content: "🏓";
+        position: absolute;
+        font-size: 15rem;
+        opacity: 0.05;
+        z-index: 0;
+        animation: float 15s ease-in-out infinite;
+      }
+
+      body::before {
+        top: -5%;
+        left: -5%;
+        transform: rotate(-15deg);
+      }
+
+      body::after {
+        bottom: -5%;
+        right: -5%;
+        transform: rotate(15deg);
+        animation-delay: 3s;
+      }
+
+      /* 浮动动画 */
+      @keyframes float {
+        0%, 100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        25% {
+          transform: translateY(-30px) rotate(5deg);
+        }
+        50% {
+          transform: translateY(0) rotate(-5deg);
+        }
+        75% {
+          transform: translateY(30px) rotate(5deg);
+        }
+      }
+
+      /* 主容器 */
+      .container {
+        position: relative;
+        z-index: 1;
+        max-width: 500px;
+        width: 100%;
+      }
+
+      /* 页头样式 */
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+        animation: fadeInDown 0.6s ease-out;
+      }
+
+      .header h1 {
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 0.5rem;
+        font-size: 2.5rem;
+        letter-spacing: -1px;
+      }
+
+      .header p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.1rem;
+        font-weight: 400;
+      }
+
+      /* 注册卡片 */
+      .register-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 2.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .register-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+      }
+
+      /* 标题样式 */
+      .register-title {
+        text-align: center;
+        font-weight: 600;
+        color: #2d3436;
+        margin-bottom: 2rem;
+        font-size: 1.8rem;
+        position: relative;
+      }
+
+      /* 表单样式 */
+      .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+        opacity: 0;
+        animation: fadeInUp 0.4s ease-out forwards;
+      }
+
+      /* 为表单项添加延迟动画 */
+      .form-group:nth-child(1) {
+        animation-delay: 0.3s;
+      }
+      .form-group:nth-child(2) {
+        animation-delay: 0.35s;
+      }
+      .form-group:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      .form-group:nth-child(4) {
+        animation-delay: 0.45s;
+      }
+      .form-group:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+      .form-group:nth-child(6) {
+        animation-delay: 0.55s;
+      }
+      .form-group:nth-child(7) {
+        animation-delay: 0.6s;
+      }
+      .form-group:nth-child(8) {
+        animation-delay: 0.65s;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #2d3436;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-control,
+      .form-select {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 3rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        transition: all 0.3s ease;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.1);
+        transform: translateY(-1px);
+      }
+
+      .form-control::placeholder {
+        color: #b2bec3;
+      }
+
+      /* 输入框图标 */
+      .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 2.5rem;
+        color: #b2bec3;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus + .input-icon {
+        color: var(--primary-color);
+        transform: translateY(-1px);
+      }
+
+      /* 密码帮助文本 */
+      .password-help {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        color: #636e72;
+        line-height: 1.4;
+      }
+
+      /* 按钮样式 */
+      .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        font-family: inherit;
+        margin-top: 1rem;
+        opacity: 0;
+        animation: fadeInUp 0.4s ease-out 0.7s both;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-light)
+        );
+      }
+
+      .btn-secondary {
+        background: linear-gradient(135deg, var(--info-color), #b2bec3);
+        margin-top: 0.75rem;
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, var(--success-color), #55efc4);
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      /* 按钮光效动画 */
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: all 0.6s ease;
+        z-index: -1;
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      /* 消息区域 */
+      #message-area {
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+        border-radius: 10px;
+        padding: 1rem;
+        font-weight: 500;
+      }
+
+      #message-area:not(.d-none) {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* 返回首页按钮 */
+      .back-to-landing {
+        position: fixed;
+        top: 1.5rem;
+        left: 1.5rem;
+        color: white;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        z-index: 100;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        opacity: 0;
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+      }
+
+      .back-to-landing:hover {
+        color: white;
+        transform: translateX(-5px);
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      /* 动画 */
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* 响应式设计 */
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .register-card {
+          padding: 2rem;
+        }
+
+        .register-title {
+          font-size: 1.5rem;
+        }
+
+        body::before,
+        body::after {
+          font-size: 10rem;
+        }
+
+        .back-to-landing {
+          top: 1rem;
+          left: 1rem;
+          font-size: 1rem;
+          padding: 0.4rem 0.8rem;
+        }
+      }
+
+      @media (max-width: 576px) {
+        body {
+          padding: 15px;
+        }
+
+        .header h1 {
+          font-size: 1.8rem;
+        }
+
+        .header p {
+          font-size: 1rem;
+        }
+
+        .register-card {
+          padding: 1.5rem;
+        }
+
+        .form-control,
+        .form-select {
+          padding: 0.75rem 0.9rem 0.75rem 2.5rem;
+          font-size: 0.9rem;
+        }
+
+        .input-icon {
+          font-size: 1rem;
+          top: 2.3rem;
+        }
+
+        body::before,
+        body::after {
+          display: none;
+        }
+      }
+    </style>
   </head>
 
-  <body class="bg-light">
+  <body>
+    <a href="/" class="back-to-landing">
+      <i class="fas fa-home"></i>
+      <span>返回首页</span>
+    </a>
+
     <div class="container">
-      <div class="row justify-content-center mt-5">
-        <div class="col-md-8">
-          <div class="card">
-            <div class="card-body">
-              <h3 class="card-title text-center mb-4">学生注册</h3>
-              <div id="message-area" class="alert d-none" role="alert"></div>
-              <form id="register-form">
-                <div class="mb-3">
-                  <label for="username" class="form-label">用户名</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="username"
-                    name="username"
-                    required
-                  >
-                </div>
-                <div class="mb-3">
-                  <label for="password" class="form-label">密码</label>
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="password"
-                    name="password"
-                    required
-                  >
-                  <small id="passwordHelp" class="form-text text-muted">
-                    密码需为 8-16
-                    位，且至少包含一个字母、一个数字和一个特殊符号。
-                  </small>
-                </div>
-                <div class="mb-3">
-                  <label for="realName" class="form-label">真实姓名</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="realName"
-                    name="realName"
-                    required
-                  >
-                </div>
-                <div class="mb-3">
-                  <label for="sex" class="form-label">性别</label>
-                  <select class="form-select" id="sex" name="sex">
-                    <option value="0">未指定</option>
-                    <option value="1">男</option>
-                    <option value="2">女</option>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="birthYear" class="form-label">出生年份</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="birthYear"
-                    name="birthYear"
-                    min="1900"
-                    max="2024"
-                  >
-                </div>
-                <div class="mb-3">
-                  <label for="campusId" class="form-label">校区</label>
-                  <select
-                    class="form-select"
-                    id="campusId"
-                    name="campusId"
-                    required
-                  >
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="phone" class="form-label">手机号</label>
-                  <input
-                    type="tel"
-                    class="form-control"
-                    id="phone"
-                    name="phone"
-                    required
-                  >
-                </div>
-                <div class="mb-3">
-                  <label for="email" class="form-label">邮箱（可选）</label>
-                  <input
-                    type="email"
-                    class="form-control"
-                    id="email"
-                    name="email"
-                  >
-                </div>
-                <button type="submit" class="btn btn-success w-100">
-                  注册
-                </button>
-              </form>
-              <div class="d-grid gap-2 mt-3">
-                <a href="/student/login" class="btn btn-secondary">返回登录</a>
-              </div>
-            </div>
+      <div class="header">
+        <h1>🏓 乒乓球管理系统</h1>
+        <p>创建您的学生账号</p>
+      </div>
+
+      <div class="register-card">
+        <h2 class="register-title">学生注册</h2>
+        <div id="message-area" class="alert d-none" role="alert"></div>
+
+        <form id="register-form">
+          <div class="form-group">
+            <label for="username" class="form-label">用户名</label>
+            <input
+              type="text"
+              class="form-control"
+              id="username"
+              name="username"
+              placeholder="请输入您的用户名"
+              required
+            >
+            <i class="fas fa-user input-icon"></i>
           </div>
-        </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">密码</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              placeholder="请设置您的密码"
+              required
+            >
+            <i class="fas fa-lock input-icon"></i>
+            <small id="passwordHelp" class="password-help">
+              密码需为 8-16 位，且至少包含一个字母、一个数字和一个特殊符号
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="realName" class="form-label">真实姓名</label>
+            <input
+              type="text"
+              class="form-control"
+              id="realName"
+              name="realName"
+              placeholder="请输入您的真实姓名"
+              required
+            >
+            <i class="fas fa-id-card input-icon"></i>
+          </div>
+
+          <div class="form-group">
+            <label for="sex" class="form-label">性别</label>
+            <select class="form-select" id="sex" name="sex">
+              <option value="0">未指定</option>
+              <option value="1">男</option>
+              <option value="2">女</option>
+            </select>
+            <i class="fas fa-venus-mars input-icon"></i>
+          </div>
+
+          <div class="form-group">
+            <label for="birthYear" class="form-label">出生年份</label>
+            <input
+              type="number"
+              class="form-control"
+              id="birthYear"
+              name="birthYear"
+              min="1900"
+              max="2024"
+              placeholder="请输入您的出生年份"
+            >
+            <i class="fas fa-calendar input-icon"></i>
+          </div>
+
+          <div class="form-group">
+            <label for="campusId" class="form-label">校区</label>
+            <select
+              class="form-select"
+              id="campusId"
+              name="campusId"
+              required
+            >
+            </select>
+            <i class="fas fa-university input-icon"></i>
+          </div>
+
+          <div class="form-group">
+            <label for="phone" class="form-label">手机号</label>
+            <input
+              type="tel"
+              class="form-control"
+              id="phone"
+              name="phone"
+              placeholder="请输入您的手机号"
+              required
+            >
+            <i class="fas fa-mobile-alt input-icon"></i>
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">邮箱（可选）</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              name="email"
+              placeholder="请输入您的邮箱地址"
+            >
+            <i class="fas fa-envelope input-icon"></i>
+          </div>
+
+          <button type="submit" class="btn btn-success">
+            <i class="fas fa-user-plus"></i>
+            注册
+          </button>
+
+          <div class="d-grid gap-2 mt-3">
+            <a href="/student/login" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i>
+              返回登录
+            </a>
+          </div>
+        </form>
       </div>
     </div>
+
     <script>
       const messageArea = document.getElementById("message-area");
       const passwordInput = document.getElementById("password");
@@ -123,6 +598,13 @@
         messageArea.textContent = message;
         messageArea.className = `alert alert-${type}`;
         messageArea.classList.remove("d-none");
+
+        // 自动隐藏消息（成功消息）
+        if (type === "success") {
+          setTimeout(() => {
+            messageArea.classList.add("d-none");
+          }, 5000);
+        }
       }
 
       // 客户端密码校验（与 utils.ts 保持一致）
@@ -136,21 +618,36 @@
         if (!/\d/.test(password)) {
           return "密码至少包含一个数字。";
         }
-        if (!/[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]/.test(password)) {
+        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
           return "密码至少包含一个特殊符号。";
         }
         return null; // Password is valid
       }
 
       async function fetchCampuses() {
-        const response = await fetch("/api/campus/all");
-        const campuses = await response.json();
-        const campusSelect = document.getElementById("campusId");
-        for (const campus of campuses) {
-          const option = document.createElement("option");
-          option.value = campus.id;
-          option.textContent = campus.name;
-          campusSelect.appendChild(option);
+        try {
+          const response = await fetch("/api/campus/all");
+          const campuses = await response.json();
+          const campusSelect = document.getElementById("campusId");
+
+          // 添加默认选项
+          const defaultOption = document.createElement("option");
+          defaultOption.value = "";
+          defaultOption.textContent = "请选择校区";
+          defaultOption.disabled = true;
+          defaultOption.selected = true;
+          campusSelect.appendChild(defaultOption);
+
+          // 添加校区选项
+          for (const campus of campuses) {
+            const option = document.createElement("option");
+            option.value = campus.id;
+            option.textContent = campus.name;
+            campusSelect.appendChild(option);
+          }
+        } catch (error) {
+          displayMessage("获取校区信息失败，请稍后重试。", "danger");
+          console.error("获取校区信息错误：", error);
         }
       }
 
@@ -180,32 +677,73 @@
           studentData.campusId = parseInt(studentData.campusId); // Campus is still required
           studentData.email = studentData.email || null; // Store null if email is empty
 
-          const response = await fetch("/api/student/register", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(studentData),
-          });
+          // 添加加载状态
+          const submitButton = this.querySelector(
+            'button[type="submit"]',
+          );
+          const originalButtonText = submitButton.innerHTML;
+          submitButton.disabled = true;
+          submitButton.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> 注册中...';
 
-          if (response.ok) {
-            displayMessage("注册成功！现在可以登录了。", "success");
-            this.reset(); // Clear the form
-            setTimeout(() => {
-              window.location.href = "/student/login"; // Redirect to login page
-            }, 2000); // Redirect after 2 seconds
-          } else {
-            const errorData = await response.json();
-            displayMessage(
-              "注册失败：" + (errorData.message || "未知错误"),
-              "danger",
-            );
+          try {
+            const response = await fetch("/api/student/register", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(studentData),
+            });
+
+            // 恢复按钮状态
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+
+            if (response.ok) {
+              displayMessage("注册成功！现在可以登录了。", "success");
+              this.reset(); // Clear the form
+              setTimeout(() => {
+                window.location.href = "/student/login"; // Redirect to login page
+              }, 2000); // Redirect after 2 seconds
+            } else {
+              const errorData = await response.json();
+              displayMessage(
+                "注册失败：" + (errorData.message || "未知错误"),
+                "danger",
+              );
+            }
+          } catch (error) {
+            // 恢复按钮状态
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+
+            displayMessage("网络错误，请稍后重试。", "danger");
+            console.error("注册请求错误：", error);
           }
         },
       );
 
+      // 为输入框添加交互效果
+      document.querySelectorAll(".form-control").forEach((input) => {
+        input.addEventListener("focus", function () {
+          const label = this.parentNode.querySelector(".form-label");
+          if (label) {
+            label.style.color = "var(--primary-color)";
+          }
+        });
+
+        input.addEventListener("blur", function () {
+          const label = this.parentNode.querySelector(".form-label");
+          if (label) {
+            label.style.color = "";
+          }
+        });
+      });
+
+      // 初始化页面
       fetchCampuses();
     </script>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
