@@ -3,44 +3,230 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>根用户主页</title>
+    <title>根用户主页 | 乒乓管理系统</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
       crossorigin="anonymous"
     />
+    <link
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    >
+    <style>
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .navbar {
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+      .card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      }
+      .card-title {
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        display: inline-block;
+      }
+      .function-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 50px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .function-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+      }
+      .logout-btn {
+        background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        border: none;
+        border-radius: 50px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .logout-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(255, 65, 108, 0.4);
+      }
+      .btn-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .welcome-text {
+        font-size: 1.1rem;
+        color: #667eea;
+        font-weight: 500;
+        margin-bottom: 20px;
+      }
+      .system-info {
+        background-color: rgba(102, 126, 234, 0.1);
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 20px;
+        border-left: 4px solid #667eea;
+      }
+      .info-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+        color: #4a5568;
+      }
+      @media (max-width: 576px) {
+        .card {
+          margin: 0 15px;
+        }
+        .function-btn,
+        .logout-btn {
+          font-size: 0.9rem;
+        }
+      }
+    </style>
   </head>
 
-  <body class="bg-light">
-    <div class="container">
-      <div class="row justify-content-center mt-5">
-        <div class="col-md-8">
+  <body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-light mb-5">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/root/home">
+          <i
+            class="fa fa-table-tennis-o text-primary mr-2"
+            aria-hidden="true"
+          ></i>
+          <span class="font-weight-bold text-primary">PingPong管理系统</span>
+        </a>
+        <div class="navbar-nav ml-auto">
+          <span class="nav-item nav-link text-primary font-weight-medium">
+            <i class="fa fa-user-circle-o" aria-hidden="true"></i> 根用户
+          </span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <div class="container flex-grow-1">
+      <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
           <div class="card">
-            <div class="card-body">
-              <h3 class="card-title text-center mb-4">
-                根用户主页
-              </h3>
-              <div class="d-grid gap-2">
+            <div class="card-body p-6">
+              <h2 class="card-title text-center mb-4">根用户控制面板</h2>
+
+              <div class="welcome-text text-center">
+                <i class="fa fa-shield" aria-hidden="true"></i>
+                欢迎访问系统管理中心
+              </div>
+
+              <div class="btn-container">
                 <a
                   href="/root/campus/all"
-                  class="btn btn-primary"
-                >校区</a>
+                  class="btn btn-primary function-btn"
+                >
+                  <i class="fa fa-building-o" aria-hidden="true"></i> 校区管理
+                </a>
                 <a
                   href="/root/admin/all"
-                  class="btn btn-primary"
-                >管理员</a>
-                <a href="/root/logout" class="btn btn-danger">登出</a>
+                  class="btn btn-primary function-btn"
+                >
+                  <i class="fa fa-users" aria-hidden="true"></i> 管理员管理
+                </a>
+                <hr class="my-3" />
+                <a href="/root/logout" class="btn btn-danger logout-btn">
+                  <i class="fa fa-sign-out" aria-hidden="true"></i> 安全登出
+                </a>
+              </div>
+
+              <div class="system-info">
+                <div class="info-item">
+                  <i
+                    class="fa fa-info-circle text-primary"
+                    aria-hidden="true"
+                  ></i>
+                  <span>此账户拥有系统最高权限</span>
+                </div>
+                <div class="info-item">
+                  <i class="fa fa-lock text-primary" aria-hidden="true"></i>
+                  <span>请确保账户信息安全</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- 页脚 -->
+    <footer class="mt-5 py-3 text-center text-white">
+      <div class="container">
+        <p class="mb-0">&copy; 2023 PingPong管理系统 - 根用户中心</p>
+      </div>
+    </footer>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
       crossorigin="anonymous"
     ></script>
+    <script>
+      // 添加页面加载动画效果
+      document.addEventListener("DOMContentLoaded", function () {
+        const card = document.querySelector(".card");
+        card.style.opacity = "0";
+        card.style.transform = "translateY(20px)";
+
+        setTimeout(() => {
+          card.style.transition =
+            "opacity 0.5s ease, transform 0.5s ease";
+          card.style.opacity = "1";
+          card.style.transform = "translateY(0)";
+        }, 100);
+
+        // 为按钮添加交互效果
+        const buttons = document.querySelectorAll(
+          ".function-btn, .logout-btn",
+        );
+        buttons.forEach((btn) => {
+          btn.addEventListener("mouseenter", function () {
+            this.style.transform = "translateY(-3px) scale(1.02)";
+          });
+          btn.addEventListener("mouseleave", function () {
+            this.style.transform = "translateY(-2px) scale(1)";
+          });
+        });
+      });
+    </script>
   </body>
 </html>

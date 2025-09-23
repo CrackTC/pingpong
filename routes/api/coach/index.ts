@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+
 import { useApiCoachAppointmentCancelCount } from "./appointment/cancel-count.ts";
 import { useApiCoachLogin } from "./login.ts";
 import { useApiCoachMe } from "./me.ts";
@@ -26,6 +27,7 @@ import { useApiCoachRegister } from "./register.ts";
 import { useApiCoachMigrationApprove } from "./migration/approve.ts";
 import { useApiCoachMigrationReject } from "./migration/reject.ts";
 import { useApiCoachMigrationPending } from "./migration/pending.ts";
+
 export function useApiCoachRoutes(app: Hono) {
   useApiCoachAppointmentCancelCount(app);
   useApiCoachLogin(app);

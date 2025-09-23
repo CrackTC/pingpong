@@ -114,6 +114,11 @@
             <p><strong>邮箱：</strong> <span id="modal-email-text"></span></p>
             <p><strong>类型：</strong> <span id="modal-type-text"></span></p>
             <p><strong>备注：</strong> <span id="modal-comment-text"></span></p>
+            <p>
+              <strong>课时费：</strong> <span
+                id="modal-hourly-rate-text"
+              ></span>
+            </p>
           </div>
           <div class="modal-footer">
             <button
@@ -194,6 +199,20 @@
             return "高级";
           default:
             return "未知";
+        }
+      }
+
+      // 添加获取课时费的函数
+      function getCoachHourlyRate(type) {
+        switch (type) {
+          case 2: // 初级教练
+            return "100元/小时";
+          case 3: // 中级教练
+            return "150元/小时";
+          case 4: // 高级教练
+            return "200元/小时";
+          default: // 待审核或其他
+            return "未设置";
         }
       }
 
@@ -290,6 +309,9 @@
           const modalCommentText = coachDetailsModal.querySelector(
             "#modal-comment-text",
           );
+          const modalHourlyRateText = coachDetailsModal.querySelector(
+            "#modal-hourly-rate-text",
+          );
 
           modalSexText.textContent = getSexString(parseInt(sex));
           modalAgeText.textContent =
@@ -304,6 +326,9 @@
             parseInt(type),
           );
           modalCommentText.textContent = comment || "未填写";
+          modalHourlyRateText.textContent = getCoachHourlyRate(
+            parseInt(type),
+          );
         },
       );
 

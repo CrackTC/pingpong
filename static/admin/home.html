@@ -3,109 +3,398 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>管理员主页</title>
+    <title>管理员主页 - 乒乓球管理系统</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
+    <style>
+      :root {
+        --primary-color: #0d6efd;
+        --secondary-color: #6c757d;
+        --success-color: #198754;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+        --info-color: #0dcaf0;
+        --light-color: #f8f9fa;
+        --dark-color: #212529;
+        --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .dashboard-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+      }
+
+      .header {
+        margin-bottom: 2rem;
+      }
+
+      .header h1 {
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+      }
+
+      .header p {
+        color: var(--secondary-color);
+        font-size: 1.1rem;
+      }
+
+      .stats-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition);
+        border: none;
+        margin-bottom: 1.5rem;
+      }
+
+      .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+      }
+
+      .stats-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+      }
+
+      .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+      }
+
+      .stats-label {
+        font-size: 1rem;
+        color: var(--secondary-color);
+        margin-bottom: 0;
+      }
+
+      .btn-group-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--dark-color);
+        padding-left: 0.5rem;
+      }
+
+      .btn-action {
+        border-radius: 8px;
+        padding: 0.75rem 1.25rem;
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+        width: 100%;
+        text-align: left;
+        transition: var(--transition);
+        border: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .btn-action:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-action i {
+        margin-right: 0.75rem;
+        font-size: 1.2rem;
+      }
+
+      .logout-btn {
+        margin-top: 1.5rem;
+        font-weight: 600;
+      }
+
+      .notification-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 50%;
+        background-color: var(--danger-color);
+        color: white;
+        margin-left: 0.5rem;
+      }
+
+      @media (max-width: 768px) {
+        .dashboard-container {
+          padding-top: 1rem;
+          padding-bottom: 1rem;
+        }
+
+        .header h1 {
+          font-size: 1.75rem;
+        }
+
+        .stats-number {
+          font-size: 2rem;
+        }
+
+        .stats-icon {
+          font-size: 2rem;
+        }
+      }
+    </style>
   </head>
 
-  <body class="bg-light">
-    <div class="container">
-      <div class="row justify-content-center mt-5">
-        <div class="col-md-8">
-          <div class="card">
-            <div class="card-body">
-              <h3 class="card-title text-center mb-4">
-                管理员仪表盘
-              </h3>
-              <div class="d-grid gap-2">
-                <a
-                  href="/admin/coach/pending"
-                  class="btn btn-primary"
-                >
-                  待处理教练注册
-                </a>
-                <a
-                  href="/admin/coach/search"
-                  class="btn btn-primary"
-                >
-                  搜索教练
-                </a>
-                <a
-                  href="/admin/coach/add"
-                  class="btn btn-primary"
-                >
-                  添加教练
-                </a>
-                <a
-                  href="/admin/student/search"
-                  class="btn btn-primary"
-                >
-                  搜索学生
-                </a>
-                <a
-                  href="/admin/student/add"
-                  class="btn btn-primary"
-                >
-                  添加学生
-                </a>
-                <a
-                  href="/admin/migrations"
-                  class="btn btn-primary"
-                >
-                  待处理迁移
-                </a>
-                <a
-                  href="/admin/table/all"
-                  class="btn btn-primary"
-                >
-                  所有球台
-                </a>
-                <a
-                  href="/admin/system-logs"
-                  class="btn btn-primary"
-                >
-                  系统日志
-                </a>
-                <a
-                  href="/admin/notifications"
-                  id="notifications-btn"
-                  class="btn btn-secondary"
-                >通知</a>
-                <a href="/admin/logout" class="btn btn-danger">登出</a>
-              </div>
-            </div>
+  <body>
+    <div class="container dashboard-container">
+      <!-- 顶部标题 -->
+      <div class="header text-center mb-5">
+        <h1>管理员仪表盘</h1>
+        <p>欢迎使用乒乓球管理系统 - 管理员控制面板</p>
+      </div>
+
+      <!-- 统计数据卡片 -->
+      <div class="row mb-5">
+        <div class="col-md-4 col-sm-6">
+          <div class="stats-card">
+            <i class="fas fa-graduation-cap stats-icon"></i>
+            <div class="stats-number" id="total-students-count">10</div>
+            <div class="stats-label">学生总数</div>
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+          <div class="stats-card">
+            <i class="fas fa-chalkboard-teacher stats-icon"></i>
+            <div class="stats-number" id="total-coaches-count">0</div>
+            <div class="stats-label">教练总数</div>
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+          <div class="stats-card">
+            <i class="fas fa-clock stats-icon"></i>
+            <div class="stats-number" id="pending-appointments-count">0</div>
+            <div class="stats-label">待处理预约</div>
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+          <div class="stats-card">
+            <i class="fas fa-user-plus stats-icon"></i>
+            <div class="stats-number" id="pending-coaches-count">0</div>
+            <div class="stats-label">待处理教练注册</div>
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+          <div class="stats-card">
+            <i class="fas fa-exchange-alt stats-icon"></i>
+            <div class="stats-number" id="pending-migrations-count">0</div>
+            <div class="stats-label">待处理迁移</div>
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+          <div class="stats-card">
+            <i class="fas fa-bell stats-icon"></i>
+            <div class="stats-number" id="notification-count">0</div>
+            <div class="stats-label">未读通知</div>
           </div>
         </div>
       </div>
+
+      <!-- 功能按钮组 -->
+      <div class="row">
+        <!-- 教练管理 -->
+        <div class="col-md-4">
+          <h3 class="btn-group-title">
+            <i class="fas fa-chalkboard-teacher mr-2"></i>教练管理
+          </h3>
+          <a
+            href="/admin/coach/pending"
+            class="btn btn-primary btn-action"
+          >
+            <i class="fas fa-hourglass-half"></i>待处理教练注册
+          </a>
+          <a
+            href="/admin/coach/search"
+            class="btn btn-primary btn-action"
+          >
+            <i class="fas fa-search"></i>搜索教练
+          </a>
+          <a
+            href="/admin/coach/add"
+            class="btn btn-primary btn-action"
+          >
+            <i class="fas fa-plus-circle"></i>添加教练
+          </a>
+        </div>
+
+        <!-- 学生管理 -->
+        <div class="col-md-4">
+          <h3 class="btn-group-title">
+            <i class="fas fa-graduation-cap mr-2"></i>学生管理
+          </h3>
+          <a
+            href="/admin/student/search"
+            class="btn btn-primary btn-action"
+          >
+            <i class="fas fa-search"></i>搜索学生
+          </a>
+          <a
+            href="/admin/student/add"
+            class="btn btn-primary btn-action"
+          >
+            <i class="fas fa-plus-circle"></i>添加学生
+          </a>
+        </div>
+
+        <!-- 系统管理 -->
+        <div class="col-md-4">
+          <h3 class="btn-group-title">
+            <i class="fas fa-cogs mr-2"></i>系统管理
+          </h3>
+          <a
+            href="/admin/migrations"
+            class="btn btn-primary btn-action"
+          >
+            <i class="fas fa-exchange-alt"></i>待处理迁移
+          </a>
+          <a
+            href="/admin/table/all"
+            class="btn btn-primary btn-action"
+          >
+            <i class="fas fa-table"></i>所有球台
+          </a>
+          <a
+            href="/admin/system-logs"
+            class="btn btn-primary btn-action"
+          >
+            <i class="fas fa-file-alt"></i>系统日志
+          </a>
+          <a
+            href="/admin/notifications"
+            id="notifications-btn"
+            class="btn btn-secondary btn-action"
+          >
+            <i class="fas fa-bell"></i>通知
+            <span
+              class="notification-badge"
+              id="notification-badge"
+              style="display: none"
+            >0</span>
+          </a>
+          <a href="/admin/logout" class="btn btn-danger btn-action logout-btn">
+            <i class="fas fa-sign-out-alt"></i>登出
+          </a>
+        </div>
+      </div>
     </div>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
       crossorigin="anonymous"
     ></script>
     <script>
-      fetch("/api/admin/home")
-        .then((response) => response.json())
-        .then((data) => {
-          const notificationsBtn = document.getElementById(
-            "notifications-btn",
-          );
-          if (data.unreadNotificationCount > 0) {
-            notificationsBtn.classList.remove("btn-secondary");
-            notificationsBtn.classList.add("btn-warning");
-            notificationsBtn.textContent =
-              `通知 (${data.unreadNotificationCount})`;
-          } else {
-            notificationsBtn.textContent = `通知`;
-          }
-        })
-        .catch((error) =>
-          console.error("获取管理员主页数据时出错：", error)
-        );
+      // 设置当前日期显示
+      document.addEventListener("DOMContentLoaded", function () {
+        fetch("/api/admin/home")
+          .then((response) => response.json())
+          .then((data) => {
+            // 更新统计数据
+            // 1. 更新通知数量
+            const notificationsBtn = document.getElementById(
+              "notifications-btn",
+            );
+            const notificationCount = document.getElementById(
+              "notification-count",
+            );
+            const notificationBadge = document.getElementById(
+              "notification-badge",
+            );
+
+            if (data.unreadNotificationCount !== undefined) {
+              const count = data.unreadNotificationCount;
+              notificationCount.textContent = count;
+
+              if (count > 0) {
+                notificationsBtn.classList.remove("btn-secondary");
+                notificationsBtn.classList.add("btn-warning");
+                notificationBadge.textContent = count;
+                notificationBadge.style.display = "inline-block";
+                notificationsBtn.innerHTML =
+                  '<i class="fas fa-bell"></i>通知 <span class="notification-badge" id="notification-badge">' +
+                  count + "</span>";
+              }
+            }
+
+            // 2. 更新学生总数
+            if (data.totalStudentsCount !== undefined) {
+              document.getElementById("total-students-count")
+                .textContent = data.totalStudentsCount;
+            }
+
+            // 3. 更新教练总数
+            if (data.totalCoachesCount !== undefined) {
+              document.getElementById("total-coaches-count")
+                .textContent = data.totalCoachesCount;
+            }
+
+            // 4. 更新待处理教练申请数量
+            if (data.pendingCoachesCount !== undefined) {
+              document.getElementById("pending-coaches-count")
+                .textContent = data.pendingCoachesCount;
+            }
+
+            // 5. 更新待处理预约数量
+            if (data.pendingAppointmentsCount !== undefined) {
+              document.getElementById("pending-appointments-count")
+                .textContent = data.pendingAppointmentsCount;
+            }
+
+            // 6. 更新待处理迁移数量
+            if (data.pendingMigrationsCount !== undefined) {
+              document.getElementById("pending-migrations-count")
+                .textContent = data.pendingMigrationsCount;
+            }
+          })
+          .catch((error) => {
+            console.error("获取管理员主页数据时出错：", error);
+
+            // 出错时设置默认值
+            document.getElementById("total-students-count")
+              .textContent = "0";
+            document.getElementById("total-coaches-count").textContent =
+              "0";
+            document.getElementById("pending-coaches-count")
+              .textContent = "0";
+            document.getElementById("pending-appointments-count")
+              .textContent = "0";
+            document.getElementById("pending-migrations-count")
+              .textContent = "0";
+            document.getElementById("notification-count").textContent =
+              "0";
+
+            // 恢复通知按钮样式
+            const notificationsBtn = document.getElementById(
+              "notifications-btn",
+            );
+            notificationsBtn.classList.remove("btn-warning");
+            notificationsBtn.classList.add("btn-secondary");
+
+            // 隐藏通知徽章
+            const notificationBadge = document.getElementById(
+              "notification-badge",
+            );
+            if (notificationBadge) {
+              notificationBadge.style.display = "none";
+            }
+          });
+      });
     </script>
   </body>
 </html>

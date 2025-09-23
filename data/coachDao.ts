@@ -70,17 +70,27 @@ export function getCoachById(
 export function getPendingCoaches(
   campusId?: number,
 ): (Coach & { campusName: string })[] {
-  let query =
-    "SELECT co.*, ca.name as campusName FROM coaches co JOIN campuses ca ON co.campusId = ca.id WHERE co.type = ?";
-  const params: (string | number)[] = [CoachType.Pending];
+  try {
+    // 明确指定字段而不是使用co.*，确保类型正确
+    let query =
+      "SELECT co.id, co.username, co.realName, co.sex, co.birthYear, co.campusId, co.phone, co.email, co.idCardNumber, co.avatarPath, co.comment, co.type, ca.name as campusName FROM coaches co JOIN campuses ca ON co.campusId = ca.id WHERE co.type = ?";
+    const params: (string | number)[] = [CoachType.Pending];
 
-  if (campusId !== undefined) {
-    query += " AND co.campusId = ?";
-    params.push(campusId);
+    if (campusId !== undefined) {
+      query += " AND co.campusId = ?";
+      params.push(campusId);
+    }
+
+    const stmt = db.prepare(query);
+    const result = stmt.all(...params);
+    // 确保返回的是数组
+    return Array.isArray(result)
+      ? (result as (Coach & { campusName: string })[])
+      : [];
+  } catch (error) {
+    console.error("获取待处理教练时出错:", error);
+    return [];
   }
-
-  const stmt = db.prepare(query);
-  return stmt.all(...params) as (Coach & { campusName: string })[];
 }
 
 export function approveCoach(coachId: number, type: CoachType) {
