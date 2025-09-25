@@ -191,6 +191,11 @@
                 } else if (a.status === 8 && a.hasReview) {
                   actionButtons =
                     `<a href="/coach/appointment/review/${a.id}" class="btn btn-info btn-sm">查看评价</a>`;
+                } else if (a.status === 2) {
+                  // Approved
+                  actionButtons = cancelButton;
+                } else {
+                  actionButtons = "";
                 }
 
                 appointmentsHtml +=
